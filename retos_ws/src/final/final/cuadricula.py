@@ -20,13 +20,7 @@ def pedir_opcion_menu():
   
   return input("Seleccione una opcion: ")
 
-def angulo_ojo(mov):
-
-  # INTRODUCIMOS EL ÁNGULO QUE QUEREMOS GIRAR
-  angulo = float(input("Introduce el ángulo (- izq / + der): "))
-
-  # INTRODUCIMOS LA DISTANCIA QUE QUEREMOS AVANZAR
-  distancia = float(input("Introduce la distancia: "))
+def girar_avanzar(mov, angulo, distancia):
 
   # GIRAMOS EL ROBOT
   if angulo < 0:
@@ -36,6 +30,18 @@ def angulo_ojo(mov):
 
   # AVANZAMOS LA DISTANCIA
   mov.avanzar_distancia(distancia)
+  mov.detener()
+
+def angulo_ojo(mov):
+
+  # INTRODUCIMOS EL ÁNGULO QUE QUEREMOS GIRAR
+  angulo = float(input("Introduce el ángulo (- izq / + der): "))
+
+  # INTRODUCIMOS LA DISTANCIA QUE QUEREMOS AVANZAR
+  distancia = float(input("Introduce la distancia: "))
+
+  # GIRAMOS Y AVANZAMOS
+  girar_avanzar(mov, angulo, distancia)
 
 def calculo_trigonometria(mov):
 
@@ -52,17 +58,13 @@ def calculo_trigonometria(mov):
   # CALCULAMOS LA DISTANCIA QUE TIENE QUE AVANZAR
   distancia = (x**2 + y**2)**0.5
 
-  # GIRAMOS EL ROBOT
-  print(f'Girando {angulo_giro} grados')
-  if giro == "izq":
-    mov.girar_grados_izq(angulo_giro)
-  elif giro == "der":
-    mov.girar_grados_der(angulo_giro)
-
-  # AVANZAMOS LA DISTANCIA
-  print(f'Avanzando {distancia}m')
-  mov.avanzar_distancia(distancia)
-  mov.detener()
+  # GIRAMOS Y AVANZAMOS
+  if giro == 'izq':
+    girar_avanzar(mov, angulo_giro, distancia)
+  elif giro == 'der':
+    girar_avanzar(mov, -angulo_giro, distancia)
+  else:
+    print("Dirección de giro no válida")
 
 def ejecutar_cuadricula(mov, opcion_menu):
   if opcion_menu == '1':
