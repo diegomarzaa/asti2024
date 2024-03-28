@@ -24,18 +24,28 @@ class DistanceSensorPublisher(Node):
             super().__init__('distance_sensor_publisher')
             self.publisher_der = self.create_publisher(Float32, 'distance_der', 10)
             self.publisher_izq = self.create_publisher(Float32, 'distance_izq', 10)
-            timer_period = 0.5  # seconds
+            timer_period = 0.1  # seconds
             self.timer = self.create_timer(timer_period, self.timer_callback)
     
         def timer_callback(self):
             distance_der = self.distance(GPIO_TRIGGERder, GPIO_ECHOder)
             distance_izq = self.distance(GPIO_TRIGGERizq, GPIO_ECHOizq)
+            
             msg_der = Float32()
-            msg_der.data = distance_der
+            if distance_der is not None and distance_der > 0.0:
+                msg_der.data = distance_der
+            else:
+                msg_der.data = 0.0
             self.publisher_der.publish(msg_der)
+            self.get_logger().info('Publishing: "%s"' % msg_der.data)
+            
             msg_izq = Float32()
-            msg_izq.data = distance_izq
+            if distance_izq is not None and distance_izq > 0.0:
+                msg_izq.data = distance_izq
+            else:
+                msg_izq.data = 0.0
             self.publisher_izq.publish(msg_izq)
+            self.get_logger().info('Publishing: "%s"' % msg_izq.data)
     
         def distance(self, TRIG, ECHO):
             GPIO.output(TRIG, True)
@@ -43,21 +53,34 @@ class DistanceSensorPublisher(Node):
             GPIO.output(TRIG, False)
             start_time = time.time()
             stop_time = time.time()
+            timeout = 0.04
+            
             while GPIO.input(ECHO) == 0:
                 start_time = time.time()
+                if start_time - stop_time > timeout:
+                    return 0.0
+                    
             while GPIO.input(ECHO) == 1:
                 stop_time = time.time()
+                if stop_time - start_time > timeout:
+                    return 0.0
+                    
             time_elapsed = stop_time - start_time
             distance = (time_elapsed * 34300) / 2
+            
             return distance
 
 def main(args=None):
     rclpy.init(args=args)
     distance_sensor_publisher = DistanceSensorPublisher()
-    rclpy.spin(distance_sensor_publisher)
-    distance_sensor_publisher.destroy_node()
-    rclpy.shutdown()
-    GPIO.cleanup()
+    try:
+        rclpy.spin(distance_sensor_publisher)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        distance_sensor_publisher.destroy_node()
+        rclpy.shutdown()
+        GPIO.cleanup()
 
 if __name__ == '__main__':
     main()
