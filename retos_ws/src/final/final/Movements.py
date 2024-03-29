@@ -259,6 +259,17 @@ class Movements(Node):
     def girar_grados_der_atras(self, degrees, radio=0.0):
         self.girar_grados(-degrees, radio, avanzar=False)
 
+    def girar_avanzar(self, angulo, distancia):
+
+        # GIRAMOS EL ROBOT
+        if angulo < 0:
+            self.girar_grados_izq(abs(angulo))
+        elif angulo > 0:
+            self.girar_grados_der(abs(angulo))
+
+        # AVANZAMOS LA DISTANCIA
+        self.avanzar_distancia(distancia)
+        self.detener()
 
     def girar_grados(self, degrees, radio=0.0, avanzar=True):
         # TODO: Testear que está bien, ya que no lo he probado

@@ -20,18 +20,6 @@ def pedir_opcion_menu():
   
   return input("Seleccione una opcion: ")
 
-def girar_avanzar(mov, angulo, distancia):
-
-  # GIRAMOS EL ROBOT
-  if angulo < 0:
-    mov.girar_grados_izq(abs(angulo))
-  elif angulo > 0:
-    mov.girar_grados_der(abs(angulo))
-
-  # AVANZAMOS LA DISTANCIA
-  mov.avanzar_distancia(distancia)
-  mov.detener()
-
 def angulo_ojo(mov):
 
   # INTRODUCIMOS EL ÁNGULO QUE QUEREMOS GIRAR
@@ -41,7 +29,7 @@ def angulo_ojo(mov):
   distancia = float(input("Introduce la distancia: "))
 
   # GIRAMOS Y AVANZAMOS
-  girar_avanzar(mov, angulo, distancia)
+  mov.girar_avanzar(angulo, distancia)
 
 def calculo_trigonometria(mov):
 
@@ -60,9 +48,9 @@ def calculo_trigonometria(mov):
 
   # GIRAMOS Y AVANZAMOS
   if giro == 'izq':
-    girar_avanzar(mov, angulo_giro, distancia)
+    mov.girar_avanzar(angulo_giro, distancia)
   elif giro == 'der':
-    girar_avanzar(mov, -angulo_giro, distancia)
+    mov.girar_avanzar(-angulo_giro, distancia)
   else:
     print("Dirección de giro no válida")
 
