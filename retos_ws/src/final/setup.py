@@ -27,6 +27,8 @@ setup(
             'siguelineas_matriz = final.siguelineas_matriz:main',
             'bolos = final.bolos:main',
             'cuadricula = final.cuadricula:main',
+            'mini_fabrica = final.mini_fabrica:main',
+            'reconocer_figura_mapa = final.reconocer_figura_mapa:main',
         ],
     },
 )
