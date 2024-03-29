@@ -12,28 +12,21 @@ SLEEP_MOV = 0.1
 VELOCIDAD_LINEAL = 0.1
 VELOCIDAD_ANGULAR = 0.5
 
-def subir_boli():
-  print("Subiendo boli")
-
-def bajar_boli():
-  print("Bajando boli")
-
-
 def get_figure_params(opcion_menu):
   figura = int(opcion_menu)
   
   if figura == 1: # Triangulo
-    angulo = 2.09439510 # 2pi/3
+    angulo = 45           # 2pi/3 radianes
     largo = 0.25
-    ancho = largo
+    ancho = 0.25
     lados = 3
   elif figura == 2: # Cuadrado
-    angulo = 1.57079632 # 2pi/4
+    angulo = 90           # 2pi/4
     largo = 0.2
-    ancho = largo
+    ancho = 0.2
     lados = 4
   elif figura == 3: # Rectangulo
-    angulo = 1.57079632 # 2pi/4
+    angulo = 90            # 2pi/4
     largo = 0.3
     ancho = 0.1
     lados = 4
@@ -49,7 +42,7 @@ def pedir_opcion_menu():
   print(" q. Salir")
   return input("Seleccione una opcion: ")
 
-def dibujar_figura(mov:Movements, opcion_menu):
+'''def dibujar_figura_antiguo(mov:Movements, opcion_menu):
   angulo, largo, ancho, lados = get_figure_params(opcion_menu)
   
   bajar_boli()
@@ -92,7 +85,35 @@ def dibujar_figura(mov:Movements, opcion_menu):
         time.sleep(SLEEP_MOV)
 
     mov.detener()
-    bajar_boli()
+    bajar_boli()'''
+
+
+def dibujar_figura(mov:Movements, opcion_menu):
+  angulo, largo, ancho, lados = get_figure_params(opcion_menu)
+  
+  mov.boli_bajar()
+  
+  for i in range(lados):
+    if i % 2:
+      distancia = largo
+    else:
+      distancia = ancho
+    
+    print(f"Moviendo hacia adelante (pintando), distancia: {distancia}")
+    mov.avanzar_distancia(distancia)
+    mov.boli_subir(prints=True)
+
+    print(f"Avanzando para corregir (sin pintar) (20cm)")
+    mov.avanzar_distancia(0.2)
+
+    print(f"Girando {angulo} grados")
+    mov.girar_grados_der(angulo)
+
+    print("Moviendo hacia atras (sin pintar), (15cm)")
+    mov.retroceder_distancia(0.15)
+
+    print("Bajando boli")
+    mov.boli_bajar(prints=True)
 
 
 
@@ -100,7 +121,9 @@ def main():
   rclpy.init(args=None)
   node = rclpy.create_node('figuras')
   mov = Movements()
-  mov.actualizar_velocidades(VELOCIDAD_LINEAL, VELOCIDAD_ANGULAR, 0.01, 0.1)    # TODO: Aceleraciones mejorar
+          
+  mov.actualizar_vel_lineal(VELOCIDAD_LINEAL)
+  mov.actualizar_vel_angular(VELOCIDAD_ANGULAR)
   
   while True:
     opcion_menu = pedir_opcion_menu()

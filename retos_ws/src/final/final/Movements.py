@@ -8,30 +8,34 @@ from custom_interfaces.msg import SetPosition
 
 def get_movements():
     # TODO: Importante mantener actualizado
+    # 1r argumento: Nombre de la función
+    # 2o argumento: Lista de argumentos obligatorios
+    # 3r argumento: Lista de argumentos opcionales
+    
     actions = {
-        1: ('avanzar', []),
-        2: ('retroceder', []),
-        3: ('girar_izquierda', []),
-        4: ('girar_derecha', []),
-        5: ('detener', []),
-        6: ('avanzar_distancia', ['distancia', 'aceleracion']),
-        7: ('retroceder_distancia', ['distancia', 'aceleracion']),
-        8: ('girar_grados_izq', ['degrees', 'radio']),
-        9: ('girar_grados_der', ['degrees', 'radio']),
-        10: ('girar_grados_izq_atras', ['degrees', 'radio']),
-        11: ('girar_grados_der_atras', ['degrees', 'radio']),
-        12: ('herramienta_girar', ['grados']),
-        13: ('boli_subir', []),
-        14: ('boli_bajar', []),
-        15: ('bolos_soltar', []),
-        16: ('bolos_mantener', []),
-        17: ('pale_subir', []),
-        18: ('pale_bajar', []),
-        19: ('actualizar_vel_lineal', ['max_linear_vel']),
-        20: ('actualizar_vel_angular', ['max_angular_vel']),
-        21: ('actualizar_acc_lineal', ['linear_acc']),
-        22: ('actualizar_acc_angular', ['angular_acc']),
-        23: ('prueba_movimientos', []),
+        0: ('prueba_movimientos', [], []), 
+        1: ('avanzar', [], []),
+        2: ('retroceder', [], []),
+        3: ('girar_izquierda', [], []),
+        4: ('girar_derecha', [], []),
+        5: ('detener', [], []),
+        6: ('avanzar_distancia', ['distancia'], ['aceleracion']),
+        7: ('retroceder_distancia', ['distancia'], ['aceleracion']),
+        8: ('girar_grados_izq', ['degrees'], ['radio']),
+        9: ('girar_grados_der', ['degrees'], ['radio']),
+        10: ('girar_grados_izq_atras', ['degrees'], ['radio']),
+        11: ('girar_grados_der_atras', ['degrees'], ['radio']),
+        12: ('herramienta_girar', ['grados'], []),
+        13: ('boli_subir', [], []),
+        14: ('boli_bajar', [], []),
+        15: ('bolos_soltar', [], []),
+        16: ('bolos_mantener', [], []),
+        17: ('pale_subir', [], []),
+        18: ('pale_bajar', [], []),
+        19: ('actualizar_vel_lineal', ['max_linear_vel'], []),
+        20: ('actualizar_vel_angular', ['max_angular_vel'], []),
+        21: ('actualizar_acc_lineal', ['linear_acc'], []),
+        22: ('actualizar_acc_angular', ['angular_acc'], []),
     }
     return actions
 
@@ -135,12 +139,16 @@ class Movements(Node):
         
     # Dibujar la figura
     
-    def boli_subir(self):
+    def boli_subir(self, prints=False):
+        if prints:
+            print("Boli subido")
         self.herramienta_girar(self.grados_boli_alto)
         
-    def boli_bajar(self):
+    def boli_bajar(self, prints=False):
+        if prints:
+            print("Boli bajado")
         self.herramienta_girar(self.grados_boli_bajo)
-        
+    
     # Bolos
     
     def bolos_soltar(self):
@@ -267,10 +275,11 @@ class Movements(Node):
         radian = abs(degrees*math.pi/180)
         
         # Determinar velocidades lineal y angular
-        vel_lin = self.obj_linear_vel if avanzar else -self.obj_linear_vel
         if radio == 0.0:
+            vel_lin = 0.0
             ang_vel = self.obj_angular_vel
         else:
+            vel_lin = self.obj_linear_vel if avanzar else -self.obj_linear_vel
             ang_vel = vel_lin/radio
         
         # Sentido de giro?
