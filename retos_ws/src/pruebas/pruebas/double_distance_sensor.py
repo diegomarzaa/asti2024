@@ -24,7 +24,7 @@ class DistanceSensorPublisher(Node):
             super().__init__('distance_sensor_publisher')
             self.publisher_der = self.create_publisher(Float32, 'distance_der', 10)
             self.publisher_izq = self.create_publisher(Float32, 'distance_izq', 10)
-            timer_period = 0.1  # seconds
+            timer_period = 0.5  # seconds
             self.timer = self.create_timer(timer_period, self.timer_callback)
     
         def timer_callback(self):
@@ -37,7 +37,8 @@ class DistanceSensorPublisher(Node):
             else:
                 msg_der.data = 0.0
             self.publisher_der.publish(msg_der)
-            self.get_logger().info('Publishing: "%s"' % msg_der.data)
+            print("Sensor derecha: \t", msg_der.data)
+            #self.get_logger().info('Sensor derecha: \t"%s"' % msg_der.data)
             
             msg_izq = Float32()
             if distance_izq is not None and distance_izq > 0.0:
@@ -45,7 +46,9 @@ class DistanceSensorPublisher(Node):
             else:
                 msg_izq.data = 0.0
             self.publisher_izq.publish(msg_izq)
-            self.get_logger().info('Publishing: "%s"' % msg_izq.data)
+            print("Sensor izquierda: \t", msg_izq.data)
+            print("\n")
+            #self.get_logger().info('Sensor izquierda: \t"%s" \n' % msg_izq.data)
     
         def distance(self, TRIG, ECHO):
             GPIO.output(TRIG, True)
