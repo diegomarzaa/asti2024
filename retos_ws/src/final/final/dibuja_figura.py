@@ -6,27 +6,29 @@ import time
 from math import pi
 from final.Movements import Movements
 
-SLEEP_TIME_BOLI = 0.5
+SLEEP_TIME_BOLI = 1
 SLEEP_MOV = 0.1
 
-VELOCIDAD_LINEAL = 0.1
+DIST_BOLI_CENTRO = 0.12
+
+VELOCIDAD_LINEAL = 0.05
 VELOCIDAD_ANGULAR = 0.5
 
 def get_figure_params(opcion_menu):
   figura = int(opcion_menu)
   
   if figura == 1: # Triangulo
-    angulo = 45           # 2pi/3 radianes
+    angulo = 133           # 2pi/3 radianes
     largo = 0.25
     ancho = 0.25
     lados = 3
   elif figura == 2: # Cuadrado
-    angulo = 90           # 2pi/4
+    angulo = 99           # 2pi/4   # TODO: Se queda corto 9 grados :(
     largo = 0.2
     ancho = 0.2
     lados = 4
   elif figura == 3: # Rectangulo
-    angulo = 90            # 2pi/4
+    angulo = 99            # 2pi/4
     largo = 0.3
     ancho = 0.1
     lados = 4
@@ -102,15 +104,16 @@ def dibujar_figura(mov:Movements, opcion_menu):
     print(f"Moviendo hacia adelante (pintando), distancia: {distancia}")
     mov.avanzar_distancia(distancia)
     mov.boli_subir(prints=True)
+    time.sleep(SLEEP_TIME_BOLI)
 
-    print(f"Avanzando para corregir (sin pintar) (20cm)")
-    mov.avanzar_distancia(0.2)
+    print(f"Avanzando para corregir (sin pintar) (DIST_BOLI_CENTRO)")
+    mov.avanzar_distancia(DIST_BOLI_CENTRO)
 
     print(f"Girando {angulo} grados")
     mov.girar_grados_der(angulo)
 
-    print("Moviendo hacia atras (sin pintar), (15cm)")
-    mov.retroceder_distancia(0.15)
+    print("Moviendo hacia atras (sin pintar), (DIST_BOLI_CENTRO)")
+    mov.retroceder_distancia(DIST_BOLI_CENTRO)
 
     print("Bajando boli")
     mov.boli_bajar(prints=True)
