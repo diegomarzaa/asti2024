@@ -48,9 +48,24 @@ class Linea_sub(Node):
 
         self.tiempo += 0.1
 
-        if self.tiempo >= 10.0:
+        if self.tiempo >= 5.0:
             maximo = max(self.formas, key=self.formas.get)
             print("\n\n\n\n\n\n\n\n\n", maximo, "\n\n\n\n\n\n\n\n\n")
+            """
+            if maximo == "TRIANGULO":
+                triangulo()
+            elif maximo == "CUADRADO":
+                cuadrado()
+            elif maximo == "ARCO":
+                arco()
+            elif maximo == "CILINDRO":
+                cilindro()
+            elif maximo == "CIRCULO":
+                circulo()
+            elif maximo == "ESTRELLA":
+                estrella()
+            """
+
             self.tiempo = 0.0
             self.formas = {
                 "TRIANGULO": 0,
@@ -151,6 +166,9 @@ class Linea_sub(Node):
         # =============================================================================
         # =============================================================================
         # =============================================================================
+
+        # El valor tonos indica la minima media de colores que permite, si se indica 30 tomara todos los colores que
+        # tenga una media de color RGB por encima de 30
 
         thresholded = cv2.threshold(blurred, self.tonos["Tibios"][0], 255, cv2.THRESH_BINARY)[1]
         cv2.imshow("thresholded", thresholded)

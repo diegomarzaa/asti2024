@@ -26,10 +26,16 @@ class ImageSubscriber(Node):
         self.caracteres = [input("Ingrese el caracter numero: "), input("Ingrese el caracter letra: ")]
 
         self.defrente = False
-
-        self.chars = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
-                      '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13']
+                                                                      #I imp                #L DIFICL IZQU
+        self.chars = ['A,(4)', 'B,8', 'C', 'D', 'E', 'F', 'G', 'H,N', 'I', 'J', 'K,(k, X)', 'L, ( [,( )', 'M,N,H',
+                      '1', '2', '3, (8, 9)', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13']
         self.mov = Movements()
+
+        self.posicion = int(input("En que lado de la cuadricula esta el robot? "
+                                    "1. Izquierda\n"
+                                    "2. Derecha\n"
+                                    "3. Arriba\n"
+                                    "4. Abajo\n"))
 
     def listener_callback(self, data):
         #self.get_logger().info('Receiving video frame')
@@ -40,12 +46,26 @@ class ImageSubscriber(Node):
         #prueba = img.copy()
         # Aplicamos OCR utilizando los lenguajes definidos anteriormente.
         reader = Reader(['en', 'es'], gpu=True)
+
+        if self.posicion == 1:
+            img = self.rotar_img(img, 90)
+            hImg, wImg, _ = img.shape
+        elif self.posicion == 2:
+            img = self.rotar_img(img, 270)
+            hImg, wImg, _ = img.shape
+        elif self.posicion == 3:
+            img = self.rotar_img(img, 180)
+            hImg, wImg, _ = img.shape
+
         results = reader.readtext(img)
+
+        encontrado = False
+        #print(results)
         if len(results) != 0:
             # Iteramos sobre las predicciones del modelo de EasyOCR.
             for bounding_box, text, probability in results:
                 # Imprimimos la probabilidad del texto.
-                print(f'{probability:.4f}: {text}')
+                #print(f'{probability:.4f}: {text}')
 
                 # Extraemos y ajustamos las coordenadas de la detección.
                 tl, tr, br, bl = bounding_box
@@ -58,43 +78,95 @@ class ImageSubscriber(Node):
                 text = cleanup_text(text)
                 cv2.rectangle(img, tl, br, (0, 255, 0), 2)
                 cv2.putText(img, text, (tl[0], tl[1] - 10), cv2.FONT_HERSHEY_SIMPLEX, .8, (0, 255, 0), 2)
+                # Mostramos el resultado en pantalla.
+                cv2.imshow('Resultado', img)
+                cv2.waitKey(1)
 
-            # Mostramos el resultado en pantalla.
-            cv2.imshow('Resultado', img)
-            if text in self.chars:
-                self.mov.detener()
-                self.mov.avanzar()
-                time.sleep(1)
+                palabra = text.split()
+                print(palabra)
 
-            self.girar_hasta_centro((tl[0], tl[1], br[0], br[1]), wImg)
+                for i in range(len(palabra)):
+                    if palabra[i] in self.caracteres:
+                        print(f"Detectado {text}")
+                        self.girar_hasta_centro((tl, br), wImg, hImg)
+                        #self.mov.detener()
+                        self.mov.avanzar()
+                        time.sleep(1)
+                        encontrado = True
+                        break
+                if text in self.caracteres:
+                    break
+        if not encontrado:
+            self.mov.avanzar()
 
-            cv2.waitKey(1)
+        # Mostramos el resultado en pantalla.
+        cv2.imshow('Resultado', img)
+        cv2.waitKey(1)
 
     def rotar_img(self, img, angle):
         # Rotamos la imagen.
         return imutils.rotate_bound(img, angle)
 
-    def girar_hasta_centro(self, bounding_box, image_width):
+    def girar_hasta_centro(self, bounding_box, image_width, image_height):
         # 1. Calcular la columna central de la imagen
-        center_column = image_width / 2
+        if self.posicion == 1 or self.posicion == 2:
+            center_column = image_height // 2
+        else:
+            center_column = image_width // 2
 
         # 2. Determinar si las coordenadas de la caja delimitadora están a la izquierda o a la derecha de la columna central
-        box_center = (bounding_box[0] + bounding_box[2]) / 2
-
-        if box_center < center_column:
-            # 3. Si las coordenadas están a la izquierda, necesitamos girar a la derecha
-            direction = 'der'
+        if self.posicion == 1 or self.posicion == 2:
+            box_center = (bounding_box[0][1] + bounding_box[1][1]) / 2
         else:
-            # 3. Si las coordenadas están a la derecha, necesitamos girar a la izquierda
-            direction = 'izq'
+            box_center = (bounding_box[0] + bounding_box[1]) / 2
 
-        # 4. Calcular los grados que el robot necesita girar
-        # Esto es solo un ejemplo, puedes necesitar ajustar la fórmula para que se ajuste a tus necesidades
-        degrees = abs(box_center - center_column) / image_width * 360
+        if self.posicion == 1:
+            if box_center < center_column:
+                # 3. Si las coordenadas están a la izquierda, necesitamos girar a la derecha
+                print("Girar izquierda")
+                self.mov.girar_izquierda()
+                time.sleep(0.1)
+            elif box_center > center_column:
+                # 3. Si las coordenadas están a la derecha, necesitamos girar a la izquierda
+                print("Girar derecha")
+                self.mov.girar_derecha()
+                time.sleep(0.1)
 
-        # 5. Llamar a la función `movements.girar_grados(degrees, direccion)` con los grados y la dirección calculados
+        elif self.posicion == 2:
+            if box_center < center_column:
+                # 3. Si las coordenadas están a la izquierda, necesitamos girar a la derecha
+                print("Girar derecha")
+                self.mov.girar_derecha()
+                time.sleep(0.1)
+            elif box_center > center_column:
+                # 3. Si las coordenadas están a la derecha, necesitamos girar a la izquierda
+                print("Girar izquierda")
+                self.mov.girar_izquierda()
+                time.sleep(0.1)
 
-        self.mov.girar_grados(degrees, direction)
+        elif self.posicion == 3:
+            if box_center < center_column:
+                # 3. Si las coordenadas están a la izquierda, necesitamos girar a la derecha
+                print("Girar derecha")
+                self.mov.girar_derecha()
+                time.sleep(0.1)
+            elif box_center > center_column:
+                # 3. Si las coordenadas están a la derecha, necesitamos girar a la izquierda
+                print("Girar izquierda")
+                self.mov.girar_izquierda()
+                time.sleep(0.1)
+
+        else:
+            if box_center < center_column:
+                # 3. Si las coordenadas están a la izquierda, necesitamos girar a la izquierda
+                print("Girar izquierda")
+                self.mov.girar_izquierda()
+                time.sleep(0.1)
+            elif box_center > center_column:
+                # 3. Si las coordenadas están a la derecha, necesitamos girar a la derecha
+                print("Girar derecha")
+                self.mov.girar_derecha()
+                time.sleep(0.1)
 
 
 def cleanup_text(text):
