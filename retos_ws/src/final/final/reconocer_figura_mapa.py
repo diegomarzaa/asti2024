@@ -16,20 +16,20 @@ COORDENADAS_PLAZA_ESPAÑA = (1.687, 0.017) # ESTRELLA
 
 
 def reconocer_figura(opcion_menu):
-  """
-  Se tendrá que importar la función correspondiente del programa de 
-  reconocimiento de figuras implementado con visión artificial, no es
-  mi oficio desarrollar esto ahora mismo
-  """
+    """
+    Se tendrá que importar la función correspondiente del programa de 
+    reconocimiento de figuras implementado con visión artificial, no es
+    mi oficio desarrollar esto ahora mismo
+    """
 
-  #figura = Figura()
+    #figura = Figura()
 
-  figura = dar_opcion(opcion_menu)
-  return figura
+    figura = dar_opcion(opcion_menu)
+    return figura
 
 
 def conseguir_objetivo(opcion_menu):
-  
+
     figura = reconocer_figura(opcion_menu)
 
     if figura == 'triangulo':
