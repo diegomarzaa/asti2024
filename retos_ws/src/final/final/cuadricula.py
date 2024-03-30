@@ -6,12 +6,14 @@ import time
 from math import pi, atan
 from final.Movements import Movements
 
+DISTANCIA_TABLERO_COL = 1.2   # Suma de las distancias de las columnas
+DISTANCIA_TABLERO_FILA = 1.05 # Suma de las distancias de las filas
 
-COL_NUM = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-COL_LETRAS = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+COL_NUM = [0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15]
+COL_LETRAS = [0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15]
 
-FILA_NUM = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-FILA_LETRAS = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+FILA_NUM = [0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15]
+FILA_LETRAS = [0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15]
 
 
 def pedir_opcion_menu():
@@ -57,12 +59,12 @@ def mostrar_coordenadas():
     print(f"\t\t{i}-{i+1}: {FILA_NUM[i]}")
 
   print("Letras:")
-  print("Columnas:")
+  print("\n\tColumnas:")
   for i in range(8):
-    print(f"{i}-{i+1}: {COL_LETRAS[i]}")
-  print("Filas:")
+    print(f"\t\t{i}-{i+1}: {COL_LETRAS[i]}")
+  print("\n\tFilas:")
   for i in range(7):
-    print(f"{i}-{i+1}: {FILA_LETRAS[i]}")
+    print(f"\t\t{i}-{i+1}: {FILA_LETRAS[i]}")
 
 def angulo_ojo(mov):
 
@@ -107,7 +109,7 @@ def posicion_final(mov):
     # CALCULAMOS LAS DISTANCIAS DE LAS LETRAS Y NÚMEROS
     distancia_numero = 0
     if inicio < 0:
-      for i in range(inicio-1):
+      for i in range(abs(inicio)-1):
           distancia_numero += COL_LETRAS[i]
     else:
       for i in range(inicio-1):
@@ -115,7 +117,7 @@ def posicion_final(mov):
 
     distancia_letra = 0
     if fin < 0:
-      for i in range(fin-1):
+      for i in range(abs(fin)-1):
           distancia_letra += COL_NUM[i]
     else:
       for i in range(fin-1):
@@ -124,37 +126,41 @@ def posicion_final(mov):
     # CALCULAMOS LA DISTANCIA X E Y
           
     # Inicio - columna números , Fin - columna letras
-    if inicio < 0 and fin < 0:
-      y = 2.5
-      x = distancia_letra - distancia_numero
-
     # Inicio - fila números , Fin - fila letras
-    elif inicio > 0 and fin > 0:
-      x = 2.5
-      y = distancia_letra - distancia_numero
+    if (inicio < 0 and fin < 0) or (inicio > 0 and fin > 0):
+      if inicio < 0:
+        y = DISTANCIA_TABLERO_FILA
+      else:
+        y = DISTANCIA_TABLERO_COL
+      x = distancia_letra - distancia_numero
 
     # Inicio - columna números , Fin - fila letras
     elif inicio < 0 and fin > 0:
-      x = 2.5 - distancia_numero
-      y = 2.5 - distancia_letra
+      x = DISTANCIA_TABLERO_COL - distancia_numero
+      y = DISTANCIA_TABLERO_FILA - distancia_letra
 
     # Inicio - fila números , Fin - columna letras
     elif inicio > 0 and fin < 0:
-      x = distancia_letra
-      y = distancia_numero
+      x = distancia_numero
+      y = -distancia_letra
     
     # CALCULAMOS EL ÁNGULO
-    angulo = atan(abs(y)/abs(x))
-    angulo = angulo * 180 / pi
-    angulo_giro = 90 - angulo
+    if x == 0:
+      angulo_giro = 0
+    else:
+      angulo = atan(abs(y)/abs(x))
+      angulo = angulo * 180 / pi
+      angulo_giro = 90 - angulo
 
-    if x > 0 or y > 0:
+    if x < 0 or y < 0:
       angulo_giro = -angulo_giro
     
     # CALCULAMOS LA DISTANCIA QUE TIENE QUE AVANZAR
     distancia = (x**2 + y**2)**0.5
   
     # GIRAMOS Y AVANZAMOS
+    print(f"X: {x}, Y: {y}")
+    print(f"Ángulo: {angulo_giro}, Distancia: {distancia}")
     mov.girar_avanzar(angulo_giro, distancia)
 
 def ejecutar_cuadricula(mov, opcion_menu):
@@ -177,6 +183,8 @@ def main():
   rclpy.init(args=None)
   node = rclpy.create_node('cuadricula')
   mov = Movements()
+  mov.actualizar_vel_lineal(0.4)
+  mov.actualizar_vel_angular(0.2)
   
   while True:
     opcion_menu = pedir_opcion_menu()
