@@ -83,6 +83,8 @@ class Figura(Node):
                 maximo = max(self.formas, key=self.formas.get)
                 print("\n\n\n\n\n\n\n\n\n", maximo, "\n\n\n\n\n\n\n\n\n")
 
+                listo = input("Presion y para arrancar")
+
                 self.moverse_objetivo(self.mov, maximo)
 
                 self.tiempo = 0.0
