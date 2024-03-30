@@ -26,7 +26,8 @@ setup(
             'detect_text_sub_easyocr = pruebas.detect_text_sub_easyocr:main',
             'distance_sensor = pruebas.distance_sensor:main',
             'nintendo_to_ros = pruebas.nintendo_to_ros:main',
-            'double_distance_sensor = pruebas.double_distance_sensor:main'
+            'double_distance_sensor = pruebas.double_distance_sensor:main',
+            'figuras = pruebas.pruebas_de_figuras:main'
         ],
     },
 )

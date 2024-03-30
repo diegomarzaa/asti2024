@@ -6,15 +6,20 @@ from rclpy.node import Node
 from sensor_msgs.msg import Image  # Image is the message type
 from cv_bridge import CvBridge  # Package to convert between ROS and OpenCV Images
 
+from math import pi, atan
 
-class Linea_sub(Node):
+from final.Movements import Movements
+
+
+class Figura(Node):
 
     def __init__(self):
         super().__init__('linea_sub')                           # video_frames  /camera/image_raw
-        self.subscription = self.create_subscription(Image, 'video_frames', self.listener_callback, 10)
+        self.subscription = self.create_subscription(Image, '/camera/image_raw', self.listener_callback, 10)
         self.subscription
 
         self.br = CvBridge()
+        self.mov = Movements()
 
         self.tonos = {
             "Oscuros": [30, 40],
@@ -38,47 +43,68 @@ class Linea_sub(Node):
 
         self.tiempo = 0.0
 
+        self.seleccion = True
+
     def listener_callback(self, msg):
         #self.get_logger().info('Receiving video frame')
 
-        # Convert ROS Image message to OpenCV image
-        img = self.br.imgmsg_to_cv2(msg)
+        if self.seleccion:
+            opcion_menu = self.pedir_opcion_menu()
+            self.seleccion = False
+        else:
+            opcion_menu = "True"
 
-        self.analizar(img)
+        # Testeos
+        if opcion_menu == 'a':
+            self.mov.prueba_movimientos()
+        elif opcion_menu == 'q':
+            print("cerrando")
+            self.destroy_node()
+            cv2.destroyAllWindows()
+            rclpy.shutdown()
 
-        self.tiempo += 0.1
-
-        if self.tiempo >= 5.0:
-            maximo = max(self.formas, key=self.formas.get)
-            print("\n\n\n\n\n\n\n\n\n", maximo, "\n\n\n\n\n\n\n\n\n")
+        # Cuadrícula
+        elif opcion_menu in ['1', '2', '3', '4', '5'] or opcion_menu == "True":
             """
-            if maximo == "TRIANGULO":
-                triangulo()
-            elif maximo == "CUADRADO":
-                cuadrado()
-            elif maximo == "ARCO":
-                arco()
-            elif maximo == "CILINDRO":
-                cilindro()
-            elif maximo == "CIRCULO":
-                circulo()
-            elif maximo == "ESTRELLA":
-                estrella()
+            1 -> triangulo - CATEDRAL
+            2 -> rectangulo - MUSEO
+            3 -> arco - UNIVERSIDAD
+            4 -> cilindro - CUBOS
+            5 -> estrella - PLAZA ESPAÑA
             """
+            # Convert ROS Image message to OpenCV image
+            img = self.br.imgmsg_to_cv2(msg)
 
-            self.tiempo = 0.0
-            self.formas = {
-                "TRIANGULO": 0,
-                "CUADRADO": 0,
-                "ARCO": 0,
-                "CILINDRO": 0,
-                "CIRCULO": 0,
-                "ESTRELLA": 0
-            }
+            self.analizar(img)
 
-        # Display image
-        cv2.imshow("camera", img)
-        cv2.waitKey(1)
+            self.tiempo += 0.1
+
+            if self.tiempo >= 5.0:
+                maximo = max(self.formas, key=self.formas.get)
+                print("\n\n\n\n\n\n\n\n\n", maximo, "\n\n\n\n\n\n\n\n\n")
+
+                self.moverse_objetivo(self.mov, maximo)
+
+                self.tiempo = 0.0
+                self.formas = {
+                    "TRIANGULO": 0,
+                    "CUADRADO": 0,
+                    "ARCO": 0,
+                    "CILINDRO": 0,
+                    "CIRCULO": 0,
+                    "ESTRELLA": 0
+                }
+
+                self.seleccion = True
+
+            # Display image
+            cv2.imshow("camera", img)
+            cv2.waitKey(1)
+
+        else:
+            print("Opcion no valida, 'q' para salir")
+
+
 
     def detect(self, contour):
         """
@@ -215,15 +241,92 @@ class Linea_sub(Node):
             #cv2.imshow('Imagen', image)
             #cv2.waitKey(0)
 
+    def conseguir_objetivo(self, figura):
+
+        # Estaban dadas en mm pero aquí están pasadas a metros
+        COORDENADAS_CATEDRAL = (1.200, -0.248)  # TRIÁNGULO
+        COORDENADAS_MUSEO = (1.733, -0.036)  # RECTÁNGULO
+        COORDENADAS_UNIVERSIDAD = (0.035, -0.568)  # ARCO
+        COORDENADAS_CUBOS = (0.649, -0.213)  # CILINDRO
+        COORDENADAS_PLAZA_ESPAÑA = (1.687, 0.017)  # ESTRELLA
+
+        #self.detectado = self.analizar(img)
+        #figura = self.detectado
+
+        if figura == 'TRIANGULO':
+            return COORDENADAS_CATEDRAL
+        elif figura == 'CUADRADO':
+            return COORDENADAS_MUSEO
+        elif figura == 'ARCO':
+            return COORDENADAS_UNIVERSIDAD
+        elif figura == 'CILINDRO':
+            return COORDENADAS_CUBOS
+        elif figura == 'ESTRELLA':
+            return COORDENADAS_PLAZA_ESPAÑA
+        else:
+            print("Figura no reconocida")
+            return None
+
+    def moverse_objetivo(self, mov, figura):
+
+        objetivo = self.conseguir_objetivo(figura)
+
+        if objetivo is not None:
+            y, x = objetivo
+
+            # CALCULAMOS EL ÁNGULO
+            angulo = atan(y / abs(x))
+            angulo = angulo * 180 / pi
+            angulo_giro = 90 - angulo
+
+            if x > 0:
+                angulo_giro = -angulo_giro
+
+            # CALCULAMOS LA DISTANCIA QUE TIENE QUE AVANZAR
+            distancia = (x ** 2 + y ** 2) ** 0.5
+
+            mov.girar_avanzar(angulo_giro, distancia)
+
+        else:
+            print("No se ha podido conseguir el objetivo")
+
+
+    def pedir_opcion_menu(self):
+        print("\nFiguras:")
+        print(" 1. Triangulo")
+        print(" 2. Rectangulo")
+        print(" 3. Arco")
+        print(" 4. Cilindro")
+        print(" 5. Estrella")
+        print(" ----------------- ")
+        print(" a. Testeo")
+        print(" q. Salir")
+        return input("Seleccione una opcion: ")
+
+
+    def dar_opcion(self, opcion_menu):
+        if opcion_menu == '1':
+            return "TRIANGULO"
+        elif opcion_menu == '2':
+            return "CUADRADO"
+        elif opcion_menu == '3':
+            return "ARCO"
+        elif opcion_menu == '4':
+            return "CILINDRO"
+        elif opcion_menu == '5':
+            return "ESTRELLA"
+        else:
+            return None
+
 
 def main(args=None):
 
     rclpy.init(args=args)
-    linea_sub = Linea_sub()
+    linea_sub = Figura()
     rclpy.spin(linea_sub)
-    linea_sub.destroy_node()
-    cv2.destroyAllWindows()
-    rclpy.shutdown()
+    #linea_sub.destroy_node()
+    #cv2.destroyAllWindows()
+    #rclpy.shutdown()
 
 
 if __name__ == '__main__':
