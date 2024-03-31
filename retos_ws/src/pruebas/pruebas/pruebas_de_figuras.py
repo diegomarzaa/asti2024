@@ -12,7 +12,6 @@ from final.Movements import Movements
 
 
 class Figura(Node):
-
     """
     Clase que se encarga de detectar figuras geométricas en una imagen y de mover el robot hacia el objetivo
     correspondiente a la figura detectada.
@@ -31,6 +30,12 @@ class Figura(Node):
         Tiempo transcurrido desde el inicio de la detección de figuras.
     seleccion : bool
         Indica si se ha seleccionado una opción del menú.
+
+    seleccion : str
+        Indica la opción seleccionada del menú.
+
+    autonomia : bool
+        Indica si el robot se moverá automáticamente o no.
 
     Methods
     -------
@@ -65,8 +70,8 @@ class Figura(Node):
 
     """
 
-    def __init__(self):
-        super().__init__('linea_sub')                           # video_frames  /camera/image_raw
+    def __init__(self, autonomia=True):
+        super().__init__('Figura')  # video_frames  /camera/image_raw
         self.subscription = self.create_subscription(Image, '/camera/image_raw', self.listener_callback, 10)
         self.subscription
 
@@ -76,9 +81,9 @@ class Figura(Node):
         self.tonos = {
             "Oscuros": [1, 40],
             "Gama de oscuros": [40, 80],
-                       #0    1    2    3    4    5    6   7     8    9   10   11   12   13
+            # 0    1    2    3    4    5    6   7     8    9   10   11   12   13
             "Tibios": [110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240,
-                       #14   15   16   17   18   19   20   21   22   23   24   25   26   27
+                       # 14   15   16   17   18   19   20   21   22   23   24   25   26   27
                        115, 125, 135, 145, 155, 165, 175, 185, 195, 205, 215, 225, 235, 245],
             "Claros": [250, 254],
             "Pruebas": [100.5]
@@ -96,31 +101,29 @@ class Figura(Node):
         self.tiempo = 0.0
 
         self.seleccion = True
+        self.autonomia = autonomia
 
     def listener_callback(self, msg):
-        #self.get_logger().info('Receiving video frame')
+        # self.get_logger().info('Receiving video frame')
 
         # La opcion_menu de momento no tiene uso pero se deja por si se quiere hacer cambios
 
-        if self.seleccion:
+        if type(self.seleccion) is bool and self.seleccion:
             opcion_menu = self.pedir_opcion_menu()
-            self.seleccion = False
-        else:
-            opcion_menu = "True"
+            self.seleccion = opcion_menu
 
         # Testeos
-        if opcion_menu == 'a':
+        if self.seleccion == 'a':
             self.mov.prueba_movimientos()
-        elif opcion_menu == 'q':
+        elif self.seleccion == 'q':
             print("cerrando")
             self.destroy_node()
             self.mov.destroy_node()
             rclpy.shutdown()
             cv2.destroyAllWindows()
 
-
         # Cuadrícula
-        elif opcion_menu in ['1', '2', '3', '4', '5'] or opcion_menu == "True":
+        elif self.seleccion in ['0','1', '2', '3', '4', '5']:
             """
             1 -> triangulo - CATEDRAL
             2 -> rectangulo - MUSEO
@@ -137,7 +140,25 @@ class Figura(Node):
             # Aumentamos el tiempo
             self.tiempo += 0.1
 
-            if self.tiempo >= 5.0:
+            # Si no estamos en autonomia, pedimos al usuario que seleccione una figura
+            if not self.autonomia:
+                if self.seleccion == "1":
+                    self.moverse_objetivo(self.mov, "TRIANGULO")
+                    self.seleccion = True
+                elif self.seleccion == "2":
+                    self.moverse_objetivo(self.mov, "CUADRADO")
+                    self.seleccion = True
+                elif self.seleccion == "3":
+                    self.moverse_objetivo(self.mov, "ARCO")
+                    self.seleccion = True
+                elif self.seleccion == "4":
+                    self.moverse_objetivo(self.mov, "CILINDRO")
+                    self.seleccion = True
+                elif self.seleccion == "5":
+                    self.moverse_objetivo(self.mov, "ESTRELLA")
+                    self.seleccion = True
+
+            elif self.tiempo >= 5.0:
                 # Obtenemos la forma con mayor frecuencia
                 maximo = max(self.formas, key=self.formas.get)
                 print("\n\n\n\n\n\n\n\n\n", maximo, "\n\n\n\n\n\n\n\n\n")
@@ -230,10 +251,9 @@ class Figura(Node):
         # Calculamos la relación de proporción entre la imagen original y la redimensionada.
         ratio = image.shape[0] / float(resized.shape[0])
 
-
         # Convertimos la imagen a escala de grises, la difuminamos y la binarizamos.
         gray = cv2.cvtColor(resized, cv2.COLOR_BGR2GRAY)
-        blurred = cv2.GaussianBlur(gray, (3, 3), 0)   # Mejor resultado con (1, 1), 1
+        blurred = cv2.GaussianBlur(gray, (3, 3), 0)  # Mejor resultado con (1, 1), 1
 
         cv2.imshow("blurred", blurred)
         cv2.waitKey(1)
@@ -268,7 +288,7 @@ class Figura(Node):
         for contour in contours:
             # Calculamos los momentos del contorno para encontrar su centro.
             M = cv2.moments(contour)
-            #print(M, contour)
+            # print(M, contour)
             try:
                 center_x = int((M['m10'] / M['m00']) * ratio)
                 center_y = int((M['m01'] / M['m00']) * ratio)
@@ -287,8 +307,8 @@ class Figura(Node):
             cv2.putText(image, shape, (center_x, center_y), cv2.FONT_HERSHEY_SIMPLEX, .7, (255, 0, 0), 2)
 
             # Mostramos el contorno en la imagen original.
-            #cv2.imshow('Imagen', image)
-            #cv2.waitKey(0)
+            # cv2.imshow('Imagen', image)
+            # cv2.waitKey(0)
 
     def conseguir_objetivo(self, figura):
 
@@ -299,8 +319,8 @@ class Figura(Node):
         COORDENADAS_CUBOS = (0.649, -0.213)  # CILINDRO
         COORDENADAS_PLAZA_ESPAÑA = (1.687, 0.017)  # ESTRELLA
 
-        #self.detectado = self.analizar(img)
-        #figura = self.detectado
+        # self.detectado = self.analizar(img)
+        # figura = self.detectado
 
         if figura == 'TRIANGULO':
             return COORDENADAS_CATEDRAL
@@ -340,15 +360,18 @@ class Figura(Node):
             print("No se ha podido conseguir el objetivo")
 
     def pedir_opcion_menu(self):
-        print("\nFiguras:")
-        print(" 1. Triangulo")
-        print(" 2. Rectangulo")
-        print(" 3. Arco")
-        print(" 4. Cilindro")
-        print(" 5. Estrella")
-        print(" ----------------- ")
-        print(" a. Testeo")
-        print(" q. Salir")
+
+        print("\nFiguras:"
+                "\n 0. Autonomia"
+                "\n 1. Triangulo"
+                "\n 2. Cuadrado"
+                "\n 3. Arco"
+                "\n 4. Cilindro"
+                "\n 5. Estrella"
+                "\n ----------------- "
+                "\n a. Testeo"
+                "\n q. Salir")
+
         return input("Seleccione una opcion: ")
 
     def dar_opcion(self, opcion_menu):
@@ -367,9 +390,8 @@ class Figura(Node):
 
 
 def main(args=None):
-
     rclpy.init(args=args)
-    linea_sub = Figura()
+    linea_sub = Figura(input("Autonomia: (y/n)") == "y")
     rclpy.spin(linea_sub)
     linea_sub.destroy_node()
     cv2.destroyAllWindows()
