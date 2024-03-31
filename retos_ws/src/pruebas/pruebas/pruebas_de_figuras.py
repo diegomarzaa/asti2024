@@ -13,6 +13,58 @@ from final.Movements import Movements
 
 class Figura(Node):
 
+    """
+    Clase que se encarga de detectar figuras geométricas en una imagen y de mover el robot hacia el objetivo
+    correspondiente a la figura detectada.
+
+    Attributes
+    ----------
+    br : CvBridge
+        Objeto que permite convertir entre mensajes de ROS y objetos de OpenCV.
+    mov : Movements
+        Objeto que permite controlar los movimientos del robot.
+    tonos : dict
+        Diccionario que contiene los valores de tonos mínimos para cada gama de colores.
+    formas : dict
+        Diccionario que almacena el número de veces que se ha detectado cada figura geométrica.
+    tiempo : float
+        Tiempo transcurrido desde el inicio de la detección de figuras.
+    seleccion : bool
+        Indica si se ha seleccionado una opción del menú.
+
+    Methods
+    -------
+    listener_callback(msg)
+        Callback que se ejecuta cada vez que se recibe un mensaje de tipo Image.
+    detect(contour)
+        Dada una figura geométrica, determina cuál es la forma más cercana a la misma.
+    analizar(image)
+        Dada una imagen, detecta las figuras geométricas presentes en la misma.
+    conseguir_objetivo(figura)
+        Dada una figura geométrica, retorna las coordenadas correspondientes al objetivo de dicha figura.
+    moverse_objetivo(mov, figura)
+        Dada una figura geométrica, mueve el robot hacia el objetivo correspondiente a dicha figura.
+    pedir_opcion_menu()
+        Muestra un menú con las figuras geométricas disponibles y solicita al usuario que seleccione una.
+    dar_opcion(opcion_menu)
+        Dada una opción del menú, retorna la figura geométrica correspondiente.
+
+    Notes
+    -----
+    La funcion pedir_opcion_menu() no tiene uso en el código actual, pero se deja por si se quiere hacer cambios.
+
+    La implementacion de trampas en el codigo, no creo que sea necesario porque el programa en ultima instancia
+    no discrimina en formas, sino por el numero de veces que se detecta una forma, ademas, el programa detecta
+    todas las formas que se le presentan, por lo que no se necesita hacer trampas.
+
+    El programa depende de la iluminacion de la imagen, por lo que se necesita una buena iluminacion para que
+    el programa funcione correctamente.
+
+    El codigo entero puede ser completamente automatizado, pero se ha dejado la opcion de seleccionar una figura
+    para que el usuario pueda ver el funcionamiento del programa.
+
+    """
+
     def __init__(self):
         super().__init__('linea_sub')                           # video_frames  /camera/image_raw
         self.subscription = self.create_subscription(Image, '/camera/image_raw', self.listener_callback, 10)
@@ -22,8 +74,8 @@ class Figura(Node):
         self.mov = Movements()
 
         self.tonos = {
-            "Oscuros": [30, 40],
-            "Gama de blancos": [40, 80],
+            "Oscuros": [1, 40],
+            "Gama de oscuros": [40, 80],
                        #0    1    2    3    4    5    6   7     8    9   10   11   12   13
             "Tibios": [110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240,
                        #14   15   16   17   18   19   20   21   22   23   24   25   26   27
@@ -48,6 +100,8 @@ class Figura(Node):
     def listener_callback(self, msg):
         #self.get_logger().info('Receiving video frame')
 
+        # La opcion_menu de momento no tiene uso pero se deja por si se quiere hacer cambios
+
         if self.seleccion:
             opcion_menu = self.pedir_opcion_menu()
             self.seleccion = False
@@ -60,8 +114,10 @@ class Figura(Node):
         elif opcion_menu == 'q':
             print("cerrando")
             self.destroy_node()
-            cv2.destroyAllWindows()
+            self.mov.destroy_node()
             rclpy.shutdown()
+            cv2.destroyAllWindows()
+
 
         # Cuadrícula
         elif opcion_menu in ['1', '2', '3', '4', '5'] or opcion_menu == "True":
@@ -75,18 +131,24 @@ class Figura(Node):
             # Convert ROS Image message to OpenCV image
             img = self.br.imgmsg_to_cv2(msg)
 
+            # Analizamos la imagen
             self.analizar(img)
 
+            # Aumentamos el tiempo
             self.tiempo += 0.1
 
             if self.tiempo >= 5.0:
+                # Obtenemos la forma con mayor frecuencia
                 maximo = max(self.formas, key=self.formas.get)
                 print("\n\n\n\n\n\n\n\n\n", maximo, "\n\n\n\n\n\n\n\n\n")
 
-                listo = input("Presion y para arrancar")
+                # Pedimos al usuario que presione cualquier boton para arrancar el robot
+                _ = input("Presion cualquier boton para arrancar")
 
+                # Movemos el robot hacia el objetivo
                 self.moverse_objetivo(self.mov, maximo)
 
+                # Reseteamos los valores
                 self.tiempo = 0.0
                 self.formas = {
                     "TRIANGULO": 0,
@@ -97,6 +159,7 @@ class Figura(Node):
                     "ESTRELLA": 0
                 }
 
+                # Activamos que el usuario seleccione una figura
                 self.seleccion = True
 
             # Display image
@@ -105,8 +168,6 @@ class Figura(Node):
 
         else:
             print("Opcion no valida, 'q' para salir")
-
-
 
     def detect(self, contour):
         """
@@ -146,13 +207,15 @@ class Figura(Node):
             shape = 'ARCO'
             self.formas["ARCO"] += 1
 
-        # Por defecto, asumiremos que cualquier polígono con 6 o más lados es un círculo.
+        # Si el polígono aproximado tiene entre 9 y 10 lados, es una estrella.
         elif len(approximate) >= 9 and len(approximate) <= 10:
             shape = 'estrella'
             self.formas["ESTRELLA"] += 1
+        # Si el polígono aproximado tiene entre 7 y 8 lados, es un círculo.
         elif 7 <= len(approximate) <= 8:
             shape = 'circulo'
             self.formas["CIRCULO"] += 1
+        # En cualquier otro caso, se considera un cilindro.
         else:
             shape = 'CILINDRO'
             self.formas["CILINDRO"] += 1
@@ -160,22 +223,6 @@ class Figura(Node):
         return shape
 
     def analizar(self, image):
-
-        imagen = [
-            "/home/jcrex/uji/teams-robotics/astic/Detector_caracteres/dynamixel.png",
-            "/home/jcrex/Imágenes/figuras_geométricas.png",
-            "/home/jcrex/Imágenes/dataset_estrellas/estrella.png"
-            "/home/jcrex/Imágenes/dataset_estrellas/estrella_3.jpeg",
-            "/home/jcrex/Imágenes/dataset_estrellas/estrella_5.png",
-            "/home/jcrex/Imágenes/dataset_estrellas/estrella_6.jpeg",
-            "/home/jcrex/Imágenes/dataset_estrellas/estrella_7.jpeg",
-            "/home/jcrex/Imágenes/dataset_estrellas/estrella_8.jpeg",
-            "/home/jcrex/Imágenes/dataset_estrellas/estrella_9.jpeg",
-            "/home/jcrex/Imágenes/dataset_estrellas/estrella_4.jpeg",
-            "/home/jcrex/Imágenes/dataset_estrellas/estrella_10.jpeg",
-            "/home/jcrex/Imágenes/circulo_rojo.jpg",
-        ]
-        #image = cv2.imread(imagen[10])
 
         # Cargamos la imagen de entrada y la redimensionamos.
         resized = imutils.resize(image, width=380)
@@ -292,7 +339,6 @@ class Figura(Node):
         else:
             print("No se ha podido conseguir el objetivo")
 
-
     def pedir_opcion_menu(self):
         print("\nFiguras:")
         print(" 1. Triangulo")
@@ -304,7 +350,6 @@ class Figura(Node):
         print(" a. Testeo")
         print(" q. Salir")
         return input("Seleccione una opcion: ")
-
 
     def dar_opcion(self, opcion_menu):
         if opcion_menu == '1':
@@ -326,9 +371,9 @@ def main(args=None):
     rclpy.init(args=args)
     linea_sub = Figura()
     rclpy.spin(linea_sub)
-    #linea_sub.destroy_node()
-    #cv2.destroyAllWindows()
-    #rclpy.shutdown()
+    linea_sub.destroy_node()
+    cv2.destroyAllWindows()
+    rclpy.shutdown()
 
 
 if __name__ == '__main__':
