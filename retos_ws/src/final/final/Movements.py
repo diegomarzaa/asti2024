@@ -82,6 +82,8 @@ class Movements(Node):
         super().__init__('movement_publisher')
         self.wheel_publisher_ = self.create_publisher(Twist, 'cmd_vel', 10)   # cmd_vel has (m/s , rad/s)
         self.tool_publisher_ = self.create_publisher(SetPosition, 'tool_pos', 10)
+        self.get_sensor_derecha_ = self.create_subscription(Float32, 'distance_der', 10)
+        self.get_sensor_izquierda_ = self.create_subscription(Float32, 'distance_izq', 10)
         
         # WHEELS
         self.obj_linear_vel = 0.1       # TODO: CAMBIAR A VALORES QUE SEAN BUENOS POR DEFECTO
@@ -184,7 +186,17 @@ class Movements(Node):
         
     def detener(self):
         self.publish_wheel_velocity(0.0, 0.0)
+
+    # ╔═════════════════════════════════════════╗
+    # ║ MOVIMIENTOS BÁSICOS RUEDAS CON SENSORES ║
+    # ╚═════════════════════════════════════════╝
         
+    def detectar_pared(self):
+        distancia_der = self.get_sensor_derecha_
+        distancia_izq = self.get_sensor_izquierda_
+
+        if distancia_der < 20 or distancia_izq < 20:
+            print("Muy cerca de un obstáculo")
 
     # ╔═══════════════════════╗
     # ║ PRUEBA DE MOVIMIENTOS ║
