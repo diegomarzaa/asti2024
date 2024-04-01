@@ -120,7 +120,7 @@ class Figura(Node):
             self.destroy_node()
             self.mov.destroy_node()
             rclpy.shutdown()
-            cv2.destroyAllWindows()
+            #cv2.destroyAllWindows()
 
         # Cuadrícula
         elif self.seleccion in ['0','1', '2', '3', '4', '5']:
@@ -184,8 +184,8 @@ class Figura(Node):
                 self.seleccion = True
 
             # Display image
-            cv2.imshow("camera", img)
-            cv2.waitKey(1)
+            #cv2.imshow("camera", img)
+            #cv2.waitKey(1)
 
         else:
             print("Opcion no valida, 'q' para salir")
@@ -255,8 +255,8 @@ class Figura(Node):
         gray = cv2.cvtColor(resized, cv2.COLOR_BGR2GRAY)
         blurred = cv2.GaussianBlur(gray, (3, 3), 0)  # Mejor resultado con (1, 1), 1
 
-        cv2.imshow("blurred", blurred)
-        cv2.waitKey(1)
+        #cv2.imshow("blurred", blurred)
+        #cv2.waitKey(1)
 
         # =============================================================================
         # =============================================================================
@@ -271,8 +271,8 @@ class Figura(Node):
 
         # Invierte los colores de la imagen
         inverted_image = cv2.bitwise_not(thresholded)
-        cv2.imshow("Inverted Image", inverted_image)
-        cv2.waitKey(1)
+        #cv2.imshow("Inverted Image", inverted_image)
+        #cv2.waitKey(1)
 
         thresholded = inverted_image
 
