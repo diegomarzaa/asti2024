@@ -23,8 +23,9 @@ class Linea_sub(Node):
         img = self.br.imgmsg_to_cv2(msg)
 
         # Display image
-        cv2.imshow("camera", img)
-        cv2.waitKey(1)
+        #cv2.imshow("camera", img)          # Comentado para optimizar
+        #cv2.waitKey(1)
+        print("mostrando")
 
 
 def main(args=None):
