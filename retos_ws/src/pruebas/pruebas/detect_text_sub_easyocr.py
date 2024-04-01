@@ -57,7 +57,10 @@ class ImageSubscriber(Node):
             img = self.rotar_img(img, 180)
             hImg, wImg, _ = img.shape
 
-        results = reader.readtext(img)
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        thresholded = cv2.threshold(gray, 120, 255, cv2.THRESH_BINARY)[1]
+        inverted_image = cv2.bitwise_not(thresholded)
+        results = reader.readtext(inverted_image)
 
         encontrado = False
         #print(results)
@@ -118,7 +121,7 @@ class ImageSubscriber(Node):
         if self.posicion == 1 or self.posicion == 2:
             box_center = (bounding_box[0][1] + bounding_box[1][1]) / 2
         else:
-            box_center = (bounding_box[0] + bounding_box[1]) / 2
+            box_center = (bounding_box[0][0] + bounding_box[1][0]) / 2
 
         if self.posicion == 1:
             if box_center < center_column:
@@ -170,6 +173,7 @@ class ImageSubscriber(Node):
 
 
 def cleanup_text(text):
+    # Limpiamos el texto de caracteres no ASCII.
     return ''.join([c if ord(c) < 128 else '' for c in text]).strip()
 
 
