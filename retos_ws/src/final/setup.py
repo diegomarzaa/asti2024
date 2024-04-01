@@ -30,6 +30,7 @@ setup(
             'cuadricula = final.cuadricula:main',
             'mini_fabrica = final.mini_fabrica:main',
             'reconocer_figura_mapa = final.reconocer_figura_mapa:main',
+            'laberinto = final.laberinto:main',
         ],
     },
 )
