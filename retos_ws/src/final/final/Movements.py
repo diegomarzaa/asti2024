@@ -6,36 +6,38 @@ from geometry_msgs.msg import Twist
 from std_msgs.msg import Float32
 from custom_interfaces.msg import SetPosition
 
+# TODO: Importante mantener actualizado get_movements() con las funciones que se vayan añadiendo
+# TODO: Cambiar a cm en vez de m, más rapido
+    
 def get_movements():
-    # TODO: Importante mantener actualizado
     # 1r argumento: Nombre de la función
     # 2o argumento: Lista de argumentos obligatorios
     # 3r argumento: Lista de argumentos opcionales
     
     actions = {
-        0: ('prueba_movimientos', [], []), 
-        1: ('avanzar', [], []),
-        2: ('retroceder', [], []),
-        3: ('girar_izquierda', [], []),
-        4: ('girar_derecha', [], []),
-        5: ('detener', [], []),
-        6: ('avanzar_distancia', ['distancia'], ['aceleracion']),
-        7: ('retroceder_distancia', ['distancia'], ['aceleracion']),
-        8: ('girar_grados_izq', ['degrees'], ['radio']),
-        9: ('girar_grados_der', ['degrees'], ['radio']),
-        10: ('girar_grados_izq_atras', ['degrees'], ['radio']),
-        11: ('girar_grados_der_atras', ['degrees'], ['radio']),
-        12: ('herramienta_girar', ['grados'], []),
-        13: ('boli_subir', [], []),
-        14: ('boli_bajar', [], []),
-        15: ('bolos_soltar', [], []),
-        16: ('bolos_mantener', [], []),
-        17: ('pale_subir', [], []),
-        18: ('pale_bajar', [], []),
-        19: ('actualizar_vel_lineal', ['max_linear_vel'], []),
-        20: ('actualizar_vel_angular', ['max_angular_vel'], []),
-        21: ('actualizar_acc_lineal', ['linear_acc'], []),
-        22: ('actualizar_acc_angular', ['angular_acc'], []),
+        "0": ('prueba_movimientos', [], []), 
+        "w": ('avanzar', [], []),
+        "x": ('retroceder', [], []),
+        "a": ('girar_izquierda', [], []),
+        "d": ('girar_derecha', [], []),
+        "s": ('detener', [], []),
+        "ww": ('avanzar_distancia', ['distancia_m'], []),          # Hay aceleración como opcional, pero se descarta por ahora, lo complica mucho
+        "xx": ('retroceder_distancia', ['distancia_m'], []),
+        "aa": ('girar_grados_izq', ['grados'], ['radio']),
+        "dd": ('girar_grados_der', ['grados'], ['radio']),
+        "zz": ('girar_grados_izq_atras', ['grados'], ['radio']),
+        "cc": ('girar_grados_der_atras', ['grados'], ['radio']),
+        "12": ('herramienta_girar', ['grados'], []),
+        "13": ('boli_subir', [], []),
+        "14": ('boli_bajar', [], []),
+        "15": ('bolos_soltar', [], []),
+        "16": ('bolos_mantener', [], []),
+        "17": ('pale_subir', [], []),
+        "18": ('pale_bajar', [], []),
+        "v": ('actualizar_vel_lineal', ['max_linear_vel'], []),
+        "b": ('actualizar_vel_angular', ['max_angular_vel'], []),
+        "vv": ('actualizar_acc_lineal', ['linear_acc'], []),
+        "bb": ('actualizar_acc_angular', ['angular_acc'], []),
     }
     return actions
 
@@ -191,7 +193,11 @@ class Movements(Node):
     # ╚═══════════════════════╝
     
     def prueba_movimientos(self):
-        print("Realizando prueba de movimiento, espere 3 segundos...")
+        print(f'Vel lin: {self.obj_linear_vel} m/s')
+        print(f'Vel ang: {self.obj_angular_vel} rad/s')
+        print(f'Acc lin: {self.linear_acc} m/s^2')
+        print(f'Acc ang: {self.angular_acc} rad/s^2')
+        print("Realizando prueba de movimiento...")
         
         # Move forward
         self.avanzar()
@@ -216,10 +222,10 @@ class Movements(Node):
     # ║ FUNCIONES POR DISTANCIAS, RADIOS O GRADOS ║
     # ╚═══════════════════════════════════════════╝
     
-    def avanzar_distancia(self, distancia, aceleracion=False):
-        # Con aceleración
+    def avanzar_distancia(self, distancia_m, aceleracion=False):
+        ## TODO: Opción de cancelar el movimiento a mitad de camino.
         vel_linear = 0.0
-        while(distancia >= 0):
+        while(distancia_m >= 0):
             if aceleracion:
                 if (vel_linear < self.obj_linear_vel):
                     vel_linear += self.linear_acc
@@ -228,13 +234,12 @@ class Movements(Node):
             self.publish_wheel_velocity(vel_linear, 0.0)
             time.sleep(0.1)
             distancia_recorrida = vel_linear*0.1
-            distancia -= distancia_recorrida
+            distancia_m -= distancia_recorrida
         self.detener()
 
-    def retroceder_distancia(self, distancia, aceleracion=False):
-        # Con aceleración
+    def retroceder_distancia(self, distancia_m, aceleracion=False):
         vel_linear = 0.0
-        while(distancia >= 0):
+        while(distancia_m >= 0):
             if aceleracion:
                 if (vel_linear < self.obj_linear_vel):
                     vel_linear += self.linear_acc
@@ -243,23 +248,23 @@ class Movements(Node):
             self.publish_wheel_velocity(-vel_linear, 0.0)
             time.sleep(0.1)
             distancia_recorrida = vel_linear*0.1
-            distancia -= distancia_recorrida
+            distancia_m -= distancia_recorrida
         self.detener()
 
 
-    def girar_grados_izq(self, degrees, radio=0.0):
-        self.girar_grados(degrees, radio)
+    def girar_grados_izq(self, grados, radio=0.0):
+        self.girar_grados(grados, radio)
         
-    def girar_grados_der(self, degrees, radio=0.0):
-        self.girar_grados(-degrees, radio)
+    def girar_grados_der(self, grados, radio=0.0):
+        self.girar_grados(-grados, radio)
         
-    def girar_grados_izq_atras(self, degrees, radio=0.0):
-        self.girar_grados(degrees, radio, avanzar=False)
+    def girar_grados_izq_atras(self, grados, radio=0.0):
+        self.girar_grados(grados, radio, avanzar=False)
 
-    def girar_grados_der_atras(self, degrees, radio=0.0):
-        self.girar_grados(-degrees, radio, avanzar=False)
+    def girar_grados_der_atras(self, grados, radio=0.0):
+        self.girar_grados(-grados, radio, avanzar=False)
 
-    def girar_avanzar(self, angulo, distancia):
+    def girar_avanzar(self, angulo, distancia_m):
 
         # GIRAMOS EL ROBOT
         if angulo < 0:
@@ -268,22 +273,23 @@ class Movements(Node):
             self.girar_grados_der(abs(angulo))
 
         # AVANZAMOS LA DISTANCIA
-        self.avanzar_distancia(distancia)
+        self.avanzar_distancia(distancia_m)
         self.detener()
 
-    def girar_grados(self, degrees, radio=0.0, avanzar=True):
+
+    def girar_grados(self, grados, radio=0.0, avanzar=True):
         # TODO: Testear que está bien, ya que no lo he probado
         """Rotar el robot en un angulo determinado
         Args:
-            degrees (int): Grados a rotar (en decimal), izquierda+ o derecha-
+            grados (int): Grados a rotar (en decimal), izquierda+ o derecha-
             radio (float, optional): Si se quiere realizar el movimiento con un radio. Defaults to 0.0
             avanzar (bool, optional): Si se quiere que el giro se haga avanzando o retrocediendo. Defaults to True.
         """
-        if degrees == 0:
+        if grados == 0:
             return
         
         # Grados -> Radianes
-        radian = abs(degrees*math.pi/180)
+        radian = abs(grados*math.pi/180)
         
         # Determinar velocidades lineal y angular
         if radio == 0.0:
@@ -294,7 +300,7 @@ class Movements(Node):
             ang_vel = vel_lin/radio
         
         # Sentido de giro?
-        if degrees < 0:
+        if grados < 0:
             ang_vel *= -1
         else:
             ang_vel *= 1
