@@ -71,8 +71,8 @@ class Figura(Node):
     """
 
     def __init__(self, autonomia=True):
-        super().__init__('Figura')  # video_frames  /camera/image_raw
-        self.subscription = self.create_subscription(Image, '/camera/image_raw', self.listener_callback, 10)
+        super().__init__('Figura')  # /video_frames  /camera/image_raw
+        self.subscription = self.create_subscription(Image, '/video_frames', self.listener_callback, 10)
         self.subscription
 
         self.br = CvBridge()
@@ -126,7 +126,7 @@ class Figura(Node):
         elif self.seleccion in ['0','1', '2', '3', '4', '5']:
             """
             1 -> triangulo - CATEDRAL
-            2 -> rectangulo - MUSEO
+    rclpy.spin(linea_sub)         2 -> rectangulo - MUSEO
             3 -> arco - UNIVERSIDAD
             4 -> cilindro - CUBOS
             5 -> estrella - PLAZA ESPAÑA

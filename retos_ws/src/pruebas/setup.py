@@ -27,7 +27,8 @@ setup(
             'distance_sensor = pruebas.distance_sensor:main',
             'nintendo_to_ros = pruebas.nintendo_to_ros:main',
             'double_distance_sensor = pruebas.double_distance_sensor:main',
-            'figuras = pruebas.pruebas_de_figuras:main'
+            'figuras = pruebas.pruebas_de_figuras:main',
+            'cam_pub = pruebas.cam_pub:main'
         ],
     },
 )
