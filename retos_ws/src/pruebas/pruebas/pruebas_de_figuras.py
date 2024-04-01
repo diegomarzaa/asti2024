@@ -184,8 +184,8 @@ class Figura(Node):
                 self.seleccion = True
 
             # Display image
-            #cv2.imshow("camera", img)
-            #cv2.waitKey(1)
+            cv2.imshow("camera", img)
+            cv2.waitKey(1)
 
         else:
             print("Opcion no valida, 'q' para salir")
@@ -266,8 +266,8 @@ class Figura(Node):
         # tenga una media de color RGB por encima de 30
 
         thresholded = cv2.threshold(blurred, self.tonos["Tibios"][0], 255, cv2.THRESH_BINARY)[1]
-        cv2.imshow("thresholded", thresholded)
-        cv2.waitKey(1)
+        #cv2.imshow("thresholded", thresholded)
+        #cv2.waitKey(1)
 
         # Invierte los colores de la imagen
         inverted_image = cv2.bitwise_not(thresholded)
