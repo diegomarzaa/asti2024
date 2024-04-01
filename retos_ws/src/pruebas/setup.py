@@ -29,6 +29,8 @@ setup(
             'double_distance_sensor = pruebas.double_distance_sensor:main',
             'figuras = pruebas.pruebas_de_figuras:main',
             'cam_pub = pruebas.cam_pub:main'
+            'prueba_mov = pruebas.prueba_mov:main'
+
         ],
     },
 )
