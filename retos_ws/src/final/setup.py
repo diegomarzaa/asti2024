@@ -32,6 +32,9 @@ setup(
             'reconocer_figura_mapa = final.reconocer_figura_mapa:main',
             'laberinto = final.laberinto:main',
             'distance_sensor = final.distance_sensor:main',
+            'cam_pub = final.cam_pub:main',
+            'camara_sub = final.camara_sub:main',
+            'figuras = final.figuras:main',
         ],
     },
 )
