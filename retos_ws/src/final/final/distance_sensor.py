@@ -18,12 +18,13 @@ GPIO.setup(GPIO_ECHOder, GPIO.IN)
 GPIO.setup(GPIO_TRIGGERizq, GPIO.OUT)
 GPIO.setup(GPIO_ECHOizq, GPIO.IN)
 
+
 class DistanceSensorPublisher(Node):
     
         def __init__(self):
             super().__init__('distance_sensor_publisher')
-            self.publisher_der = self.create_publisher(Float32, 'distance_der', 10)
-            self.publisher_izq = self.create_publisher(Float32, 'distance_izq', 10)
+            self.publisher_der = self.create_publisher(Float32, '/distance_der', 10)
+            self.publisher_izq = self.create_publisher(Float32, '/distance_izq', 10)
             timer_period = 0.5  # seconds
             self.timer = self.create_timer(timer_period, self.timer_callback)
     
@@ -73,6 +74,7 @@ class DistanceSensorPublisher(Node):
             
             return distance
 
+
 def main(args=None):
     rclpy.init(args=args)
     distance_sensor_publisher = DistanceSensorPublisher()
@@ -84,6 +86,7 @@ def main(args=None):
         distance_sensor_publisher.destroy_node()
         rclpy.shutdown()
         GPIO.cleanup()
+
 
 if __name__ == '__main__':
     main()
