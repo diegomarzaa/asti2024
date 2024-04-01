@@ -15,21 +15,24 @@ COL_LETRAS = [0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15]
 FILA_NUM = [0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15]
 FILA_LETRAS = [0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15]
 
+opciones = {
+  '1': 'Ángulo a ojo',
+  '2': 'Cálculo con trigonometría',
+  '3': 'Posición final',
+  '4': 'Trampa zapato',
+  '5': 'Contar líneas',
+  '6': 'Ángulo a ojo + reconocimiento de letras',
+  'u': 'Actualizar coordenadas',
+  'm': 'Mostrar coordenadas',
+  'a': 'Prueba de movimiento',
+  'q': 'Salir'
+}
 
 def pedir_opcion_menu():
   print("\nOpciones cuadrícula:")
-  print(" 1. Ángulo a ojo")
-  print(" 2. Cálculo con trigonometría")
-  print(" 3. Posición final")
-  print(" 4. Trampa zapato (falta por implementar)")
-  print(" 5. Contar líneas (falta por implementar)")
-  print(" 6. Ángulo a ojo + reconocimiento de letras (falta por implementar)")
-  print(" u. Actualizar coordenadas")
-  print(" m. Mostrar coordenadas")
-  print("\nPruebas:")
-  print(" a. Prueba de movimiento")
-  print(" q. Salir")
-  
+  for key, value in opciones.items():
+    print(f" {key}. {value}")
+    
   return input("Seleccione una opcion: ")
 
 def actualizar_coordenadas():
@@ -200,7 +203,7 @@ def main():
       break
 
     # Cuadrícula
-    elif opcion_menu in ['1', '2', '3', '4', '5', '6']:
+    elif opcion_menu in opciones:
       """
       1 -> Ángulo a ojo
       2 -> Cálculo con trigonometría
