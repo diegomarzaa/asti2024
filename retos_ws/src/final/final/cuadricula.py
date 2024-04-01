@@ -6,14 +6,14 @@ import time
 from math import pi, atan
 from final.Movements import Movements
 
-DISTANCIA_TABLERO_COL = 1.2   # Suma de las distancias de las columnas
-DISTANCIA_TABLERO_FILA = 1.05 # Suma de las distancias de las filas
+DISTANCIA_TABLERO_COL = 2.45   # Suma de las distancias de las columnas
+DISTANCIA_TABLERO_FILA = 2.45 # Suma de las distancias de las filas
 
-COL_NUM = [0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15]
-COL_LETRAS = [0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15]
+COL_NUM = [0.23, 0.46, 0.20, 0.26, 0.17, 0.53, 0.35, 0.24]
+COL_LETRAS = [0.23, 0.46, 0.20, 0.26, 0.17, 0.53, 0.35, 0.24]
 
-FILA_NUM = [0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15]
-FILA_LETRAS = [0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15]
+FILA_NUM = [0.37, 0.22, 0.57, 0.38, 0.52, 0.23, 0.16]
+FILA_LETRAS = [0.37, 0.22, 0.57, 0.38, 0.52, 0.23, 0.16]
 
 opciones = {
   '1': 'Ángulo a ojo',
