@@ -107,10 +107,11 @@ class Movements(Node):
     # LISTENER CALLBACK
         
     def listener_callback(self, msg):
+        global distancia_der, distancia_izq
         if msg.topic_name == 'distance_der':
-            self.get_sensor_derecha_ = msg.data
+            distancia_der = msg.data
         elif msg.topic_name == 'distance_izq':
-            self.get_sensor_izquierda_ = msg.data
+            distancia_izq = msg.data
 
     # WHEELS
     
@@ -201,9 +202,6 @@ class Movements(Node):
     # ╚═════════════════════════════════════════╝
         
     def detectar_pared(self):
-        distancia_der = self.get_sensor_derecha_
-        distancia_izq = self.get_sensor_izquierda_
-
         if distancia_der < 20 or distancia_izq < 20:
             print("Muy cerca de un obstáculo")
             return True
