@@ -84,8 +84,8 @@ class Movements(Node):
         super().__init__('movement_publisher')
         self.wheel_publisher_ = self.create_publisher(Twist, 'cmd_vel', 10)   # cmd_vel has (m/s , rad/s)
         self.tool_publisher_ = self.create_publisher(SetPosition, 'tool_pos', 10)
-        self.get_sensor_derecha_ = self.create_subscription(Float32, 'distance_der', self.listener_callback, 10)
-        self.get_sensor_izquierda_ = self.create_subscription(Float32, 'distance_izq', self.listener_callback, 10)
+        #self.get_sensor_derecha_ = self.create_subscription(Float32, 'distance_der', self.listener_callback, 10)
+        #self.get_sensor_izquierda_ = self.create_subscription(Float32, 'distance_izq', self.listener_callback, 10)
         
         # WHEELS
         self.obj_linear_vel = 0.1       # TODO: CAMBIAR A VALORES QUE SEAN BUENOS POR DEFECTO
