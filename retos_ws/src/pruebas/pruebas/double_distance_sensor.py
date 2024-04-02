@@ -2,21 +2,21 @@
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import Float32
-import RPi.GPIO as GPIO
+#import RPi.GPIO as GPIO
 import time
 
-GPIO.setmode(GPIO.BCM)
-GPIO_TRIGGERder = 23
-GPIO_ECHOder = 24
-GPIO_TRIGGERizq = 20
-GPIO_ECHOizq = 21
+#GPIO.setmode(GPIO.BCM)
+#GPIO_TRIGGERder = 23
+#GPIO_ECHOder = 24
+#GPIO_TRIGGERizq = 20
+#GPIO_ECHOizq = 21
 
 
 
-GPIO.setup(GPIO_TRIGGERder, GPIO.OUT)
-GPIO.setup(GPIO_ECHOder, GPIO.IN)
-GPIO.setup(GPIO_TRIGGERizq, GPIO.OUT)
-GPIO.setup(GPIO_ECHOizq, GPIO.IN)
+#GPIO.setup(GPIO_TRIGGERder, GPIO.OUT)
+#GPIO.setup(GPIO_ECHOder, GPIO.IN)
+#GPIO.setup(GPIO_TRIGGERizq, GPIO.OUT)
+#GPIO.setup(GPIO_ECHOizq, GPIO.IN)
 
 class DistanceSensorPublisher(Node):
     
@@ -24,16 +24,21 @@ class DistanceSensorPublisher(Node):
             super().__init__('distance_sensor_publisher')
             self.publisher_der = self.create_publisher(Float32, 'distance_der', 10)
             self.publisher_izq = self.create_publisher(Float32, 'distance_izq', 10)
-            timer_period = 0.5  # seconds
+            timer_period = 0.8  # seconds
             self.timer = self.create_timer(timer_period, self.timer_callback)
+            self.distance_der = 30.0
+            self.distance_izq = 35.0
     
         def timer_callback(self):
-            distance_der = self.distance(GPIO_TRIGGERder, GPIO_ECHOder)
-            distance_izq = self.distance(GPIO_TRIGGERizq, GPIO_ECHOizq)
+            #distance_der = self.distance(GPIO_TRIGGERder, GPIO_ECHOder)
+            #distance_izq = self.distance(GPIO_TRIGGERizq, GPIO_ECHOizq)
             
+            self.distance_der -= 1.0
+            self.distance_izq -= 1.0
+
             msg_der = Float32()
-            if distance_der is not None and distance_der > 0.0:
-                msg_der.data = distance_der
+            if self.distance_der is not None and self.distance_der > 0.0:
+                msg_der.data = self.distance_der
             else:
                 msg_der.data = 0.0
             self.publisher_der.publish(msg_der)
@@ -41,8 +46,8 @@ class DistanceSensorPublisher(Node):
             #self.get_logger().info('Sensor derecha: \t"%s"' % msg_der.data)
             
             msg_izq = Float32()
-            if distance_izq is not None and distance_izq > 0.0:
-                msg_izq.data = distance_izq
+            if self.distance_izq is not None and self.distance_izq > 0.0:
+                msg_izq.data = self.distance_izq
             else:
                 msg_izq.data = 0.0
             self.publisher_izq.publish(msg_izq)

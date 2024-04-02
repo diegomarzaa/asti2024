@@ -84,8 +84,8 @@ class Movements(Node):
         super().__init__('movement_publisher')
         self.wheel_publisher_ = self.create_publisher(Twist, 'cmd_vel', 10)   # cmd_vel has (m/s , rad/s)
         self.tool_publisher_ = self.create_publisher(SetPosition, 'tool_pos', 10)
-        #self.get_sensor_derecha_ = self.create_subscription(Float32, 'distance_der', self.listener_callback, 10)
-        #self.get_sensor_izquierda_ = self.create_subscription(Float32, 'distance_izq', self.listener_callback, 10)
+        self.get_sensor_derecha_ = self.create_subscription(Float32, 'distance_der', self.callback_derecha, 10)
+        self.get_sensor_izquierda_ = self.create_subscription(Float32, 'distance_izq', self.callback_izquierda, 10)
         
         # WHEELS
         self.obj_linear_vel = 0.1       # TODO: CAMBIAR A VALORES QUE SEAN BUENOS POR DEFECTO
@@ -104,14 +104,17 @@ class Movements(Node):
         self.grados_pale_alto = 0.0     
         self.grados_pale_bajo = 0.0     
 
-    # LISTENER CALLBACK
+        # SENSORS
+        self.distancia_der = 50.0
+        self.distancia_izq = 50.0
+
+    # SCALLBACK
         
-    def listener_callback(self, msg):
-        global distancia_der, distancia_izq
-        if msg.topic_name == 'distance_der':
-            distancia_der = msg.data
-        elif msg.topic_name == 'distance_izq':
-            distancia_izq = msg.data
+    def callback_derecha(self, msg):
+        self.distancia_der = msg.data
+
+    def callback_izquierda(self, msg):
+        self.distancia_izq = msg.data
 
     # WHEELS
     
@@ -202,11 +205,14 @@ class Movements(Node):
     # ╚═════════════════════════════════════════╝
         
     def detectar_pared(self):
-        self.get_sensor_derecha_
-        self.get_sensor_izquierda_
-        if distancia_der < 20 or distancia_izq < 20:
+        print(f'Distancia derecha: {self.distancia_der} cm')
+        print(f'Distancia izquierda: {self.distancia_izq} cm')
+        if self.distancia_der < 20 or self.distancia_izq < 20:
             print("Muy cerca de un obstáculo")
             return True
+        else:
+            print("No hay obstáculos")
+            return False
 
     def avanzar_hasta_pared(self):
         while True:
@@ -375,3 +381,4 @@ class Movements(Node):
             # TODO: Odometria para saber cuánto ha girado??
         
         self.detener()
+

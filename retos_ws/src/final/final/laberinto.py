@@ -5,6 +5,7 @@ import rclpy
 import time
 from math import pi, atan
 from final.Movements import Movements
+from final.Sensors import Sensors
 
 DISTANCIA_TABLERO_COL = 1.2   # Suma de las distancias de las columnas
 DISTANCIA_TABLERO_FILA = 1.05 # Suma de las distancias de las filas
@@ -29,13 +30,13 @@ def pedir_opcion_menu():
     
   return input("Seleccione una opcion: ")
 
-def pruebas(mov):
+def pruebas(sensors):
   print("Pruebas")
-  mov.detectar_pared()
+  sensors.detectar_pared()
 
-def ejecutar_laberinto(mov, opcion_menu):
+def ejecutar_laberinto(mov, sensors, opcion_menu):
   if opcion_menu == '1':
-    pruebas(mov)
+    pruebas(sensors)
   elif opcion_menu == '2':
     pass
   elif opcion_menu == '3':
@@ -53,10 +54,11 @@ def main():
   rclpy.init(args=None)
   node = rclpy.create_node('laberinto')
   mov = Movements()
+  sensors = Sensors()
   mov.actualizar_vel_lineal(0.4)
   mov.actualizar_vel_angular(0.2)
   
-  while True:
+  while rclpy.ok():
     opcion_menu = pedir_opcion_menu()
     
     # Testeos
@@ -70,10 +72,10 @@ def main():
       """
       1 -> Pruebas
       """
-      ejecutar_laberinto(mov, opcion_menu)
+      ejecutar_laberinto(mov, sensors, opcion_menu)
     else:
       print("Opcion no valida, 'q' para salir")
+    rclpy.spin_once(sensors)
 
   mov.detener()
   rclpy.shutdown()
-
