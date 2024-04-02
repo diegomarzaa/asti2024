@@ -84,8 +84,8 @@ class Movements(Node):
         super().__init__('movement_publisher')
         self.wheel_publisher_ = self.create_publisher(Twist, 'cmd_vel', 10)   # cmd_vel has (m/s , rad/s)
         self.tool_publisher_ = self.create_publisher(SetPosition, 'tool_pos', 10)
-        self.get_sensor_derecha_ = self.create_subscription(Float32, 'distance_der', 10)
-        self.get_sensor_izquierda_ = self.create_subscription(Float32, 'distance_izq', 10)
+        self.get_sensor_derecha_ = self.create_subscription(Float32, 'distance_der', self.listener_callback, 10)
+        self.get_sensor_izquierda_ = self.create_subscription(Float32, 'distance_izq', self.listener_callback, 10)
         
         # WHEELS
         self.obj_linear_vel = 0.1       # TODO: CAMBIAR A VALORES QUE SEAN BUENOS POR DEFECTO
@@ -104,6 +104,13 @@ class Movements(Node):
         self.grados_pale_alto = 0.0     
         self.grados_pale_bajo = 0.0     
 
+    # LISTENER CALLBACK
+        
+    def listener_callback(self, msg):
+        if msg.topic_name == 'distance_der':
+            self.get_sensor_derecha_ = msg.data
+        elif msg.topic_name == 'distance_izq':
+            self.get_sensor_izquierda_ = msg.data
 
     # WHEELS
     
@@ -199,6 +206,40 @@ class Movements(Node):
 
         if distancia_der < 20 or distancia_izq < 20:
             print("Muy cerca de un obstáculo")
+            return True
+
+    def avanzar_hasta_pared(self):
+        while True:
+            if self.detectar_pared():
+                break
+            self.avanzar()
+        self.detener()
+
+    def girar_derecha_hasta_despejar(self):
+        while True:
+            if not self.detectar_pared():
+                break
+            self.girar_derecha()
+        self.detener()
+
+    def girar_izquierda_hasta_despejar(self):
+        while True:
+            if not self.detectar_pared():
+                break
+            self.girar_izquierda()
+        self.detener()
+
+    def avanzar_paralelo_paredes(self):
+        distancia_der = self.get_sensor_derecha_
+        distancia_izq = self.get_sensor_izquierda_
+        while True:
+            if self.get_sensor_derecha_ < distancia_der:
+                self.girar_grados_izq(10)
+            elif self.get_sensor_izquierda_ < distancia_izq:
+                self.girar_grados_der(10)
+            else:
+                self.avanzar()
+        self.detener()
 
     # ╔═══════════════════════╗
     # ║ PRUEBA DE MOVIMIENTOS ║

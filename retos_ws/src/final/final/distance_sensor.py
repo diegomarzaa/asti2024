@@ -37,7 +37,7 @@ class DistanceSensorPublisher(Node):
                 msg_der.data = distance_der
             else:
                 msg_der.data = 0.0
-            self.publisher_der.publish(msg_der)
+            self.publisher_der.publish(msg_der.data)
             #print("Sensor derecha: \t", msg_der.data)
             self.get_logger().info('Sensor derecha: \t"%s"' % msg_der.data)
             
@@ -46,7 +46,7 @@ class DistanceSensorPublisher(Node):
                 msg_izq.data = distance_izq
             else:
                 msg_izq.data = 0.0
-            self.publisher_izq.publish(msg_izq)
+            self.publisher_izq.publish(msg_izq.data)
             #print("Sensor izquierda: \t", msg_izq.data)
             #print("\n")
             self.get_logger().info('Sensor izquierda: \t"%s" \n' % msg_izq.data)
