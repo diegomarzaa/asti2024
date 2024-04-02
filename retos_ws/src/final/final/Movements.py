@@ -202,6 +202,8 @@ class Movements(Node):
     # ╚═════════════════════════════════════════╝
         
     def detectar_pared(self):
+        self.get_sensor_derecha_
+        self.get_sensor_izquierda_
         if distancia_der < 20 or distancia_izq < 20:
             print("Muy cerca de un obstáculo")
             return True

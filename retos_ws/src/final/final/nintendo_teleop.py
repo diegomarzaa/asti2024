@@ -79,7 +79,7 @@ class Button_publisher(Node):
         proceso0 = subprocess.Popen(comando0, preexec_fn=os.setsid) 
         comando = ['sudo', 'tcpdump', '-i', 'wlo1', 'port', self.port, '-X']
         proceso = subprocess.Popen(comando, stdout=subprocess.PIPE)    
-        print(proceso)  
+
         try:
             # Leer la salida línea por línea
             for linea in proceso.stdout:
