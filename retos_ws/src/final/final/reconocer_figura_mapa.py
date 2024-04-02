@@ -15,6 +15,7 @@ COORDENADAS_CUBOS = (0.649, -0.213)       # CILINDRO
 COORDENADAS_PLAZA_ESPAÑA = (1.687, 0.017) # ESTRELLA
 
 
+
 def reconocer_figura(opcion_menu):
     """
     Se tendrá que importar la función correspondiente del programa de 
@@ -102,6 +103,7 @@ def main():
     rclpy.init(args=None)
     node = rclpy.create_node('reconocimiento_figuras_mapa')
     mov = Movements()
+    mov.actualizar_vel_lineal(0.4)
 
     while True:
         opcion_menu = pedir_opcion_menu()
