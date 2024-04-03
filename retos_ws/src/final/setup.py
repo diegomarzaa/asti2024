@@ -35,6 +35,8 @@ setup(
             'cam_pub = final.cam_pub:main',
             'camara_sub = final.camara_sub:main',
             'figuras = final.figuras:main',
+            'nintendo_teleop = final.nintendo_teleop:main',
+            'sensor_sub = final.Sensors:main'
         ],
     },
 )
