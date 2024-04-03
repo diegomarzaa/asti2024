@@ -3,6 +3,7 @@ import math
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import Float32
+#from final.Movements import Movements
 
 class Sensors(Node):
     def __init__(self):
@@ -13,23 +14,20 @@ class Sensors(Node):
         self.get_sensor_derecha_ = self.create_subscription(Float32, 'distance_der', self.callback_derecha, 10)
         self.get_sensor_derecha_
         self.get_sensor_izquierda_ = self.create_subscription(Float32, 'distance_izq', self.callback_izquierda, 10)
+        self.get_sensor_izquierda_
         
     def callback_derecha(self, msg):
         self.distancia_der = msg.data
-        print(f'Distancia derecha: {self.distancia_der} cm')
         
     def callback_izquierda(self, msg):
-        distancia_izq = msg.data
-        print(f'Distancia izquierda: {distancia_izq} cm')
+        self.distancia_izq = msg.data
 
-    def detectar_pared(self):
-        print(f'Distancia derecha: {self.distancia_der} cm')
-        if self.distancia_der < 20:
-            print("Muy cerca de un obstáculo")
-            return True
-        else:
-            print("No hay obstáculos")
-            return False
+    def get_distancia_derecha(self):
+        return self.distancia_der
+    
+    def get_distancia_izquierda(self):
+        return self.distancia_izq
+
 
 def main(args=None):
     rclpy.init(args=args)

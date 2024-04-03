@@ -30,13 +30,13 @@ def pedir_opcion_menu():
     
   return input("Seleccione una opcion: ")
 
-def pruebas(sensors):
+def pruebas(mov, sensors):
   print("Pruebas")
-  sensors.detectar_pared()
+  mov.detectar_pared(sensors)
 
 def ejecutar_laberinto(mov, sensors, opcion_menu):
   if opcion_menu == '1':
-    pruebas(sensors)
+    pruebas(mov, sensors)
   elif opcion_menu == '2':
     pass
   elif opcion_menu == '3':
