@@ -72,6 +72,7 @@ def main():
       """
       1 -> Pruebas
       """
+      rclpy.spin_once(sensors)    # ESTO MAMAHUEVO, ACTUALIZAR LOS SUSCRIBERS ANTES DE LLAMAR A NADA (Si está al final, no se actualizarán hasta que se llegue al final, en este caso aún no se ha llegado, por lo que sensors.distancia_der = None)
       ejecutar_laberinto(mov, sensors, opcion_menu)
     else:
       print("Opcion no valida, 'q' para salir")
