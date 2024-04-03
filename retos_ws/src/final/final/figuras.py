@@ -160,7 +160,7 @@ class Figura(Node):
                     self.moverse_objetivo(self.mov, "ESTRELLA")
                     self.seleccion = True
 
-            elif self.tiempo >= 5.0:
+            elif self.tiempo >= 10.0:
                 # Obtenemos la forma con mayor frecuencia
                 maximo = max(self.formas, key=self.formas.get)
                 print("\n\n\n\n\n\n\n\n\n", maximo, "\n\n\n\n\n\n\n\n\n")
