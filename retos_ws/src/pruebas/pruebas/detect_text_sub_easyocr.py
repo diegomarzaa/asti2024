@@ -7,8 +7,10 @@ from cv_bridge import CvBridge  # Package to convert between ROS and OpenCV Imag
 import cv2  # OpenCV library
 from easyocr import Reader
 import imutils
+from math import pi
 
 from final.Movements import Movements
+
 
 
 class ImageSubscriber(Node):
@@ -17,7 +19,7 @@ class ImageSubscriber(Node):
         super().__init__('image_subscriber')
         self.subscription = self.create_subscription(
             Image,
-            'camera/image_raw',
+            'camera/image_raw',  # /video_frames
             self.listener_callback,
             10)
         self.subscription  # prevent unused variable warning
@@ -27,18 +29,28 @@ class ImageSubscriber(Node):
 
         self.defrente = False
                                                                       #I imp                #L DIFICL IZQU
-        self.chars = ['A,(4)', 'B,8', 'C', 'D', 'E', 'F', 'G', 'H,N', 'I', 'J', 'K,(k, X)', 'L, ( [,( )', 'M,N,H',
+        self.chars = ['A,(4)', 'B,8', 'C', 'D', 'E', 'F', 'G, (6)', 'H,N', 'I', 'J', 'K,(k, X)', 'L, ( [,( )', 'M,N,H',
                       '1', '2', '3, (8, 9)', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13']
         self.mov = Movements()
 
         self.posicion = int(input("En que lado de la cuadricula esta el robot? "
-                                    "1. Izquierda\n"
+                                    "\n1. Izquierda\n"
                                     "2. Derecha\n"
                                     "3. Arriba\n"
                                     "4. Abajo\n"))
 
+        self.encontrado = False
+        self.cont = 0
+        self.finalizado = False
+
     def listener_callback(self, data):
         #self.get_logger().info('Receiving video frame')
+
+        # if input("pruebas de movimiento?") == "s":
+        #    self.mov.prueba_movimientos()
+        #    self.mov.avanzar()
+        #    time.sleep(3)
+
         # Convert ROS Image message to OpenCV image
         img = self.br.imgmsg_to_cv2(data)
         hImg, wImg, _ = img.shape
@@ -57,18 +69,129 @@ class ImageSubscriber(Node):
             img = self.rotar_img(img, 180)
             hImg, wImg, _ = img.shape
 
-        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        thresholded = cv2.threshold(gray, 120, 255, cv2.THRESH_BINARY)[1]
-        inverted_image = cv2.bitwise_not(thresholded)
-        results = reader.readtext(inverted_image)
+        print(f"dimensiones {hImg}, {wImg}")
 
-        encontrado = False
-        #print(results)
+        self.analizar(img, reader, hImg, wImg)
+
+    def analizar(self, img, reader, hImg, wImg):
+
+        self.detectar(img, reader, hImg, wImg)
+        if not self.encontrado:
+            """
+            if self.posicion == 1:
+                while cont < 3:
+                    self.mov.girar_derecha()
+                    #time.sleep(0.1)
+                    self.detectar(img, reader, hImg, wImg)
+                    if self.encontrado:
+                        break
+                    cont += 1
+
+            elif self.posicion == 2:
+                while cont < 3:
+                    self.mov.girar_izquierda()
+                    #time.sleep(0.1)
+                    self.detectar(img, reader, hImg, wImg)
+                    if self.encontrado:
+                        break
+                    cont += 1
+                #self.mov.girar_izquierda()
+                #time.sleep(1)
+            elif self.posicion == 3:
+                while cont < 3:
+                    self.mov.girar_izquierda()
+                    #time.sleep(0.1)
+                    self.detectar(img, reader, hImg, wImg)
+                    if self.encontrado:
+                        break
+                    cont += 1
+
+                while cont < 3:
+                    if self.encontrado:
+                        break
+                    self.mov.girar_derecha()
+                    #time.sleep(0.1)
+                    self.detectar(img, reader, hImg, wImg)
+
+                    cont += 1
+                #self.mov.girar_izquierda()
+                #time.sleep(1)
+                #self.mov.girar_derecha()
+                #time.sleep(1)
+            else:
+                while cont < 3:
+                    self.mov.girar_izquierda()
+                    #time.sleep(0.1)
+                    self.detectar(img, reader, hImg, wImg)
+                    if self.encontrado:
+                        break
+                    cont += 1
+                while cont < 3:
+                    if self.encontrado:
+                        break
+                    self.mov.girar_derecha()
+                    #time.sleep(0.1)
+                    self.detectar(img, reader, hImg, wImg)
+                    cont += 1
+                #self.mov.girar_izquierda()
+                #time.sleep(1)
+                #self.mov.girar_derecha()
+                #time.sleep(1)
+
+            """
+            print("primer if ", self.cont)
+            if self.cont < 2 and not self.finalizado:
+                if self.encontrado:
+                    print("Encontrado while izquierda")
+                    self.finalizado = True
+                else:
+                    self.mov.girar_grados_izq(pi/8)
+                    # time.sleep(0.1)
+                    self.detectar(img, reader, hImg, wImg)
+
+            elif 2 < self.cont < 7 and not self.finalizado:
+                print("sefundo if ", self.cont)
+                if self.encontrado:
+                    print("Encontrado while derecha")
+                    self.finalizado = True
+                else:
+                    self.mov.girar_grados_der(pi/8)
+                    # time.sleep(0.1)
+                    self.detectar(img, reader, hImg, wImg)
+
+            if 7 < self.cont < 9 and not self.finalizado:
+                print("tercero if ", self.cont)
+                if self.encontrado:
+                    print("Encontrado while izquierda")
+                    self.finalizado = True
+                else:
+                    self.mov.girar_grados_izq(pi/8)
+                    # time.sleep(0.1)
+                    self.detectar(img, reader, hImg, wImg)
+
+            if self.cont > 9:
+                self.cont = 0
+                self.mov.avanzar_distancia(0.5)
+            else:
+                self.cont += 1
+
+    def detectar(self, img, reader, hImg, wImg):
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        # thresholded = cv2.threshold(gray, 120, 255, cv2.THRESH_BINARY)[1]
+        # cv2.imshow('Thresholded', thresholded)
+        # cv2.waitKey(1)
+        # inverted_image = cv2.bitwise_not(thresholded)
+        # cv2.imshow('Inverted', inverted_image)
+        # cv2.waitKey(1)
+        results = reader.readtext(gray)
+
+        self.encontrado = False
+        # print(results)
         if len(results) != 0:
             # Iteramos sobre las predicciones del modelo de EasyOCR.
             for bounding_box, text, probability in results:
                 # Imprimimos la probabilidad del texto.
-                #print(f'{probability:.4f}: {text}')
+                # print(f'{probability:.4f}: {text}')
 
                 # Extraemos y ajustamos las coordenadas de la detección.
                 tl, tr, br, bl = bounding_box
@@ -92,15 +215,34 @@ class ImageSubscriber(Node):
                     if palabra[i] in self.caracteres:
                         print(f"Detectado {text}")
                         self.girar_hasta_centro((tl, br), wImg, hImg)
-                        #self.mov.detener()
+                        # self.mov.detener()
                         self.mov.avanzar()
                         time.sleep(1)
-                        encontrado = True
+                        self.encontrado = True
+                        self.cont = 0
                         break
                 if text in self.caracteres:
                     break
+        """
         if not encontrado:
+            if self.posicion == 1:
+                self.mov.girar_derecha()
+                time.sleep(1)
+            elif self.posicion == 2:
+                self.mov.girar_izquierda()
+                time.sleep(1)
+            elif self.posicion == 3:
+                self.mov.girar_izquierda()
+                time.sleep(1)
+                self.mov.girar_derecha()
+                time.sleep(1)
+            else:
+                self.mov.girar_izquierda()
+                time.sleep(1)
+                self.mov.girar_derecha()
+                time.sleep(1)
             self.mov.avanzar()
+        """
 
         # Mostramos el resultado en pantalla.
         cv2.imshow('Resultado', img)
@@ -125,51 +267,57 @@ class ImageSubscriber(Node):
 
         if self.posicion == 1:
             if box_center < center_column:
-                # 3. Si las coordenadas están a la izquierda, necesitamos girar a la derecha
+                # 3. Si las coordenadas están a la izquierda, necesitamos girar a la izquierda
                 print("Girar izquierda")
-                self.mov.girar_izquierda()
-                time.sleep(0.1)
+                print(box_center, " izquierda ", box_center / 640 * 1)
+                self.mov.girar_grados_izq(box_center / 640 * 0.1)
+
+                #self.mov.girar_izquierda()
+                #time.sleep(0.2)
             elif box_center > center_column:
-                # 3. Si las coordenadas están a la derecha, necesitamos girar a la izquierda
+                # 3. Si las coordenadas están a la derecha, necesitamos girar a la derecha
                 print("Girar derecha")
-                self.mov.girar_derecha()
-                time.sleep(0.1)
+                print(box_center, " derecha ", box_center / 640 * 0.1)
+                self.mov.girar_grados_der(box_center / 640 * 0.1)
 
         elif self.posicion == 2:
             if box_center < center_column:
                 # 3. Si las coordenadas están a la izquierda, necesitamos girar a la derecha
                 print("Girar derecha")
-                self.mov.girar_derecha()
-                time.sleep(0.1)
+                print(box_center, " derecha ", box_center / 640 * 0.1)
+                self.mov.girar_grados_der(box_center / 640 * 0.1)
+
             elif box_center > center_column:
                 # 3. Si las coordenadas están a la derecha, necesitamos girar a la izquierda
                 print("Girar izquierda")
-                self.mov.girar_izquierda()
-                time.sleep(0.1)
+                print(box_center, " izquierda ", box_center / 640 * 1)
+                self.mov.girar_grados_izq(box_center / 640 * 0.1)
 
         elif self.posicion == 3:
             if box_center < center_column:
                 # 3. Si las coordenadas están a la izquierda, necesitamos girar a la derecha
                 print("Girar derecha")
-                self.mov.girar_derecha()
-                time.sleep(0.1)
+                print(box_center, " derecha ", box_center / 480 * 0.1)
+                self.mov.girar_grados_der(box_center / 480 * 0.1)
+
             elif box_center > center_column:
                 # 3. Si las coordenadas están a la derecha, necesitamos girar a la izquierda
                 print("Girar izquierda")
-                self.mov.girar_izquierda()
-                time.sleep(0.1)
+                print(box_center, " izquierda ", box_center / 480 * 1)
+                self.mov.girar_grados_izq(box_center / 480 * 0.1)
 
         else:
             if box_center < center_column:
                 # 3. Si las coordenadas están a la izquierda, necesitamos girar a la izquierda
                 print("Girar izquierda")
+                print(box_center, " izquierda ", box_center / 480 * 0.1)
                 self.mov.girar_izquierda()
-                time.sleep(0.1)
+                time.sleep(box_center / 480 * 0.1)
             elif box_center > center_column:
                 # 3. Si las coordenadas están a la derecha, necesitamos girar a la derecha
                 print("Girar derecha")
-                self.mov.girar_derecha()
-                time.sleep(0.1)
+                print(box_center, " derecha ", box_center / 480 * 0.1)
+                self.mov.girar_grados_der(box_center / 480 * 0.1)
 
 
 def cleanup_text(text):
