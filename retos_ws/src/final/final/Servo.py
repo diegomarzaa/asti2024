@@ -1,34 +1,55 @@
-# Import libraries
 import RPi.GPIO as GPIO
 import time
 
-# Set GPIO numbering mode
-GPIO.setmode(GPIO.BOARD)
+def setup_servo(pin):
+    GPIO.setmode(GPIO.BOARD)  # Use physical pin numbering
+    GPIO.setup(pin, GPIO.OUT)
+    servo = GPIO.PWM(pin, 50)  # 50Hz pulse for servo
+    servo.start(0)  # Initialization with 0 duty cycle
+    return servo
 
-# Set pin 11 as an output, and define as servo1 as PWM pin
-GPIO.setup(11,GPIO.OUT)
-servo1 = GPIO.PWM(11,50) # pin 11 for servo1, pulse 50Hz
+def servo_angle_to_duty_cycle(angle):
+    """Convert an angle to the suitable duty cycle."""
+    return 2 + (angle / 18)
 
-# Start PWM running, with value of 0 (pulse off)
-servo1.start(0)
+def gradually_move_servo(servo, current_angle, target_angle, step=1, delay=0.05):
+    """Gradually move the servo to target_angle in smaller steps and with a slight delay."""
+    # Determine the current angle based on the duty cycle (assuming starting from 0 for simplicity)
+    current_duty_cycle = servo_angle_to_duty_cycle(target_angle)
+    #current_angle = (current_duty_cycle - 2) * 18
 
-# Loop to allow user to set servo angle. Try/finally allows exit
-# with execution of servo.stop and GPIO cleanup :)
+    # Calculate steps required to reach the target angle
+    steps = int(abs(target_angle - current_angle) / step)
+    print(f'There are {steps} steps. Target angle: {target_angle}. Current angle: {current_angle}')
 
-try:
-    while True:
-        #Ask user for angle and turn servo to it
-        angle = float(input('Enter angle between 0 & 180: '))
-        servo1.ChangeDutyCycle(2+(angle/18))
-        time.sleep(0.5)
-        servo1.ChangeDutyCycle(0)
+    for _ in range(steps):
+        # Increment or decrement the current angle towards the target angle
+        current_angle += step if target_angle > current_angle else -step
+        duty_cycle = servo_angle_to_duty_cycle(current_angle)
+        servo.ChangeDutyCycle(duty_cycle)
+        time.sleep(delay)
+    
+    # Ensures the servo moves to the exact target angle in case it wasn't divisible by the step
+    servo.ChangeDutyCycle(servo_angle_to_duty_cycle(target_angle))
+    time.sleep(0.5)
+    servo.ChangeDutyCycle(0)  # Stop sending signal to hold position
 
-finally:
-    #Clean things up at the end
-    servo1.stop()
-    GPIO.cleanup()
-    print("Goodbye!")
+# Main section
+if __name__ == '__main__':
+    servo_pin = 11
+    servo = setup_servo(servo_pin)
 
+    try:
+        while True:
+            angle = float(input('Enter angle between 0 & 180: '))
+            if 0 <= angle <= 180:
+                gradually_move_servo(servo, 0, angle)      # TODO: Ajustar bien parametros
+            else:
+                print("Angle must be between 0 and 180 degrees.")
+    finally:
+        servo.stop()
+        GPIO.cleanup()
+        print("Goodbye!")
 
 
 

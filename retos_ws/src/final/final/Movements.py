@@ -110,10 +110,9 @@ class Movements(Node):
     # ║ MOVIMIENTOS BÁSICOS RUEDAS CON SENSORES ║
     # ╚═════════════════════════════════════════╝
     
-    def detectar_pared(sensors):
-        print(f'Distancia derecha: {sensors.distancia_der} cm')
-        print(f'Distancia izquierda: {sensors.distancia_izq} cm')
-        if sensors.distancia_der < 20 or sensors.distancia_izq < 20:
+    def detectar_pared(self, sensors):
+        print(f'Distancia delante: {sensors.distancia_delante} cm')
+        if sensors.distancia_delante < 20 or sensors.distancia_delante < 20:
             print("Muy cerca de un obstáculo")
             return True
         else:
