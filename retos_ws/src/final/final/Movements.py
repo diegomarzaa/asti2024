@@ -47,6 +47,7 @@ def get_movements():
     }
     return actions
 
+
 class Movements(Node):
     def __init__(self, usar_herramienta=False):
         """
@@ -419,7 +420,8 @@ class Movements(Node):
     def boli_subir(self, prints=False):
         if prints:
             print("Boli subido")
-        self.herramienta_girar(self.grados_boli_alto)
+        tiempo = 1.5
+        self.herramienta_girar(self.grados_boli_alto, tiempo)
         
     def boli_bajar(self, prints=False):
         if prints:
