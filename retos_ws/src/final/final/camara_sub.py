@@ -11,7 +11,7 @@ class Linea_sub(Node):
 
     def __init__(self):
         super().__init__('linea_sub')                            # /video_frames   simulador: /camera/image_raw
-        self.subscription = self.create_subscription(Image, '/camera/image_raw', self.listener_callback, 10)
+        self.subscription = self.create_subscription(Image, '/video_frames', self.listener_callback, 10)
         self.subscription
 
         self.br = CvBridge()

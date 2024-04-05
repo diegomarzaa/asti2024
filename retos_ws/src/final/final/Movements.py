@@ -112,7 +112,7 @@ class Movements(Node):
     
     def detectar_pared(self, sensors):
         print(f'Distancia delante: {sensors.distancia_delante} cm')
-        if sensors.distancia_delante < 20 or sensors.distancia_delante < 20:
+        if sensors.get_distancia_delante() < 20:
             print("Muy cerca de un obstáculo")
             return True
         else:
@@ -141,12 +141,12 @@ class Movements(Node):
         self.detener()
 
     def avanzar_paralelo_paredes(self, sensors):
-        distancia_der_principio = sensors.get_distancia_derecha_()
-        distancia_izq_principio = sensors.get_distancia_izquierda_()
+        distancia_der_principio = sensors.get_distancia_derecha()
+        distancia_izq_principio = sensors.get_distancia_izquierda()
         while True:
-            if sensors.get_distancia_derecha_() < distancia_der_principio:
+            if sensors.get_distancia_derecha() < distancia_der_principio:
                 self.girar_grados_izq(10)
-            elif sensors.get_distancia_izquierda_() < distancia_izq_principio:
+            elif sensors.get_distancia_izquierda() < distancia_izq_principio:
                 self.girar_grados_der(10)
             else:
                 self.avanzar()

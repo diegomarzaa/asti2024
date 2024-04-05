@@ -19,7 +19,7 @@ class ImageSubscriber(Node):
         super().__init__('image_subscriber')
         self.subscription = self.create_subscription(
             Image,
-            'camera/image_raw',  # /video_frames
+            '/video_frames',  # /video_frames
             self.listener_callback,
             10)
         self.subscription  # prevent unused variable warning
@@ -205,8 +205,8 @@ class ImageSubscriber(Node):
                 cv2.rectangle(img, tl, br, (0, 255, 0), 2)
                 cv2.putText(img, text, (tl[0], tl[1] - 10), cv2.FONT_HERSHEY_SIMPLEX, .8, (0, 255, 0), 2)
                 # Mostramos el resultado en pantalla.
-                cv2.imshow('Resultado', img)
-                cv2.waitKey(1)
+               # cv2.imshow('Resultado', img)
+               # cv2.waitKey(1)
 
                 palabra = text.split()
                 print(palabra)
@@ -245,8 +245,8 @@ class ImageSubscriber(Node):
         """
 
         # Mostramos el resultado en pantalla.
-        cv2.imshow('Resultado', img)
-        cv2.waitKey(1)
+       # cv2.imshow('Resultado', img)
+       # cv2.waitKey(1)
 
     def rotar_img(self, img, angle):
         # Rotamos la imagen.

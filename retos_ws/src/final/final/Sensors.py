@@ -8,16 +8,17 @@ from std_msgs.msg import Float32
 class Sensors(Node):
     def __init__(self):
         super().__init__('distance_sensor_subscriber')
-        self.distancia_der = None
-        self.distancia_izq = None
-        self.distancia_delante = None
         
-        self.get_sensor_derecha_ = self.create_subscription(Float32, 'distance_der', self.callback_derecha, 10)
-        self.get_sensor_derecha_
-        self.get_sensor_izquierda_ = self.create_subscription(Float32, 'distance_izq', self.callback_izquierda, 10)
-        self.get_sensor_izquierda_
-        self.get_sensor_delante_ = self.create_subscription(Float32, 'distance_delante', self.callback_delante, 10)
+        self.get_sensor_delante_ = self.create_subscription(Float32, '/distance_delante', self.callback_delante, 10)
+        self.get_sensor_derecha_ = self.create_subscription(Float32, '/distance_der', self.callback_derecha, 10)
+        self.get_sensor_izquierda_ = self.create_subscription(Float32, '/distance_izq', self.callback_izquierda, 10)
+        
         self.get_sensor_delante_
+        self.get_sensor_derecha_
+        self.get_sensor_izquierda_
+        self.distancia_der = 0.0
+        self.distancia_izq = 0.0
+        self.distancia_delante = 0.0
         
     def callback_derecha(self, msg):
         self.distancia_der = msg.data
