@@ -106,7 +106,7 @@ class Movements(Node):
             self.servo = self.setup_servo()  
             
             self.grados_boli_alto = 20.0     # TODO: Cambiar a valor correcto para cada prueba
-            self.grados_boli_bajo = -10.0     
+            self.grados_boli_bajo = -20.0     
             
             self.grados_bolos_soltar = 0.0  
             self.grados_bolos_mantener = 0.0
