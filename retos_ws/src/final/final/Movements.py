@@ -4,8 +4,13 @@ import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import Twist
 from std_msgs.msg import Float32
-from custom_interfaces.msg import SetPosition
+# from custom_interfaces.msg import SetPosition
 from final.Sensors import Sensors
+
+try:
+    import RPi.GPIO as GPIO
+except ImportError:
+    print("RPi.GPIO not available")
 
 # TODO: Importante mantener actualizado get_movements() con las funciones que se vayan añadiendo
 # TODO: Cambiar a cm en vez de m, más rapido
@@ -43,7 +48,7 @@ def get_movements():
     return actions
 
 class Movements(Node):
-    def __init__(self):
+    def __init__(self, usar_herramienta=False):
         """
         Clase Personalizada para el manejo de movimientos del robot.
         
@@ -84,7 +89,6 @@ class Movements(Node):
         
         super().__init__('movement_publisher')
         self.wheel_publisher_ = self.create_publisher(Twist, 'cmd_vel', 10)   # cmd_vel has (m/s , rad/s)
-        self.tool_publisher_ = self.create_publisher(SetPosition, 'tool_pos', 10)
 
         # WHEELS
         self.obj_linear_vel = 0.1       # TODO: CAMBIAR A VALORES QUE SEAN BUENOS POR DEFECTO
@@ -94,15 +98,20 @@ class Movements(Node):
         self.last_vel = (0.0, 0.0)
         
         # TOOL
-        self.tool_pos = 0.0
-        self.tool_id = 3    # id 1,2 ruedas, id 3 herramienta
-        self.grados_boli_alto = 0.0     # TODO: Cambiar a valor correcto para cada prueba
-        self.grados_boli_bajo = 0.0     
-        self.grados_bolos_soltar = 0.0  
-        self.grados_bolos_mantener = 0.0
-        self.grados_pale_alto = 0.0     
-        self.grados_pale_bajo = 0.0     
-
+        if usar_herramienta:
+            
+            self.PIN_SERVO = 11
+            self.servo_current_angle = 0.0
+            self.servo = self.setup_servo()  
+            
+            self.grados_boli_alto = 20.0     # TODO: Cambiar a valor correcto para cada prueba
+            self.grados_boli_bajo = 0.0     
+            
+            self.grados_bolos_soltar = 0.0  
+            self.grados_bolos_mantener = 0.0
+            self.grados_pale_alto = 0.0     
+            self.grados_pale_bajo = 0.0   
+        
         # SENSORS
         sensors = Sensors()
 
@@ -184,45 +193,6 @@ class Movements(Node):
     
     def actualizar_acc_angular(self, angular_acc):
         self.angular_acc = angular_acc
-    
-    # ╔═════════════════════════════╗
-    # ║       TOOL FUNCTIONS        ║
-    # ╚═════════════════════════════╝
-    
-    def herramienta_girar(self, grados):
-        msg = SetPosition()
-        msg.position = int(grados)
-        msg.id = self.tool_id
-        self.tool_publisher_.publish(msg)
-        
-    # Dibujar la figura
-    
-    def boli_subir(self, prints=False):
-        if prints:
-            print("Boli subido")
-        self.herramienta_girar(self.grados_boli_alto)
-        
-    def boli_bajar(self, prints=False):
-        if prints:
-            print("Boli bajado")
-        self.herramienta_girar(self.grados_boli_bajo)
-    
-    # Bolos
-    
-    def bolos_soltar(self):
-        self.herramienta_girar(self.grados_bolos_soltar)
-        
-    def bolos_mantener(self):
-        self.herramienta_girar(self.grados_bolos_mantener)
-        
-    # Mini-fábrica
-    
-    def pale_subir(self):
-        self.herramienta_girar(self.grados_pale_alto)
-        
-    def pale_bajar(self):
-        self.herramienta_girar(self.grados_pale_bajo)
-        
 
     # ╔═════════════════════════════╗
     # ║ MOVIMIENTOS BÁSICOS RUEDAS  ║
@@ -378,3 +348,102 @@ class Movements(Node):
         
         self.detener()
 
+
+
+    # ╔═════════════════════════════╗
+    # ║       TOOL FUNCTIONS        ║
+    # ╚═════════════════════════════╝
+
+    def herramienta_girar(self, grados_objetivo, tiempo=0):
+        """
+        tiempo: Tiempo que tarda en llegar al objetivo
+        """
+        #TODO: REVISAR
+        
+        if tiempo <= 0:
+            step = abs(grados_objetivo - self.servo_current_angle)
+            delay = 0
+        else:
+            step = abs(grados_objetivo - self.servo_current_angle) / (tiempo / 0.05)
+            delay = 0.05
+            
+        direction = 1 if grados_objetivo > self.servo_current_angle else -1
+
+        # Gradually move the servo to the target angle
+        while abs(self.servo_current_angle - grados_objetivo) > step:
+            self.servo_current_angle += direction * step
+            duty_cycle = self.servo_angle_to_duty_cycle(self.servo_current_angle)
+            self.servo.ChangeDutyCycle(duty_cycle)
+            time.sleep(delay)
+
+        # Ensure the servo reaches the exact target angle
+        self.servo_current_angle = grados_objetivo
+        duty_cycle = self.servo_angle_to_duty_cycle(self.servo_current_angle)
+        self.servo.ChangeDutyCycle(duty_cycle)
+        time.sleep(0.5)
+        self.servo.ChangeDutyCycle(0)  # Stop sending signal to hold position
+
+        
+    def pedir_angulo_tool(self):
+        angle = float(input("Introduce el ángulo para la herramienta (Entre 0 y 180): "))
+        if 0 <= angle <= 180:
+            return angle
+        else:
+            print("El ángulo debe estar entre 0 y 180 grados.")
+            
+    
+            
+    
+    
+    
+    
+    
+    def setup_servo(self):
+        GPIO.setmode(GPIO.BOARD)  # Use physical pin numbering
+        GPIO.setup(self.PIN_SERVO, GPIO.OUT)
+        servo = GPIO.PWM(self.PIN_SERVO, 50)  # 50Hz pulse for servo
+        servo.start(0)  # DEFAULT POSITION
+        return servo
+
+    def servo_angle_to_duty_cycle(self, angle):
+        """Convert an angle to the suitable duty cycle."""
+        return 2 + (angle / 18)
+    
+
+
+
+
+
+    # Dibujar la figura
+    
+    def boli_subir(self, prints=False):
+        if prints:
+            print("Boli subido")
+        self.herramienta_girar(self.grados_boli_alto)
+        
+    def boli_bajar(self, prints=False):
+        if prints:
+            print("Boli bajado")
+        self.herramienta_girar(self.grados_boli_bajo)
+    
+    # Bolos
+    
+    def bolos_soltar(self):
+        self.herramienta_girar(self.grados_bolos_soltar)
+        
+    def bolos_mantener(self):
+        self.herramienta_girar(self.grados_bolos_mantener)
+        
+    # Mini-fábrica
+    
+    def pale_subir(self):
+        self.herramienta_girar(self.grados_pale_alto)
+        
+    def pale_bajar(self):
+        self.herramienta_girar(self.grados_pale_bajo)
+    
+    # def herramienta_girar_dynamixel(self, grados):      # NO
+    #     msg = SetPosition()
+    #     msg.position = int(grados)
+    #     msg.id = self.tool_id
+    #     self.tool_publisher_.publish(msg)

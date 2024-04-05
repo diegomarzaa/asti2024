@@ -1,6 +1,8 @@
 import RPi.GPIO as GPIO
 import time
 
+PIN_SERVO = 11
+
 def setup_servo(pin):
     GPIO.setmode(GPIO.BOARD)  # Use physical pin numbering
     GPIO.setup(pin, GPIO.OUT)
@@ -36,13 +38,13 @@ def gradually_move_servo(servo, current_angle, target_angle, step=1, delay=0.05)
 
 # Main section
 if __name__ == '__main__':
-    servo_pin = 11
+    servo_pin = PIN_SERVO
     servo = setup_servo(servo_pin)
 
     try:
         while True:
             angle = float(input('Enter angle between 0 & 180: '))
-            if 0 <= angle <= 180:
+            if 0 <= angle <= 40:
                 gradually_move_servo(servo, 0, angle)      # TODO: Ajustar bien parametros
             else:
                 print("Angle must be between 0 and 180 degrees.")
