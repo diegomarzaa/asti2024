@@ -426,7 +426,8 @@ class Movements(Node):
     def boli_bajar(self, prints=False):
         if prints:
             print("Boli bajado")
-        self.herramienta_girar(self.grados_boli_bajo)
+        tiempo = 1.5
+        self.herramienta_girar(self.grados_boli_bajo, tiempo)
     
     # Bolos
     
