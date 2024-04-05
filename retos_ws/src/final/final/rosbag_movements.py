@@ -31,7 +31,7 @@ class MovementSaver():
         self.parentDir = os.path.join(os.path.dirname(__file__), 'recordings')       # Todo: add date by default so it doesnt duplicate
         self.fileName = f"movements_{time.strftime('%Y%m%d_%H%M%S')}.txt"
         self.pathName = self.get_path(self.fileName)
-        self.mover = Movements()
+        self.mover = Movements(usar_herramienta=True)
         self.actions = get_movements()
         
         self.action_playing = None
