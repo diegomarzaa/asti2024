@@ -32,6 +32,7 @@ class ButtonPublisher(Node):
             for line in proceso.stdout: # Bucle recibir contenido paquete
 
                 self.handle_line(line.strip(), mov) # Enviar contenido a método
+                sleep(0.000001)
 
             proceso.stdout.close()
             proceso.wait()
@@ -85,6 +86,7 @@ class ButtonPublisher(Node):
                 msg.linear.x = self.tupla[0]
                 msg.angular.z = self.tupla[1]
                 self.publisher_.publish(msg)
+                print('x')
 
             elif byte_of_interest == '4000' and self.x <= 2.0 and self.side_counter == False: # UP, aumentar velocidad linear cada vez que pulsemos cruz hacia arriba
                 self.side_counter = True
@@ -94,6 +96,7 @@ class ButtonPublisher(Node):
                 msg.linear.x = self.tupla[0]
                 msg.angular.z = self.tupla[1]
                 self.publisher_.publish(msg)
+                print('up')
                     
             elif byte_of_interest == '8000' and self.x >= -2.0 and self.side_counter == False: # DOWN, disminuir velocidad linear cada vez que pulsemos cruz hacia abajo
                 self.side_counter = True
@@ -103,6 +106,7 @@ class ButtonPublisher(Node):
                 msg.linear.x = self.tupla[0]
                 msg.angular.z = self.tupla[1]
                 self.publisher_.publish(msg)
+                print('down')
                    
             elif byte_of_interest == '2000' and self.y <= 2.0 and self.side_counter == False: # LEFT, aumentar velocidad angular izquierda cada vez que pulsemos cruz hacia izquierda
                 self.side_counter = True
@@ -112,6 +116,7 @@ class ButtonPublisher(Node):
                 msg.linear.x = self.tupla[0]
                 msg.angular.z = self.tupla[1]
                 self.publisher_.publish(msg)
+                print('left')
                     
             elif byte_of_interest == '1000' and self.y >= -2.0 and self.side_counter == False: # RIGHT, aumentar velocidad angular derecha cada vez que pulsemos cruz hacia derecha
                 self.side_counter = True
@@ -121,11 +126,14 @@ class ButtonPublisher(Node):
                 msg.linear.x = self.tupla[0]
                 msg.angular.z = self.tupla[1]
                 self.publisher_.publish(msg)
+                print('right')
             
             elif byte_of_interest == '0001': # R, sube pale al pulsar botón R
+                print('R')
                 mov.pale_subir()
                 
             elif byte_of_interest == '0002': # L, baja pale al pulsar botón L
+                print('L')
                 mov.pale_bajar()
             
             elif byte_of_interest == '0800': # START
