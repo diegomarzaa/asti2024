@@ -4,7 +4,6 @@ import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import Twist
 from std_msgs.msg import Float32
-# from custom_interfaces.msg import SetPosition
 from final.Sensors import Sensors
 
 try:
@@ -33,7 +32,7 @@ def get_movements():
         "dd": ('girar_grados_der', ['grados'], ['radio']),
         "zz": ('girar_grados_izq_atras', ['grados'], ['radio']),
         "cc": ('girar_grados_der_atras', ['grados'], ['radio']),
-        "12": ('herramienta_girar', ['grados'], []),
+        "ca": ('ver_angulos_herramienta', [], []),
         "13": ('boli_subir', [], []),
         "14": ('boli_bajar', [], []),
         "15": ('bolos_soltar', [], []),
@@ -99,19 +98,30 @@ class Movements(Node):
         self.last_vel = (0.0, 0.0)
         
         # TOOL
+        self.servo_current_angle = 0.0
+
+        self.grados_boli_alto = 20.0     # TODO: Cambiar a valor correcto para cada prueba
+        self.grados_boli_bajo = -20.0     
+        self.grados_bolos_soltar = 0.0  
+        self.grados_bolos_mantener = 0.0
+        self.grados_pale_alto = 0.0     
+        self.grados_pale_bajo = 0.0   
+        
+        # Tiempos
+        self.tiempo_boli_subir = 0.5
+        self.tiempo_boli_bajar = 1.5
+        
+        self.tiempo_bolos_soltar = 0.5
+        self.tiempo_bolos_mantener = 0.5
+        
+        self.tiempo_pale_subir = 2.5
+        self.tiempo_pale_bajar = 2
+        
         if usar_herramienta:
-            
             self.PIN_SERVO = 11
-            self.servo_current_angle = 0.0
             self.servo = self.setup_servo()  
             
-            self.grados_boli_alto = 20.0     # TODO: Cambiar a valor correcto para cada prueba
-            self.grados_boli_bajo = -20.0     
             
-            self.grados_bolos_soltar = 0.0  
-            self.grados_bolos_mantener = 0.0
-            self.grados_pale_alto = 0.0     
-            self.grados_pale_bajo = 0.0   
         
         # SENSORS
         sensors = Sensors()
@@ -368,37 +378,44 @@ class Movements(Node):
             step = abs(grados_objetivo - self.servo_current_angle) / (tiempo / 0.05)
             delay = 0.05
             
-        direction = 1 if grados_objetivo > self.servo_current_angle else -1
+        direction = 1 if grados_objetivo > self.servo_current_angle else -1     # Evitamos que el servo gire en sentido contrario
 
         # Gradually move the servo to the target angle
         while abs(self.servo_current_angle - grados_objetivo) > step:
             self.servo_current_angle += direction * step
             duty_cycle = self.servo_angle_to_duty_cycle(self.servo_current_angle)
-            self.servo.ChangeDutyCycle(duty_cycle)
+            # self.servo.ChangeDutyCycle(duty_cycle)
+            print(f"Moving angle: {self.servo_current_angle}")
             time.sleep(delay)
 
         # Ensure the servo reaches the exact target angle
         self.servo_current_angle = grados_objetivo
         duty_cycle = self.servo_angle_to_duty_cycle(self.servo_current_angle)
-        self.servo.ChangeDutyCycle(duty_cycle)
+        # self.servo.ChangeDutyCycle(duty_cycle)
+        print(f"Final angle: {self.servo_current_angle}")
         time.sleep(0.5)
-        self.servo.ChangeDutyCycle(0)  # Stop sending signal to hold position
+        # self.servo.ChangeDutyCycle(0)  # Stop sending signal to hold position
 
-        
-    def pedir_angulo_tool(self):
-        angle = float(input("Introduce el ángulo para la herramienta (Entre 0 y 180): "))
-        if 0 <= angle <= 180:
-            return angle
-        else:
-            print("El ángulo debe estar entre 0 y 180 grados.")
-            
     
-            
-    
-    
-    
-    
-    
+    def ver_angulos_herramienta(self):
+        while True:
+            print(f"Ángulo actual: {self.servo_current_angle}")
+            angle_sent = input("Introduce un ángulo para observar en la herramienta (Entre 0 y 180), Enter para salir: ")
+            if angle_sent == "":
+                break
+            angle_sent = float(angle_sent)
+            if angle_sent < 0 or angle_sent > 180:
+                print("El ángulo debe estar entre 0 y 180 grados.")
+                continue
+            tiempo_sent = input("Introduce un tiempo para llegar al ángulo (0 o enter para llegar directamente): ")
+            if tiempo_sent == "":
+                tiempo_sent = 2   # 2 segundos por seguridad
+            else:
+                tiempo_sent = float(tiempo_sent)
+            self.herramienta_girar(angle_sent, tiempo=tiempo_sent)     # Dar tiempo a reaccionar y que no se rompa algo otra vez
+            self.servo_current_angle = angle_sent            
+
+
     def setup_servo(self):
         GPIO.setmode(GPIO.BOARD)  # Use physical pin numbering
         GPIO.setup(self.PIN_SERVO, GPIO.OUT)
@@ -412,22 +429,17 @@ class Movements(Node):
     
 
 
-
-
-
     # Dibujar la figura
     
     def boli_subir(self, prints=False):
         if prints:
             print("Boli subido")
-        tiempo = 1.5
-        self.herramienta_girar(self.grados_boli_alto, tiempo)
+        self.herramienta_girar(self.grados_boli_alto, self.tiempo_boli_subir)
         
     def boli_bajar(self, prints=False):
         if prints:
             print("Boli bajado")
-        tiempo = 1.5
-        self.herramienta_girar(self.grados_boli_bajo, tiempo)
+        self.herramienta_girar(self.grados_boli_bajo, self.tiempo_boli_bajar)
     
     # Bolos
     
@@ -444,9 +456,3 @@ class Movements(Node):
         
     def pale_bajar(self):
         self.herramienta_girar(self.grados_pale_bajo)
-    
-    # def herramienta_girar_dynamixel(self, grados):      # NO
-    #     msg = SetPosition()
-    #     msg.position = int(grados)
-    #     msg.id = self.tool_id
-    #     self.tool_publisher_.publish(msg)
