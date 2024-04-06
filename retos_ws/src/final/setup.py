@@ -20,9 +20,10 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'rosbag_movements00 = final.rosbag_movements00:main',
-            'rosbag_movements = final.rosbag_movements:main',
+            'rosbag = final.rosbag:main',
             'keyboard_teleop = final.keyboard_teleop:main',
+            'nintendo_teleop = final.nintendo_teleop:main',
+            
             'dibuja_figura = final.dibuja_figura:main',
             'siguelineas_sim = final.siguelineas_sim:main',
             'siguelineas_matriz = final.siguelineas_matriz:main',
@@ -31,11 +32,12 @@ setup(
             'mini_fabrica = final.mini_fabrica:main',
             'reconocer_figura_mapa = final.reconocer_figura_mapa:main',
             'laberinto = final.laberinto:main',
+            'figuras = final.figuras:main',
+            
             'distance_sensor = final.distance_sensor:main',
+            
             'cam_pub = final.cam_pub:main',
             'camara_sub = final.camara_sub:main',
-            'figuras = final.figuras:main',
-            'nintendo_teleop = final.nintendo_teleop:main',
             'sensor_sub = final.Sensors:main'
         ],
     },

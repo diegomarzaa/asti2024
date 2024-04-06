@@ -9,10 +9,6 @@ import json
 # DISTANCIAS INTRODUCIDAS: EN CM
 # GRADOS: EN GRADOS
 
-################################################
-# TODO: Mejorar grabado de movimientos a partir de las acciones
-################################################
-
 SLEEP = 0.05       # Tiempo de espera entre movimientos
 
 # Colorines para la terminal ejjejejeje
@@ -29,7 +25,7 @@ RESET = '\033[0m'
 class MovementSaver():
     def __init__(self):
         self.actions_to_do = []         # list with the name of the functions movements + data
-        self.parentDir = os.path.join(os.path.dirname(__file__), 'recordings')       # Todo: add date by default so it doesnt duplicate
+        self.parentDir = os.path.join(os.path.dirname(__file__), 'recordings')
         self.fileName = f"movements_{time.strftime('%Y-%m-%d_%H-%M-%S')}.txt"
         self.pathName = self.get_path(self.fileName)
         self.mover = Movements()
@@ -45,7 +41,6 @@ class MovementSaver():
         self.rosbag_numbers = []
         
     def get_valid_input(self, input):
-        # TODO: Careful with Booleans for example
         try:
             return float(input.replace(",", "."))
         except ValueError:
@@ -93,7 +88,7 @@ class MovementSaver():
         self.action_playing = None
 
 
-    def show_menu(self, param=None, action=None):          # TODO: Quitar parametro ask_input
+    def show_menu(self, param=None, action=None):
         
         print("\n==============================================\
             \n\t\t\tMENU\
@@ -129,7 +124,6 @@ class MovementSaver():
                 print(CYAN + f"\t{key}\t{value[0]}({', '.join(value[1])})" + RESET)
             else:
                 print(f"\t{key}\t{value[0]}({', '.join(value[1])})")
-
 
 
 
@@ -238,7 +232,6 @@ def main(args=None):
                 user_input = saver.get_valid_input(user_input)
                 kwargs[param] = user_input
             
-        # TODO: Add the action to the list of actions to do
         saver.action_playing = action_name
         if saver.recording:
             saver.actions_to_do.append([action_name, args, kwargs])
