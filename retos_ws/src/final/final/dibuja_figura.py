@@ -4,7 +4,7 @@
 import rclpy
 import time
 from math import pi
-from final.Movements import Movements
+from final.Movements import Movements     # Contiene los angulos de la herramienta
 
 SLEEP_TIME_BOLI = 1
 SLEEP_MOV = 0.1
@@ -36,58 +36,6 @@ def get_figure_params(opcion_menu):
     raise ValueError("Invalid figure")
   return angulo, largo, ancho, lados
 
-def pedir_opcion_menu():
-  print("\nFiguras:")
-  print(" 1. Triangulo")
-  print(" 2. Cuadrado")
-  print(" 3. Rectangulo")
-  print(" q. Salir")
-  return input("Seleccione una opcion: ")
-
-'''def dibujar_figura_antiguo(mov:Movements, opcion_menu):
-  angulo, largo, ancho, lados = get_figure_params(opcion_menu)
-  
-  bajar_boli()
-  
-  for i in range(lados):
-    if i % 2:
-        distancia = largo
-    else:
-        distancia = ancho
-    
-    # Move forward
-    print("Moviendo hacia adelante")
-    for linear_iterations in range(int(distancia / (abs(VELOCIDAD_LINEAL) * SLEEP_MOV))):
-        mov.avanzar()
-        time.sleep(SLEEP_MOV)
-
-    mov.detener()
-    mov
-
-    # Move forward 16cm
-    print("Moviendo hacia adelante")
-    for linear_iterations in range(int(0.2 / (abs(VELOCIDAD_LINEAL) * SLEEP_MOV))):
-        mov.avanzar()
-        time.sleep(SLEEP_MOV)
-
-    mov.detener()
-
-    # Turn
-    print("Girando")
-    for angular_iterations in range(int(angulo / (abs(VELOCIDAD_ANGULAR) * SLEEP_MOV))):
-        mov.girar_izquierda()
-        time.sleep(SLEEP_MOV)
-
-    mov.detener()
-
-    # Move backward 16cm
-    print("Moviendo hacia atras")
-    for linear_iterations in range(int(0.15 / (abs(VELOCIDAD_LINEAL) * SLEEP_MOV))):
-        mov.retroceder()
-        time.sleep(SLEEP_MOV)
-
-    mov.detener()
-    bajar_boli()'''
 
 
 def dibujar_figura(mov:Movements, opcion_menu):
@@ -122,20 +70,32 @@ def dibujar_figura(mov:Movements, opcion_menu):
 
 def main():
   rclpy.init(args=None)
-  node = rclpy.create_node('figuras')
   mov = Movements()
           
   mov.actualizar_vel_lineal(VELOCIDAD_LINEAL)
   mov.actualizar_vel_angular(VELOCIDAD_ANGULAR)
   
   while True:
-    opcion_menu = pedir_opcion_menu()
     
-    # Testeos
+    print("\nFiguras:")
+    print(" 1. Triangulo")
+    print(" 2. Cuadrado")
+    print(" 3. Rectangulo")
+    print(" c. Calibrar boli")
+    print(" q. Salir")
+    opcion_menu = input("Seleccione una opcion: ")
+    
+    # OPCIONES
+    
     if opcion_menu in ['1', '2', '3']:  # Triangulo, cuadrado, rectangulo
       dibujar_figura(mov, opcion_menu)
+      
+    elif opcion_menu == 'c':
+      mov.ver_angulos_herramienta()
+      
     elif opcion_menu == 'q':
       break
+    
     else:
       print("Opcion no valida, 'q' para salir")
 
