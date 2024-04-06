@@ -1,221 +1,144 @@
-from time import sleep
-import subprocess
+import os
+import sys
 import rclpy
+import subprocess
+from time import sleep
 from rclpy.node import Node
 from geometry_msgs.msg import Twist
-from std_msgs.msg import Float64
-from cv_bridge import CvBridge
-from sensor_msgs.msg import Image
-import cv2
-import sys
-import os
-import signal
-from trajectory_msgs.msg import JointTrajectory
-from trajectory_msgs.msg import JointTrajectoryPoint
-from std_msgs.msg import Header
-from geometry_msgs.msg import TransformStamped
+from final.Movements import Movements
 
-class Button_publisher(Node):
+class ButtonPublisher(Node):
 
     def __init__(self):
+    
         super().__init__('button_publisher')
         self.publisher_ = self.create_publisher(Twist, 'cmd_vel', 300)
-        self.publisher_camera_ = self.create_publisher(JointTrajectory, '/set_joint_trajectory', 10)
-        self.publisher_camera_
         self.publisher_
-        timer_period = 0.01  # seconds
-        self.timer = self.create_timer(timer_period, self.timer_callback)
-
-        
-        self.tupla = (0.0, 0.0)
+        self.counter = 0 # Diferenciar inicio de recepción paquetes
+        self.tupla = (0.0, 0.0) # Tupla velocidades
         self.x = 0.0
         self.y = 0.0
-        self.camera_tilt_angle = 0.0
-        self.max_camera_tilt = 4.0
-        self.min_camera_tilt = -4.0
-        self.counter = 0
-        
-        self.side_counter = False
-        
-        self.port = '8888'
-        
-        self.count = 0
-        
-    def timer_callback(self):
-        self.run()
+        self.side_counter = False # Distinguir entre pulsar cruz por primera vez o tenerla mantenida
     
-    def publish_camera_tilt_angle(self, angle):
-        msg = JointTrajectory()
-        msg.header = Header()
-        msg.header.frame_id = 'world'
-        msg.joint_names = ['camera_joint']
-        point = JointTrajectoryPoint()
-        point.positions = [0.0]
-        msg.points = [point]
-        self.publisher_camera_.publish(msg)
-        self.get_logger().info('Published message')
-        
-    def publish_camera_tilt_angle2(self, angle):        
-        msg = JointTrajectory()
-        msg.header = Header()
-        msg.header.frame_id = 'world'
-        msg.joint_names = ['camera_joint']
-        point = JointTrajectoryPoint()
-        point.positions = [4.0]
-        msg.points = [point]
-        self.publisher_camera_.publish(msg)
-        self.get_logger().info('Published message')
-		
-    def run(self):
-        # Ejecutar el comando tcpdump en la terminal
-        print('\nListening on port', self.port)
-        print('Please be patient, this might take a while\n')
-        print('╦╦╦╦╦╦▄▀▀▀▀▀▀▄╦╦╦╦╦╦')
-        print('▒▓▒▓▒█╗░░▐░░░╔█▒▓▒▓▒')
-        print('▒▓▒▓▒█║░░▐▄▄░║█▒▓▒▓▒')
-        print('▒▓▒▓▒█╝░░░░░░╚█▒▓▒▓▒')
-        print('╩╩╩╩╩╩▀▄▄▄▄▄▄▀╩╩╩╩╩╩\n')
-        comando0 = ['ros2', 'run', 'pruebas', 'test_vision_gazebo']
-        proceso0 = subprocess.Popen(comando0, preexec_fn=os.setsid) 
-        comando = ['sudo', 'tcpdump', '-i', 'wlo1', 'port', self.port, '-X']
-        proceso = subprocess.Popen(comando, stdout=subprocess.PIPE)    
+    def run_tcpdump(self, port):
 
         try:
-            # Leer la salida línea por línea
-            for linea in proceso.stdout:
-                # Decodificar la línea a UTF-8
-                linea_decodificada = linea.decode('utf-8').strip()
-                linea = linea_decodificada.split(' ')
-                columna = linea[2]
-                if columna == '0000' and self.counter == 0:
-                    print('\n\n░░░░░░░░░░░░░░░░░░░░░░█████████░░░░░░░░░')
-                    print('░░███████░░░░░░░░░░███▒▒▒▒▒▒▒▒███░░░░░░░')
-                    print('░░█▒▒▒▒▒▒█░░░░░░░███▒▒▒▒▒▒▒▒▒▒▒▒▒███░░░░')
-                    print('░░░█▒▒▒▒▒▒█░░░░██▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒██░░')
-                    print('░░░░█▒▒▒▒▒█░░░██▒▒▒▒▒██▒▒▒▒▒▒██▒▒▒▒▒███░')
-                    print('░░░░░█▒▒▒█░░░█▒▒▒▒▒▒████▒▒▒▒████▒▒▒▒▒▒██')
-                    print('░░░█████████████▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒██')
-                    print('░░░█▒▒▒▒▒▒▒▒▒▒▒▒█▒▒▒▒▒▒▒▒▒█▒▒▒▒▒▒▒▒▒▒▒██')
-                    print('░██▒▒▒▒▒▒▒▒▒▒▒▒▒█▒▒▒██▒▒▒▒▒▒▒▒▒▒██▒▒▒▒██')
-                    print('██▒▒▒███████████▒▒▒▒▒██▒▒▒▒▒▒▒▒██▒▒▒▒▒██')
-                    print('█▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒█▒▒▒▒▒▒████████▒▒▒▒▒▒▒██')
-                    print('██▒▒▒▒▒▒▒▒▒▒▒▒▒▒█▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒██░')
-                    print('░█▒▒▒███████████▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒██░░░')
-                    print('░██▒▒▒▒▒▒▒▒▒▒████▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒█░░░░░')
-                    print('░░████████████░░░█████████████████░░░░░░')
-                    print('\n##########')
-                    print('# START! #')
-                    print('##########\n')
-                    self.counter += 1
-                elif columna == '0000' and self.counter >= 1:
-                    
-                    self.side_counter = False
-                    
-                elif columna == '0100': # A
-                    self.tupla = (0.2, 0.0)
-                    self.x = 0.2
-                    msg = Twist()
-                    msg.linear.x = self.tupla[0]
-                    msg.angular.z = self.tupla[1]
-                    self.publisher_.publish(msg)
-                    self.get_logger().info(f"({msg.linear.x}, {msg.angular.z})")
-                elif columna == '0200': # B
-                    self.tupla = (-0.2, 0.0)
-                    self.x = -0.2
-                    msg = Twist()
-                    msg.linear.x = self.tupla[0]
-                    msg.angular.z = self.tupla[1]
-                    self.publisher_.publish(msg)
-                    self.get_logger().info(f"({msg.linear.x}, {msg.angular.z})")
-                elif columna == '0004': # X
-                    self.tupla = (0.0, 0.0)
-                    self.x = 0.0
-                    self.y = 0.0
-                    msg = Twist()
-                    msg.linear.x = self.tupla[0]
-                    msg.angular.z = self.tupla[1]
-                    
-                    msg.linear.y = 0.0
-                    msg.linear.z = 0.0
-                    msg.angular.x = 0.0
-                    msg.angular.y = 0.0
-                    
-                    self.publisher_.publish(msg)
-                    self.get_logger().info(f"({msg.linear.x}, {msg.linear.y}, {msg.linear.z},{msg.angular.x}, {msg.angular.z},{msg.angular.z})")
-                elif columna == '0008': # Y
-                    msg = Twist()
-                    msg.linear.x = 2.0
-                    self.publisher_.publish(msg)
-                    self.get_logger().info(f"{msg.linear.x}")
-                elif columna == '4000' and self.x <= 2.0 and self.side_counter == False: # UP
-                    self.side_counter = True
-                    self.y = 0.0
-                    self.x += 0.2
-                    self.tupla = (self.x, 0.0)
-                    msg = Twist()
-                    msg.linear.x = self.tupla[0]
-                    msg.angular.z = self.tupla[1]
-                    self.publisher_.publish(msg)
-                    self.get_logger().info(f"({msg.linear.x}, {msg.angular.z})")
-                    
-                elif columna == '8000' and self.x >= -2.0 and self.side_counter == False: # DOWN
-                    self.side_counter = True
-                    self.y = 0.0
-                    self.x -= 0.2
-                    self.tupla = (self.x, 0.0)
-                    msg = Twist()
-                    msg.linear.x = self.tupla[0]
-                    msg.angular.z = self.tupla[1]
-                    self.publisher_.publish(msg)
-                    self.get_logger().info(f"({msg.linear.x}, {msg.angular.z})")
-                    
-                elif columna == '2000' and self.y <= 2.0 and self.side_counter == False: # LEFT
-                    self.side_counter = True
-                    self.x = 0.0
-                    self.y += 0.3
-                    self.tupla = (0.0, self.y)
-                    msg = Twist()
-                    msg.linear.x = self.tupla[0]
-                    msg.angular.z = self.tupla[1]
-                    self.publisher_.publish(msg)
-                    self.get_logger().info(f"({msg.linear.x}, {msg.angular.z})")
-                    
-                elif columna == '1000' and self.y >= -2.0 and self.side_counter == False: # RIGHT
-                    self.side_counter = True
-                    self.x = 0.0
-                    self.y -= 0.3
-                    self.tupla = (0.0, self.y)
-                    msg = Twist()
-                    msg.linear.x = self.tupla[0]
-                    msg.angular.z = self.tupla[1]
-                    self.publisher_.publish(msg)
-                    self.get_logger().info(f"({msg.linear.x}, {msg.angular.z})")
-                    
-                elif columna == '0001': # R
-                    
-                    self.camera_tilt_angle += 0.1
-                    self.publish_camera_tilt_angle(self.camera_tilt_angle)
-                        
-                elif columna == '0002': # L
-                    self.camera_tilt_angle -= 0.1
-                    self.publish_camera_tilt_angle2(self.camera_tilt_angle)
+            comando = ['sudo', 'tcpdump', '-i', 'wlo1', f'port {port}', '-X'] # Comando recibir paquetes
+            proceso = subprocess.Popen(comando, stdout=subprocess.PIPE, universal_newlines=True) # Lanzar comando
 
-                elif columna == '0800': # START
-                    print('Shutting down...')
-                    os.killpg(os.getpgid(proceso0.pid), signal.SIGTERM)
-                    exit()
-            
-                
+            for line in proceso.stdout: # Bucle recibir contenido paquete
+
+                self.handle_line(line.strip()) # Enviar contenido a método
+
+            proceso.stdout.close()
+            proceso.wait()
+
         except KeyboardInterrupt:
-            proceso.terminate()
+        
+            self.get_logger().info("Proceso de tcpdump interrumpido.")
+
+        finally:
+        
+            if proceso and proceso.poll() is None:
+
+                proceso.kill()
+
+    def handle_line(self, line): # Lógica de código
+
+        if line.startswith('0x0020:'): # Leemos contenido a partir de byte 0x0020
+
+            bytes_str = line.split()[1]
+            byte_of_interest = bytes_str[:4] # Bytes de interés son los dos siguientes
+            
+            if byte_of_interest == '0000' and self.counter == 0: # Print de primer paquete recibido
+                print('\n\n░░░░░░░░░░░░░░░░░░░░░░█████████░░░░░░░░░')
+                print('░░███████░░░░░░░░░░███▒▒▒▒▒▒▒▒███░░░░░░░')
+                print('░░█▒▒▒▒▒▒█░░░░░░░███▒▒▒▒▒▒▒▒▒▒▒▒▒███░░░░')
+                print('░░░█▒▒▒▒▒▒█░░░░██▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒██░░')
+                print('░░░░█▒▒▒▒▒█░░░██▒▒▒▒▒██▒▒▒▒▒▒██▒▒▒▒▒███░')
+                print('░░░░░█▒▒▒█░░░█▒▒▒▒▒▒████▒▒▒▒████▒▒▒▒▒▒██')
+                print('░░░█████████████▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒██')
+                print('░░░█▒▒▒▒▒▒▒▒▒▒▒▒█▒▒▒▒▒▒▒▒▒█▒▒▒▒▒▒▒▒▒▒▒██')
+                print('░██▒▒▒▒▒▒▒▒▒▒▒▒▒█▒▒▒██▒▒▒▒▒▒▒▒▒▒██▒▒▒▒██')
+                print('██▒▒▒███████████▒▒▒▒▒██▒▒▒▒▒▒▒▒██▒▒▒▒▒██')
+                print('█▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒█▒▒▒▒▒▒████████▒▒▒▒▒▒▒██')
+                print('██▒▒▒▒▒▒▒▒▒▒▒▒▒▒█▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒██░')
+                print('░█▒▒▒███████████▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒██░░░')
+                print('░██▒▒▒▒▒▒▒▒▒▒████▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒█░░░░░')
+                print('░░████████████░░░█████████████████░░░░░░')
+                print('\n##########')
+                print('# START! #')
+                print('##########\n')
+                self.counter += 1
+                    
+            elif byte_of_interest == '0000' and self.counter >= 1: # Si no pulsamos ningún botón, self.side_counter -> False, haciendo que podamos volver a usar la cruceta
+                self.side_counter = False
+            
+            elif byte_of_interest == '0004': # X, para detener el robot
+                self.tupla = (0.0, 0.0)
+                self.x = 0.0
+                self.y = 0.0
+                msg = Twist()
+                msg.linear.x = self.tupla[0]
+                msg.angular.z = self.tupla[1]
+                self.publisher_.publish(msg)
+
+            elif byte_of_interest == '4000' and self.x <= 2.0 and self.side_counter == False: # UP, aumentar velocidad linear cada vez que pulsemos cruz hacia arriba
+                self.side_counter = True
+                self.x += 0.1
+                self.tupla = (self.x, self.y)
+                msg = Twist()
+                msg.linear.x = self.tupla[0]
+                msg.angular.z = self.tupla[1]
+                self.publisher_.publish(msg)
+                    
+            elif byte_of_interest == '8000' and self.x >= -2.0 and self.side_counter == False: # DOWN, disminuir velocidad linear cada vez que pulsemos cruz hacia abajo
+                self.side_counter = True
+                self.x -= 0.1
+                self.tupla = (self.x, self.y)
+                msg = Twist()
+                msg.linear.x = self.tupla[0]
+                msg.angular.z = self.tupla[1]
+                self.publisher_.publish(msg)
+                   
+            elif byte_of_interest == '2000' and self.y <= 2.0 and self.side_counter == False: # LEFT, aumentar velocidad angular izquierda cada vez que pulsemos cruz hacia izquierda
+                self.side_counter = True
+                self.y += 0.1
+                self.tupla = (self.x, self.y)
+                msg = Twist()
+                msg.linear.x = self.tupla[0]
+                msg.angular.z = self.tupla[1]
+                self.publisher_.publish(msg)
+                    
+            elif byte_of_interest == '1000' and self.y >= -2.0 and self.side_counter == False: # RIGHT, aumentar velocidad angular derecha cada vez que pulsemos cruz hacia derecha
+                self.side_counter = True
+                self.y -= 0.1
+                self.tupla = (self.x, self.y)
+                msg = Twist()
+                msg.linear.x = self.tupla[0]
+                msg.angular.z = self.tupla[1]
+                self.publisher_.publish(msg)
+            
+            elif byte_of_interest == '0001': # R, sube pale al pulsar botón R
+                self.mov.pale_subir()
+                
+            elif byte_of_interest == '0002': # L, baja pale al pulsar botón L
+                self.mov.pale_bajar()
+            
+            elif byte_of_interest == '0800': # START
+                sexo # Detiene ejecución
 
 def main(args=None):
+    
     rclpy.init(args=args)
-    button_pub = Button_publisher()
-    rclpy.spin(button_pub)
-    button_pub.destroy_node()
+    button_publisher = ButtonPublisher()
+    mov = Movements()
+    button_publisher.run_tcpdump('8888')
+    rclpy.spin(button_publisher)
+    button_publisher.destroy_node()
     rclpy.shutdown()
 
-if __name__ == "__main__":
+if __name__ == '__main__':
+
     main()
 
