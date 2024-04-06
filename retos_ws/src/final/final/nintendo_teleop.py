@@ -14,6 +14,7 @@ class ButtonPublisher(Node):
         super().__init__('button_publisher')
         self.publisher_ = self.create_publisher(Twist, 'cmd_vel', 300)
         self.publisher_
+        
         self.counter = 0 # Diferenciar inicio de recepción paquetes
         self.tupla = (0.0, 0.0) # Tupla velocidades
         self.x = 0.0
@@ -25,10 +26,12 @@ class ButtonPublisher(Node):
         try:
             comando = ['sudo', 'tcpdump', '-i', 'wlo1', f'port {port}', '-X'] # Comando recibir paquetes
             proceso = subprocess.Popen(comando, stdout=subprocess.PIPE, universal_newlines=True) # Lanzar comando
+            
+            mov = Movements()
 
             for line in proceso.stdout: # Bucle recibir contenido paquete
 
-                self.handle_line(line.strip()) # Enviar contenido a método
+                self.handle_line(line.strip(), mov) # Enviar contenido a método
 
             proceso.stdout.close()
             proceso.wait()
@@ -43,7 +46,7 @@ class ButtonPublisher(Node):
 
                 proceso.kill()
 
-    def handle_line(self, line): # Lógica de código
+    def handle_line(self, line, mov): # Lógica de código
 
         if line.startswith('0x0020:'): # Leemos contenido a partir de byte 0x0020
 
@@ -120,19 +123,18 @@ class ButtonPublisher(Node):
                 self.publisher_.publish(msg)
             
             elif byte_of_interest == '0001': # R, sube pale al pulsar botón R
-                self.mov.pale_subir()
+                mov.pale_subir()
                 
             elif byte_of_interest == '0002': # L, baja pale al pulsar botón L
-                self.mov.pale_bajar()
+                mov.pale_bajar()
             
             elif byte_of_interest == '0800': # START
-                sexo # Detiene ejecución
+                pass # Detiene ejecución
 
 def main(args=None):
     
     rclpy.init(args=args)
     button_publisher = ButtonPublisher()
-    mov = Movements()
     button_publisher.run_tcpdump('8888')
     rclpy.spin(button_publisher)
     button_publisher.destroy_node()
