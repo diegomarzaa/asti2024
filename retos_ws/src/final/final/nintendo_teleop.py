@@ -77,16 +77,82 @@ class ButtonPublisher(Node):
                     
             elif byte_of_interest == '0000' and self.counter >= 1: # Si no pulsamos ningún botón, self.side_counter -> False, haciendo que podamos volver a usar la cruceta
                 self.side_counter = False
-            
-            elif byte_of_interest == '0004': # X, para detener el robot
+                
+            elif byte_of_interest == '0100' and self.side_counter == False: # A, avanzar rápido de forma progresiva
+                self.side_counter = True
                 self.tupla = (0.0, 0.0)
                 self.x = 0.0
                 self.y = 0.0
                 msg = Twist()
+                msg.angular.z = 0.0
+                
+                for i in range(10):
+                    msg.linear.x = self.x
+                    self.x += 0.1
+                    print(f'x: {self.x}')
+                    self.publisher_.publish(msg)
+                    sleep(0.05)
+                
+            elif byte_of_interest == '0200' and self.side_counter == False: # B, retroceder rápido de forma progresiva
+                self.side_counter = True
+                self.tupla = (0.0, 0.0)
+                self.x = 0.0
+                self.y = 0.0
+                msg = Twist()
+                msg.angular.z = 0.0
+                
+                for i in range(10):
+                    msg.linear.x = self.x
+                    self.x -= 0.1
+                    print(f'x: {self.x}')
+                    self.publisher_.publish(msg)
+                    sleep(0.05)
+            
+            elif byte_of_interest == '0004': # X, para detener el robot
+                
+                
+                """
+                En caso de querer frenar de forma gradual (funciona rarete)
+                
+                msg = Twist()
                 msg.linear.x = self.tupla[0]
                 msg.angular.z = self.tupla[1]
+                goal = 0.0
+                while self.x > goal:
+                    msg.linear.x = self.x
+                    self.x -= 0.1
+                    print(f'x: {self.x}')
+                    self.publisher_.publish(msg)
+                    sleep(0.02)
+                while self.x < goal:
+                    msg.linear.x = self.x
+                    self.x += 0.1
+                    print(f'x: {self.x}')
+                    self.publisher_.publish(msg)
+                    sleep(0.02)
+                while self.y < goal:
+                    msg.linear.y = self.y
+                    self.y += 0.1
+                    print(f'y: {self.y}')
+                    self.publisher_.publish(msg)
+                    sleep(0.02)
+                while self.y > goal:
+                    msg.linear.y = self.y
+                    self.y -= 0.1
+                    print(f'y: {self.y}')
+                    self.publisher_.publish(msg)
+                    sleep(0.02)
+                msg.linear.x = 0.0
+                msg.angular.z = 0.0
                 self.publisher_.publish(msg)
-                print('x')
+                """
+                msg = Twist()
+                msg.linear.x = 0.0
+                msg.angular.z = 0.0
+                self.x = 0.0
+                self.y = 0.0
+                self.publisher_.publish(msg)
+                
 
             elif byte_of_interest == '4000' and self.x <= 2.0 and self.side_counter == False: # UP, aumentar velocidad linear cada vez que pulsemos cruz hacia arriba
                 self.side_counter = True
