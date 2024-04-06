@@ -129,7 +129,7 @@ class ButtonPublisher(Node):
                 mov.pale_bajar()
             
             elif byte_of_interest == '0800': # START
-                pass # Detiene ejecución
+                diego_putero # Detiene ejecución
 
 def main(args=None):
     
