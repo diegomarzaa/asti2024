@@ -369,7 +369,7 @@ class Movements(Node):
         """
         tiempo: Tiempo que tarda en llegar al objetivo
         """
-        #TODO: REVISAR
+        #TODO: HAY QUE DESCOMENTAR LOS CAMBIOS DE DUTY CYCLE PARA QUE FUNCIONE EL SERVO Y SE MUEVA
         
         if tiempo <= 0:
             step = abs(grados_objetivo - self.servo_current_angle)
