@@ -10,18 +10,19 @@ class Sensors(Node):
         super().__init__('distance_sensor_subscriber')
         
         self.get_sensor_delante_izq_ = self.create_subscription(Float32, '/distance_delante_der', self.callback_delante_der, 10)
+        self.get_sensor_delante_izq_
         self.get_sensor_delante_der_ = self.create_subscription(Float32, '/distance_delante_izq', self.callback_delante_izq, 10)
+        self.get_sensor_delante_der_
 
         self.get_sensor_derecha_ = self.create_subscription(Float32, '/distance_der', self.callback_derecha, 10)
-        self.get_sensor_izquierda_ = self.create_subscription(Float32, '/distance_izq', self.callback_izquierda, 10)
-        
-        self.get_sensor_delante_izq_
-        self.get_sensor_delante_der_
         self.get_sensor_derecha_
+        self.get_sensor_izquierda_ = self.create_subscription(Float32, '/distance_izq', self.callback_izquierda, 10)
         self.get_sensor_izquierda_
+        
         self.distancia_der = 0.0
         self.distancia_izq = 0.0
-        self.distancia_delante = 0.0
+        self.distancia_delante_der = 0.0
+        self.distancia_delante_izq = 0.0
         
     def callback_derecha(self, msg):
         self.distancia_der = msg.data
@@ -41,8 +42,11 @@ class Sensors(Node):
     def get_distancia_izquierda(self):
         return self.distancia_izq
 
-    def get_distancia_delante(self):
-        return self.distancia_delante
+    def get_distancia_delante_der(self):
+        return self.distancia_delante_der
+    
+    def get_distancia_delante_izq(self):
+        return self.distancia_delante_izq
 
 def main(args=None):
     rclpy.init(args=args)
