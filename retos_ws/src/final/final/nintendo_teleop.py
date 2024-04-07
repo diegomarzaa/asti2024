@@ -7,6 +7,10 @@ from rclpy.node import Node
 from geometry_msgs.msg import Twist
 from final.Movements import Movements
 
+# DISPOSITIVO_WIFI = 'wlo1'     # Adrià
+DISPOSITIVO_WIFI = 'wlan0'      # Raspberry
+
+
 class ButtonPublisher(Node):
 
     def __init__(self):
@@ -24,7 +28,7 @@ class ButtonPublisher(Node):
     def run_tcpdump(self, port):
 
         try:
-            comando = ['sudo', 'tcpdump', '-i', 'wlan0', f'port {port}', '-X'] # Comando recibir paquetes
+            comando = ['sudo', 'tcpdump', '-i', DISPOSITIVO_WIFI, f'port {port}', '-X'] # Comando recibir paquetes
             proceso = subprocess.Popen(comando, stdout=subprocess.PIPE, universal_newlines=True) # Lanzar comando
             
             mov = Movements()
