@@ -10,16 +10,22 @@ GPIO_TRIGGERder = 23
 GPIO_ECHOder = 24
 GPIO_TRIGGERizq = 20
 GPIO_ECHOizq = 21
-GPIO_TRIGGERdelante = 5
-GPIO_ECHOdelante = 6
+GPIO_TRIGGERdelante_der = 27
+GPIO_ECHOdelante_der = 22
+GPIO_TRIGGERdelante_izq = 5
+GPIO_ECHOdelante_izq = 6
 
 
 GPIO.setup(GPIO_TRIGGERder, GPIO.OUT)
 GPIO.setup(GPIO_ECHOder, GPIO.IN)
+
 GPIO.setup(GPIO_TRIGGERizq, GPIO.OUT)
 GPIO.setup(GPIO_ECHOizq, GPIO.IN)
-GPIO.setup(GPIO_TRIGGERdelante, GPIO.OUT)
-GPIO.setup(GPIO_ECHOdelante, GPIO.IN)
+
+GPIO.setup(GPIO_TRIGGERdelante_izq, GPIO.OUT)
+GPIO.setup(GPIO_ECHOdelante_izq, GPIO.IN)
+GPIO.setup(GPIO_TRIGGERdelante_der, GPIO.OUT)
+GPIO.setup(GPIO_ECHOdelante_der, GPIO.IN)
 
 
 class DistanceSensorPublisher(Node):
@@ -28,15 +34,19 @@ class DistanceSensorPublisher(Node):
             super().__init__('distance_sensor_publisher')
             self.publisher_der = self.create_publisher(Float32, '/distance_der', 10)
             self.publisher_izq = self.create_publisher(Float32, '/distance_izq', 10)
-            self.publisher_delante = self.create_publisher(Float32, '/distance_delante', 10)
+            self.publisher_delante_der = self.create_publisher(Float32, '/distance_delante_der', 10)
+            self.publisher_delante_izq = self.create_publisher(Float32, '/distance_delante_izq', 10)
+            
             timer_period = 0.2  # seconds
             self.timer = self.create_timer(timer_period, self.timer_callback)
     
         def timer_callback(self):
             distance_der = self.distance(GPIO_TRIGGERder, GPIO_ECHOder)
             distance_izq = self.distance(GPIO_TRIGGERizq, GPIO_ECHOizq)
-            distance_delante = self.distance(GPIO_TRIGGERdelante, GPIO_ECHOdelante)
+            distance_delante_der = self.distance(GPIO_TRIGGERdelante_der, GPIO_ECHOdelante_der)
+            distance_delante_izq = self.distance(GPIO_TRIGGERdelante_izq, GPIO_ECHOdelante_izq)
             
+            # DER
             msg_der = Float32()
             if distance_der is not None and distance_der > 0.0:
                 msg_der.data = distance_der
@@ -46,6 +56,8 @@ class DistanceSensorPublisher(Node):
             #print("Sensor derecha: \t", msg_der.data)
             self.get_logger().info('Sensor derecha: \t"%s"' % msg_der.data)
             
+            
+            # IZQ
             msg_izq = Float32()
             if distance_izq is not None and distance_izq > 0.0:
                 msg_izq.data = distance_izq
@@ -56,14 +68,28 @@ class DistanceSensorPublisher(Node):
             #print("\n")
             self.get_logger().info('Sensor izquierda: \t"%s"' % msg_izq.data)
             
-            msg_delante = Float32()
-            if distance_delante is not None and distance_delante > 0.0:
-                msg_delante.data = distance_delante
+            
+            # DELANTE IZQ
+            msg_delante_izq = Float32()
+            if distance_delante_izq is not None and distance_delante_izq > 0.0:
+                msg_delante_izq.data = distance_delante_izq
             else:
-                msg_delante.data = 0.0
-            self.publisher_delante.publish(msg_delante)
-            #print("Sensor delanta: \t", msg_delante.data)
-            self.get_logger().info('Sensor delante: \t"%s" \n' % msg_delante.data)
+                msg_delante_izq.data = 0.0
+            self.publisher_delante_izq.publish(msg_delante_izq)
+            #print("Sensor delanta: \t", msg_delante_izq.data)
+            self.get_logger().info('Sensor delante: \t"%s" \n' % msg_delante_izq.data)
+            
+            
+            # DELANTE DER
+            msg_delante_der = Float32()
+            if distance_delante_der is not None and distance_delante_der > 0.0:
+                msg_delante_der.data = distance_delante_der
+            else:
+                msg_delante_der.data = 0.0
+            self.publisher_delante_der.publish(msg_delante_der)
+            #print("Sensor delante: \t", msg_delante_der.data)
+            self.get_logger().info('Sensor delante: \t"%s" \n' % msg_delante_der.data)
+    
     
         def distance(self, TRIG, ECHO):
             GPIO.output(TRIG, True)
