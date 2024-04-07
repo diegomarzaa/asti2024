@@ -24,7 +24,7 @@ class ButtonPublisher(Node):
     def run_tcpdump(self, port):
 
         try:
-            comando = ['sudo', 'tcpdump', '-i', 'wlo1', f'port {port}', '-X'] # Comando recibir paquetes
+            comando = ['sudo', 'tcpdump', '-i', 'wlan0', f'port {port}', '-X'] # Comando recibir paquetes
             proceso = subprocess.Popen(comando, stdout=subprocess.PIPE, universal_newlines=True) # Lanzar comando
             
             mov = Movements()
