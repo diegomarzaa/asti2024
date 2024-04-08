@@ -127,9 +127,10 @@ class Movements(Node):
     # ║ MOVIMIENTOS BÁSICOS RUEDAS CON SENSORES ║
     # ╚═════════════════════════════════════════╝
     
-    def detectar_pared(self, sensors):
+    def detectar_pared(self, sensors, dist):
         print(f'Distancia delante: {sensors.distancia_delante} cm')
-        if sensors.get_distancia_delante() < 20:
+        distancias = sensors.get_distancias()
+        if (distancias < dist).any():
             print("Muy cerca de un obstáculo")
             return True
         else:
@@ -157,16 +158,40 @@ class Movements(Node):
             self.girar_izquierda()
         self.detener()
 
-    def avanzar_paralelo_paredes(self, sensors):
-        distancia_der_principio = sensors.get_distancia_derecha()
-        distancia_izq_principio = sensors.get_distancia_izquierda()
-        while True:
-            if sensors.get_distancia_derecha() < distancia_der_principio:
-                self.girar_grados_izq(10)
-            elif sensors.get_distancia_izquierda() < distancia_izq_principio:
-                self.girar_grados_der(10)
+    def avanzar_paralelo_paredes(self, sensors):    # Con trigonometría para enderezarse
+        distancias = sensors.distancias()
+        compar_der = self.comparar_distancias(sensors.get_distancia_derecha(), distancias[3], 0.05)
+        compar_izq = self.comparar_distancias(sensors.get_distancia_izquierda(), distancias[0], 0.05)
+        while not self.detectar_pared(sensors, 0.10):
+            if compar_der:  # TODO: Mirar el radio de curvatura
+                if compar_der == 2: # Nos vamos para la derecha
+                    grados = sensors.get_distancia_delante_der() / sensors.get_distancia_derecha() 
+                    self.girar_grados_izq(grados)
+                else: # Nos vamos para la izquierda
+                    grados = sensors.get_distancia_delante_izq() / sensors.get_distancia_izquierda()
+                    self.girar_grados_der(grados)   
+            elif compar_izq:    # TODO No es necesario del todo, pero sirve para asegurar
+                if compar_izq == 2: # Nos vamos para la izquierda
+                    grados = sensors.get_distancia_delante_izq() /sensors.get_distancia_izquierda()
+                    self.girar_grados_der(grados) 
+                elif compar_der == 1:
+                    grados = sensors.get_distancia_delante_der() / sensors.get_distancia_derecha() 
+                    self.girar_grados_izq(grados)
             else:
                 self.avanzar()
+                
+    def comparar_distancias(self, distancia1, distancia2, error=0.1):
+        """
+        Sirve para comparar distancias con un límite de error
+        Return: 0 si son iguales, 1 si distancia1 es mayor, 2 si distancia2 es mayor
+        """
+        diferencia = distancia2 - distancia1
+        if diferencia > error:
+            return 2
+        elif abs(diferencia) < error:
+            return 0
+        else:
+            return 1
     
     # SCALLBACK
         

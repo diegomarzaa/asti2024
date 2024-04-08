@@ -34,6 +34,7 @@ def pruebas(mov, sensors):
   print("Pruebas")
   mov.detectar_pared(sensors)
 
+
 def ejecutar_laberinto(mov, sensors, opcion_menu):
   if opcion_menu == '1':
     pruebas(mov, sensors)
