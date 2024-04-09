@@ -127,7 +127,7 @@ class Movements(Node):
     # ║ MOVIMIENTOS BÁSICOS RUEDAS CON SENSORES ║
     # ╚═════════════════════════════════════════╝
     
-    def detectar_pared(self, sensors, dist):
+    def detectar_pared(self, sensors, dist = 20):
         print(f'Distancia delante: {sensors.distancia_delante} cm')
         distancias = sensors.get_distancias()
         if (distancias < dist).any():
@@ -162,7 +162,7 @@ class Movements(Node):
         distancias = sensors.distancias()
         compar_der = self.comparar_distancias(sensors.get_distancia_derecha(), distancias[3], 0.05)
         compar_izq = self.comparar_distancias(sensors.get_distancia_izquierda(), distancias[0], 0.05)
-        while not self.detectar_pared(sensors, 0.10):
+        while self.detectar_pared(sensors, 0.10):
             if compar_der:  # TODO: Mirar el radio de curvatura
                 if compar_der == 2: # Nos vamos para la derecha
                     grados = sensors.get_distancia_delante_der() / sensors.get_distancia_derecha() 
@@ -179,7 +179,28 @@ class Movements(Node):
                     self.girar_grados_izq(grados)
             else:
                 self.avanzar()
+            distancias = sensors.distancias()
+            compar_der = self.comparar_distancias(sensors.get_distancia_derecha(), distancias[3], 0.05)
+            compar_izq = self.comparar_distancias(sensors.get_distancia_izquierda(), distancias[0], 0.05)
+        self.detener()
                 
+    def avanzar_derecha(self, sensors):
+        """
+        Se mantiene a la derecha
+        """
+        distancias = sensors.distancias()
+        compar_der = self.comparar_distancias(sensors.get_distancia_derecha(), distancias[3], 0.5)
+        while self.detectar_pared(sensors, 0.05):
+            if compar_der:
+                if compar_der == 2: # No hay nada en el lado
+                    self.girar_grados(90, 0.3)  # Girar 90 grados con un radio de 30 cm
+                    if sensors.get_distancia_delante < 0.5 and sensors.get_distancia_derecha() < 0.1: # TODO Comprobar valores
+                        self.girar_grados(90, 0.2)
+            else:
+                self.avanzar()
+            distancias = sensors.distancias()
+            compar_der = self.comparar_distancias(sensors.get_distancia_derecha(), distancias[3], 0.5)
+        self.detener()
     def comparar_distancias(self, distancia1, distancia2, error=0.1):
         """
         Sirve para comparar distancias con un límite de error
