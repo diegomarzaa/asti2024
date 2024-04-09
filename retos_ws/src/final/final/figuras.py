@@ -186,8 +186,8 @@ class Figura(Node):
                 self.seleccion = True
 
             # Display image
-            cv2.imshow("camera", img)
-            cv2.waitKey(1)
+            #cv2.imshow("camera", img)
+            #cv2.waitKey(1)
 
         else:
             print("Opcion no valida, 'q' para salir")
@@ -232,11 +232,11 @@ class Figura(Node):
 
         # Si el polígono aproximado tiene entre 9 y 10 lados, es una estrella.
         elif len(approximate) >= 9 and len(approximate) <= 10:
-            shape = 'estrella'
+            shape = 'ESTRELLA'
             self.formas["ESTRELLA"] += 1
         # Si el polígono aproximado tiene entre 7 y 8 lados, es un círculo.
         elif 7 <= len(approximate) <= 8:
-            shape = 'circulo'
+            shape = 'CIRCULO'
             self.formas["CIRCULO"] += 1
         # En cualquier otro caso, se considera un cilindro.
         else:
