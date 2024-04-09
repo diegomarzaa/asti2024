@@ -1,0 +1,26 @@
+[
+    [
+        "avanzar_distancia",
+        [
+            0.4
+        ],
+        {}
+    ],
+    [
+        "girar_grados_der",
+        [
+            20.0
+        ],
+        {}
+    ],
+    [
+        "retroceder",
+        [],
+        {}
+    ],
+    [
+        "detener",
+        [],
+        {}
+    ]
+]

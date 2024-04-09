@@ -5,7 +5,7 @@ from geometry_msgs.msg import Twist
 from final.Sensors import Sensors
 try:
     import RPi.GPIO as GPIO
-    GPIO_ENABLED = False
+    GPIO_ENABLED = True
 except ImportError:
     print("RPi.GPIO not available")
     GPIO_ENABLED = False
