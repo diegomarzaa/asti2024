@@ -7,6 +7,10 @@ from rclpy.node import Node
 from geometry_msgs.msg import Twist
 from final.Movements import Movements
 
+# DISPOSITIVO_WIFI = 'wlo1'     # Adrià
+DISPOSITIVO_WIFI = 'wlan0'      # Raspberry
+
+
 class ButtonPublisher(Node):
 
     def __init__(self):
@@ -24,7 +28,7 @@ class ButtonPublisher(Node):
     def run_tcpdump(self, port):
 
         try:
-            comando = ['sudo', 'tcpdump', '-i', 'wlo1', f'port {port}', '-X'] # Comando recibir paquetes
+            comando = ['sudo', 'tcpdump', '-i', DISPOSITIVO_WIFI, f'port {port}', '-X'] # Comando recibir paquetes
             proceso = subprocess.Popen(comando, stdout=subprocess.PIPE, universal_newlines=True) # Lanzar comando
             
             mov = Movements()
@@ -55,21 +59,6 @@ class ButtonPublisher(Node):
             byte_of_interest = bytes_str[:4] # Bytes de interés son los dos siguientes
             
             if byte_of_interest == '0000' and self.counter == 0: # Print de primer paquete recibido
-                print('\n\n░░░░░░░░░░░░░░░░░░░░░░█████████░░░░░░░░░')
-                print('░░███████░░░░░░░░░░███▒▒▒▒▒▒▒▒███░░░░░░░')
-                print('░░█▒▒▒▒▒▒█░░░░░░░███▒▒▒▒▒▒▒▒▒▒▒▒▒███░░░░')
-                print('░░░█▒▒▒▒▒▒█░░░░██▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒██░░')
-                print('░░░░█▒▒▒▒▒█░░░██▒▒▒▒▒██▒▒▒▒▒▒██▒▒▒▒▒███░')
-                print('░░░░░█▒▒▒█░░░█▒▒▒▒▒▒████▒▒▒▒████▒▒▒▒▒▒██')
-                print('░░░█████████████▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒██')
-                print('░░░█▒▒▒▒▒▒▒▒▒▒▒▒█▒▒▒▒▒▒▒▒▒█▒▒▒▒▒▒▒▒▒▒▒██')
-                print('░██▒▒▒▒▒▒▒▒▒▒▒▒▒█▒▒▒██▒▒▒▒▒▒▒▒▒▒██▒▒▒▒██')
-                print('██▒▒▒███████████▒▒▒▒▒██▒▒▒▒▒▒▒▒██▒▒▒▒▒██')
-                print('█▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒█▒▒▒▒▒▒████████▒▒▒▒▒▒▒██')
-                print('██▒▒▒▒▒▒▒▒▒▒▒▒▒▒█▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒██░')
-                print('░█▒▒▒███████████▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒██░░░')
-                print('░██▒▒▒▒▒▒▒▒▒▒████▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒█░░░░░')
-                print('░░████████████░░░█████████████████░░░░░░')
                 print('\n##########')
                 print('# START! #')
                 print('##########\n')
@@ -86,7 +75,7 @@ class ButtonPublisher(Node):
                 msg = Twist()
                 msg.angular.z = 0.0
                 
-                for i in range(10):
+                for i in range(5):
                     msg.linear.x = self.x
                     self.x += 0.1
                     print(f'x: {self.x}')
@@ -101,7 +90,7 @@ class ButtonPublisher(Node):
                 msg = Twist()
                 msg.angular.z = 0.0
                 
-                for i in range(10):
+                for i in range(5):
                     msg.linear.x = self.x
                     self.x -= 0.1
                     print(f'x: {self.x}')
@@ -154,7 +143,7 @@ class ButtonPublisher(Node):
                 self.publisher_.publish(msg)
                 
 
-            elif byte_of_interest == '4000' and self.x <= 2.0 and self.side_counter == False: # UP, aumentar velocidad linear cada vez que pulsemos cruz hacia arriba
+            elif byte_of_interest == '4000' and self.x <= 0.6 and self.side_counter == False: # UP, aumentar velocidad linear cada vez que pulsemos cruz hacia arriba
                 self.side_counter = True
                 self.x += 0.1
                 self.tupla = (self.x, self.y)
@@ -164,7 +153,7 @@ class ButtonPublisher(Node):
                 self.publisher_.publish(msg)
                 print('up')
                     
-            elif byte_of_interest == '8000' and self.x >= -2.0 and self.side_counter == False: # DOWN, disminuir velocidad linear cada vez que pulsemos cruz hacia abajo
+            elif byte_of_interest == '8000' and self.x >= -0.6 and self.side_counter == False: # DOWN, disminuir velocidad linear cada vez que pulsemos cruz hacia abajo
                 self.side_counter = True
                 self.x -= 0.1
                 self.tupla = (self.x, self.y)
@@ -174,7 +163,7 @@ class ButtonPublisher(Node):
                 self.publisher_.publish(msg)
                 print('down')
                    
-            elif byte_of_interest == '2000' and self.y <= 2.0 and self.side_counter == False: # LEFT, aumentar velocidad angular izquierda cada vez que pulsemos cruz hacia izquierda
+            elif byte_of_interest == '2000' and self.y <= 1.5 and self.side_counter == False: # LEFT, aumentar velocidad angular izquierda cada vez que pulsemos cruz hacia izquierda
                 self.side_counter = True
                 self.y += 0.1
                 self.tupla = (self.x, self.y)
@@ -184,7 +173,7 @@ class ButtonPublisher(Node):
                 self.publisher_.publish(msg)
                 print('left')
                     
-            elif byte_of_interest == '1000' and self.y >= -2.0 and self.side_counter == False: # RIGHT, aumentar velocidad angular derecha cada vez que pulsemos cruz hacia derecha
+            elif byte_of_interest == '1000' and self.y >= -1.5 and self.side_counter == False: # RIGHT, aumentar velocidad angular derecha cada vez que pulsemos cruz hacia derecha
                 self.side_counter = True
                 self.y -= 0.1
                 self.tupla = (self.x, self.y)

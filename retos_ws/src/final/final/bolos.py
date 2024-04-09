@@ -57,9 +57,12 @@ def main(args=None):
     if opcion_menu == 'q':
       break
     
+    # EJECUCIÓN
     bolos.posicionarse_patras()
     bolos.lanzar_mientras_retrocede()
     
+    
+    # AJUSTES
     distancia_inicial_calib = input(f"\nDistancia inicial actual: {bolos.distancia_inicial} m.\nNueva distancia inicial (Enter para omitir): ")
     if distancia_inicial_calib:
       bolos.distancia_inicial = float(distancia_inicial_calib)
