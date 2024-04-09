@@ -35,7 +35,7 @@ network:
 
 1. Conectar raspberry a la corriente / batería.
 2. Entrar en la raspberry con ssh desde otro portátil conectado a la misma red wifi.
-  - `ssh -X pi@192.168.245.104`           (`ssh -X pi@192.168.0.114` antes era este pero ya no)
+  - `ssh -X pi@192.168.113.22`            `ssh -X pi@192.168.245.104`           (`ssh -X pi@192.168.0.114` antes era este pero ya no)
   - Contraseña: `qwerty`
   - La red wifi puede ser el router PIROBOTNET o los datos de cualquier móvil ya configurado.
   - Para conectarlo a los datos de un móvil o red no configurada, habría que hacerlo desde la interfaz gráfica de la raspberry, conectando un teclado, ratón y monitor... O conectando cable ethernet.
