@@ -53,6 +53,10 @@ def main(args=None):
   bolos = Bolos()
   
   while True:
+    input("Enter para posicionar el servo en la posición inicial (mantener proyectil)")
+
+    bolos.mov.bolos_mantener()
+    
     opcion_menu = input("Enter para iniciar el lanzamiento de bolos (q para salir): ")
     if opcion_menu == 'q':
       break
