@@ -4,7 +4,7 @@
 import rclpy
 import time
 from math import pi
-from final.Movements import Movements     # Contiene los angulos de la herramienta
+from final.Movements import Movements, Servo     # Contiene los angulos de la herramienta
 
 SLEEP_TIME_BOLI = 1
 SLEEP_MOV = 0.1
@@ -38,10 +38,10 @@ def get_figure_params(opcion_menu):
 
 
 
-def dibujar_figura(mov:Movements, opcion_menu):
+def dibujar_figura(mov, servo, opcion_menu):
   angulo, largo, ancho, lados = get_figure_params(opcion_menu)
   
-  mov.boli_bajar()
+  servo.boli_bajar()
   
   for i in range(lados):
     if i % 2:
@@ -51,26 +51,27 @@ def dibujar_figura(mov:Movements, opcion_menu):
     
     print(f"Moviendo hacia adelante (pintando), distancia: {distancia}")
     mov.avanzar_distancia(distancia)
-    mov.boli_subir(prints=True)
+    servo.boli_subir(prints=True)
     time.sleep(SLEEP_TIME_BOLI)
 
-    print(f"Avanzando para corregir (sin pintar) (DIST_BOLI_CENTRO)")
+    print(f"Avanzando para corregir (sin pintar) {DIST_BOLI_CENTRO}")
     mov.avanzar_distancia(DIST_BOLI_CENTRO)
 
     print(f"Girando {angulo} grados")
     mov.girar_grados_der(angulo)
 
-    print("Moviendo hacia atras (sin pintar), (DIST_BOLI_CENTRO)")
+    print("Moviendo hacia atras (sin pintar), {DIST_BOLI_CENTRO}")
     mov.retroceder_distancia(DIST_BOLI_CENTRO)
 
     print("Bajando boli")
-    mov.boli_bajar(prints=True)
+    servo.boli_bajar(prints=True)
 
 
 
 def main():
   rclpy.init(args=None)
   mov = Movements()
+  servo = Servo()
           
   mov.actualizar_vel_lineal(VELOCIDAD_LINEAL)
   mov.actualizar_vel_angular(VELOCIDAD_ANGULAR)
@@ -88,10 +89,10 @@ def main():
     # OPCIONES
     
     if opcion_menu in ['1', '2', '3']:  # Triangulo, cuadrado, rectangulo
-      dibujar_figura(mov, opcion_menu)
+      dibujar_figura(mov, servo, opcion_menu)
       
     elif opcion_menu == 'c':
-      mov.ver_angulos_herramienta()
+      servo.ver_angulos_herramienta()
       
     elif opcion_menu == 'q':
       break
