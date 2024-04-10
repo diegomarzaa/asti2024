@@ -7,7 +7,7 @@ from rclpy.node import Node
 from geometry_msgs.msg import Twist
 from final.Movements import Movements, Servo
 
-# DISPOSITIVO_WIFI = 'wlo1'     # Adrià
+#DISPOSITIVO_WIFI = 'wlo1'     # Adrià
 DISPOSITIVO_WIFI = 'wlan0'      # Raspberry
 
 
@@ -184,6 +184,44 @@ class ButtonPublisher(Node):
                 msg.angular.z = self.tupla[1]
                 self.publisher_.publish(msg)
                 print('right')
+            
+            elif byte_of_interest == '0008' and self.side_counter == False:
+                self.side_counter = True
+                self.y = -0.5
+                self.x = 0.0
+                self.tupla = (self.x, self.y)
+                msg = Twist()
+                msg.linear.x = self.tupla[0]
+                msg.angular.z = self.tupla[1]
+                self.publisher_.publish(msg)
+                sleep(0.5)
+                self.y = 0.0
+                self.x = 0.0
+                self.tupla = (self.x, self.y)
+                msg = Twist()
+                msg.linear.x = self.tupla[0]
+                msg.angular.z = self.tupla[1]
+                self.publisher_.publish(msg)
+                print('Y')
+                
+            elif byte_of_interest == '0400' and self.side_counter == False:
+                self.side_counter = True
+                self.y = 0.5
+                self.x = 0.0
+                self.tupla = (self.x, self.y)
+                msg = Twist()
+                msg.linear.x = self.tupla[0]
+                msg.angular.z = self.tupla[1]
+                self.publisher_.publish(msg)
+                sleep(0.5)
+                self.y = 0.0
+                self.x = 0.0
+                self.tupla = (self.x, self.y)
+                msg = Twist()
+                msg.linear.x = self.tupla[0]
+                msg.angular.z = self.tupla[1]
+                self.publisher_.publish(msg)
+                print('SELECT')
             
             elif byte_of_interest == '0001': # R, sube pale al pulsar botón R
                 print('R')
