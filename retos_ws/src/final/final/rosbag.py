@@ -1,6 +1,6 @@
 import rclpy
 import time
-from final.Movements import Movements, get_movements
+from final.Movements import Movements, Servo, get_servo_movements, get_movements
 import os
 import glob
 import inspect
@@ -29,8 +29,10 @@ class MovementSaver():
         self.fileName = f"movements_{time.strftime('%Y-%m-%d_%H-%M-%S')}.txt"
         self.pathName = self.get_path(self.fileName)
         self.mover = Movements()
+        self.servo = Servo()
         
         self.actions = get_movements()
+        self.actions_servo = get_servo_movements()
         
         self.action_playing = None
         self.last_action = None
@@ -124,6 +126,14 @@ class MovementSaver():
                 print(CYAN + f"\t{key}\t{value[0]}({', '.join(value[1])})" + RESET)
             else:
                 print(f"\t{key}\t{value[0]}({', '.join(value[1])})")
+                
+        for key, value in self.actions_servo.items():
+            if value[0] == self.action_playing:
+                print(BLUE + f"\t{key}\t{value[0]}({', '.join(value[1])})" + RESET)
+            if value[0] == self.last_action:
+                print(CYAN + f"\t{key}\t{value[0]}({', '.join(value[1])})" + RESET)
+            else:
+                print(f"\t{key}\t{value[0]}({', '.join(value[1])})")
 
 
 
@@ -188,12 +198,12 @@ def main(args=None):
             
         
         # EJECUCIÓN DE ACCIONES
-
-        elif choice not in saver.actions:
-            print(f"Invalid choice. Try again.")
+        if choice in saver.actions:
+            action_name, params_required, params_optional = saver.actions[choice]
+        elif choice in saver.actions_servo:
+            action_name, params_required, params_optional = saver.actions_servo[choice]
+        else:
             continue
-        
-        action_name, params_required, params_optional = saver.actions[choice]
             
         args = []       # Required parameters
         kwargs = {}     # Optional parameters
@@ -238,7 +248,10 @@ def main(args=None):
         print('MOVEMENTS:', saver.actions_to_do)
         
         # Execute the chosen action
-        getattr(saver.mover, action_name)(*args, **kwargs)
+        try:
+            getattr(saver.mover, action_name)(*args, **kwargs)
+        except:
+            getattr(saver.servo, action_name)(*args, **kwargs)
         saver.last_action = action_name
         saver.action_playing = None
         

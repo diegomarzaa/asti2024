@@ -34,15 +34,20 @@ def get_movements():
         "b": ('actualizar_vel_angular', ['max_angular_vel'], []),
         "vv": ('actualizar_acc_lineal', ['linear_acc'], []),
         "bb": ('actualizar_acc_angular', ['angular_acc'], []),
-        "13": ('boli_subir', [], []),
-        "14": ('boli_bajar', [], []),
-        "15": ('bolos_soltar', [], []),
-        "16": ('bolos_mantener', [], []),
-        "17": ('pale_subir', [], []),
-        "18": ('pale_bajar', [], []),
-        "ca": ('ver_angulos_herramienta', [], []),
     }
     return actions
+    
+def get_servo_movements():
+    actions_servo = {       # TODO
+        "ñw": ('boli_subir', [], []),
+        "ñs": ('boli_bajar', [], []),
+        "lw": ('bolos_soltar', [], []),
+        "ls": ('bolos_mantener', [], []),
+        "pw": ('pale_subir', [], []),
+        "ps": ('pale_bajar', [], []),
+        "ca": ('ver_angulos_herramienta', [], []),
+    }
+    return actions_servo
 
 class Servo():
     def __init__(self):
