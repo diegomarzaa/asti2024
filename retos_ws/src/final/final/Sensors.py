@@ -52,10 +52,10 @@ class Sensors(Node):
         """
         Return: tupla izquierda, delante_izq, delante_der, derecha
         """
-        izquierda = get_distancia_izquierda()
-        delante_izq = get_distancia_delante_izq()
-        delante_der = get_distancia_delante_der()
-        derecha = get_distancia_derecha()
+        izquierda = self.get_distancia_izquierda()
+        delante_izq = self.get_distancia_delante_izq()
+        delante_der = self.get_distancia_delante_der()
+        derecha = self.get_distancia_derecha()
         return (izquierda, delante_izq, delante_der, derecha)
 
 def main(args=None):
