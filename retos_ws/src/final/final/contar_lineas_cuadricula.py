@@ -157,23 +157,23 @@ class LineaPublisher(Node):
             
             
 # Intersección a izquierda
-            if (self.matrix[:, 0] == 1).any() and (self.matrix[:,3].all() == 1 or self.matrix[:,4].all() == 1) and self.h:
+            if (self.matrix[:, 0] == 1).any() and (self.matrix[:,3].all() == 1 or self.matrix[:,4].all() == 1) and self.h:  # TODO: Ajustable
                 self.estacionado = False
                 self.giro = 'interizq'
                 if self.estado != 'interizq' and self.count >= 15:
                     self.puntos_h -= 1
-                    self.count = 0
+                    self.count = 0      # No contar 2 veces una intersección
                 self.estado = 'interizq'
-                if self.puntos_h > 0:
-                    self.tupla = (0.3, 0.0)
+                if self.puntos_h > 0:  # Modificar velocidad y reducirla antes del último punto
+                    self.tupla = (0.5, 0.0) 
                 elif self.puntos_h == 0:
-                    self.estado = None
+                    self.estado = None      # No envia datos a los motores
                     if self.puntos_v > 0:
                         self.mov.girar_grados_der(90)
                     else:
                         self.mov.girar_grados_izq(90)
                 else:
-                    self.h = False
+                    self.h = False  # Para no tener que entrar de nuevo al bucle
                     
                     
                             
