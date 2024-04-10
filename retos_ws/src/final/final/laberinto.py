@@ -7,19 +7,14 @@ from math import pi, atan
 from final.Movements import Movements
 from final.Sensors import Sensors
 
-DISTANCIA_TABLERO_COL = 1.2   # Suma de las distancias de las columnas
-DISTANCIA_TABLERO_FILA = 1.05 # Suma de las distancias de las filas
-
-COL_NUM = [0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15]
-COL_LETRAS = [0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15]
-
-FILA_NUM = [0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15]
-FILA_LETRAS = [0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15]
+FACTOR = 2
 
 opciones = {
   '1': 'Pruebas',
-  'm': 'Mostrar coordenadas',
-  'a': 'Prueba de movimiento',
+  '2': 'Prueba mano derecha (opción 1)',
+  '3': 'Prueba paralelo a paredes (opción 2)',
+  '4': 'Prueba de laberinto básico (opción 3)',
+  '5': 'Programa principal (sin acabar)',
   'q': 'Salir'
 }
 
@@ -34,18 +29,60 @@ def pruebas(mov, sensors):
   print("Pruebas")
   mov.detectar_pared(sensors)
 
+def basico(mov, sensors):
+    distancias = sensors.distancias()
+    if distancias[1] > 0.1 and distancias[2] > 0.1:
+        if round(distancia[3],1) < 0.10:    # Demasiado cerca de la paredes
+            mov.girar_izq(10)
+        elif round(distancia[3], 1) > 0.1 and distancia[3] < 0.3:
+            mov.girar_der(8)
+        else:
+            mov.avanzar()
+        if distancia[3] > 0.3:
+            mov.girar_grados_der(90)
+    else:
+        while round(distancias[2], 1) == round(distancias[1], 1) and distancias[1] < 0.5:
+            mov.actualizar_vel_lineal(0.0)
+            mov.actualizar_vel_angular(-0.1)
+            distancias = sensors.distancias()
+        mov.actualizar_vel_lineal(0.3)
+        mov.actualizar_vel_angular(0.0)
+            
+    
+def paralelo_paredes(mov, sensors): # Cambia el valor de las ruedas según la distancia a las paredes 
+    distancias = sensors.distancias()
+    diferencia = distancia[3] - distancia[0] # distancia entre derecha e izquierda
+    if distancia[2] < 0.05 and distancia[1] < 0.05:
+        while round(distancias[2], 1) == round(distancias[1], 1) and distancias[1] < 0.5:
+            mov.actualizar_vel_lineal(0.0)
+            mov.actualizar_vel_angular(-0.1)
+            distancias = sensors.distancias()
+        mov.actualizar_vel_lineal(0.3)
+        mov.actualizar_vel_angular(0.0)
+    if abs(diferencia) < 0.3:
+        mov.actualizar_vel_angular(diferencia/FACTOR)    # Revisar signo y factor
+    elif diferencia > 0:                            # Camino derecha
+        mov.girar_grados_der(90, 0.2)
+    elif distancia[1] < 0.3 and diferencia < 0:     # Única posibilida izquierda
+        mov.girar_grados_izq(90, 0.2)
+    else:
+        mov.girar_grados_der(180)
+
+def mano_derecho(mov, sensors):
+    mov.avanzar_derecha(mov, sensors)
+
 
 def ejecutar_laberinto(mov, sensors, opcion_menu):
   if opcion_menu == '1':
     pruebas(mov, sensors)
   elif opcion_menu == '2':
-    pass
+    mano_derecha(mov, sensors)
   elif opcion_menu == '3':
-    pass
+    paralelo_paredes(mov, sensors)
   elif opcion_menu == '4':
-    pass
+    basico(mov, sensors)
   elif opcion_menu == '5':
-    pass
+    main()
   elif opcion_menu == '6':
     pass
   else:
@@ -58,6 +95,7 @@ def main():
   sensors = Sensors()
   mov.actualizar_vel_lineal(0.4)
   mov.actualizar_vel_angular(0.2)
+  
   
   while rclpy.ok():
     opcion_menu = pedir_opcion_menu()
