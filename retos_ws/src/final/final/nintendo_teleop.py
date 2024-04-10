@@ -223,11 +223,13 @@ class ButtonPublisher(Node):
                 self.publisher_.publish(msg)
                 print('SELECT')
             
-            elif byte_of_interest == '0001': # R, sube pale al pulsar botón R
+            elif byte_of_interest == '0001' and self.side_counter == False: # R, sube pale al pulsar botón R
+                self.side_counter = True
                 print('R')
                 self.servo.pale_subir()
                 
-            elif byte_of_interest == '0002': # L, baja pale al pulsar botón L
+            elif byte_of_interest == '0002' and self.side_counter == False: # L, baja pale al pulsar botón L
+                self.side_counter = True
                 print('L')
                 self.servo.pale_bajar()
             
