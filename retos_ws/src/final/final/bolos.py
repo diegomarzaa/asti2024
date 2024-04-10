@@ -127,7 +127,9 @@ def main(args=None):
 
     print("Lanzando los bolos mientras retrocede")
     bolos.mov.actualizar_vel_lineal(bolos.vel_lanzamiento)
+    bolos.mov.retroceder_distancia(bolos.distancia_final/2, aceleracion=False)
     bolos.bolos_soltar()
-    bolos.mov.retroceder_distancia(bolos.distancia_final, aceleracion=False)
+    bolos.mov.retroceder_distancia(bolos.distancia_final/2, aceleracion=False)
+    
     
   rclpy.shutdown()
