@@ -20,10 +20,10 @@ class Bolos(Node):
     
     self.servo = Servo()
     
-    self.grados_bolos_mantener = 0
-    self.grados_bolos_soltar = 50
-    self.tiempo_bolos_mantener = 0.5
-    self.tiempo_bolos_soltar = 1          # TODO: MODIFICAR ESTO, BAJAR NUMERO
+    self.grados_bolos_mantener = 0.0
+    self.grados_bolos_soltar = 50.0
+    self.tiempo_bolos_mantener = 0.2
+    self.tiempo_bolos_soltar = 0.2          # TODO: MODIFICAR ESTO, BAJAR NUMERO
     
 
   def bolos_soltar(self):

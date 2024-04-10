@@ -54,16 +54,16 @@ class Servo():
         # Grados
         self.servo_current_angle = 0.0
         
-        self.grados_boli_alto = 20.0     # TODO: Cambiar a valor correcto para cada prueba
-        self.grados_boli_bajo = -20.0     
+        self.grados_boli_alto = 15.0     # TODO: Cambiar a valor correcto para cada prueba
+        self.grados_boli_bajo = 0.0     
         self.grados_bolos_soltar = 50.0
         self.grados_bolos_mantener = 0.0
-        self.grados_pale_alto = 10.0        # TODO: Cambiar
-        self.grados_pale_bajo = -10.0
+        self.grados_pale_alto = 0.0       # TODO: Cambiar
+        self.grados_pale_bajo = 0.0
     
         # Tiempos
-        self.tiempo_boli_subir = 1.5
-        self.tiempo_boli_bajar = 1.5
+        self.tiempo_boli_subir = 0.1
+        self.tiempo_boli_bajar = 0.1
         
         self.tiempo_bolos_soltar = 0.1
         self.tiempo_bolos_mantener = 0.5

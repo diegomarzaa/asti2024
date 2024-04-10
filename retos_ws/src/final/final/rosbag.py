@@ -98,7 +98,7 @@ class MovementSaver():
         
         # RECORDING
         if not self.recording:
-            print(GREEN + "\t1\tStart recording movements" + RESET)
+            print(GREEN + "\t1\tStart recording movements  (1ñ to record them without reproducing)" + RESET)
         else:
             print(RED + "\t1\tStop recording movements" + RESET)
         
@@ -164,7 +164,7 @@ def main(args=None):
         
         # RECORDING
         
-        if choice == "1":
+        if choice == "1" or choice == "1ñ":
             saver.recording = not saver.recording
             saver.selecting = False
             if saver.recording:
@@ -173,7 +173,6 @@ def main(args=None):
                 print("Recording stopped.")
                 saver.save_inscript()
             continue
-
 
         # EJECUCIÓN DE MOVIMIENTOS
 
@@ -248,10 +247,14 @@ def main(args=None):
         print('MOVEMENTS:', saver.actions_to_do)
         
         # Execute the chosen action
-        try:
-            getattr(saver.mover, action_name)(*args, **kwargs)
-        except:
-            getattr(saver.servo, action_name)(*args, **kwargs)
+        # TODO: DONT EXECUTE IF RECORDING OPTION IS 1ñ
+        if choice != "1ñ":
+            try:
+                getattr(saver.mover, action_name)(*args, **kwargs)
+            except:
+                getattr(saver.servo, action_name)(*args, **kwargs)
+        else:
+            print("Movement recorded.")
         saver.last_action = action_name
         saver.action_playing = None
         
