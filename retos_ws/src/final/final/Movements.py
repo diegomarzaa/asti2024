@@ -7,7 +7,7 @@ try:
     import RPi.GPIO as GPIO
     GPIO_ENABLED = True
 except ImportError:
-    print("RPi.GPIO not available")
+    print("RPi.GPIO no encontrada en el sistema")
     GPIO_ENABLED = False
 
     
@@ -43,6 +43,162 @@ def get_movements():
         "ca": ('ver_angulos_herramienta', [], []),
     }
     return actions
+
+class Servo():
+    def __init__(self):
+        # Grados
+        self.servo_current_angle = 0.0
+        
+        self.grados_boli_alto = 20.0     # TODO: Cambiar a valor correcto para cada prueba
+        self.grados_boli_bajo = -20.0     
+        self.grados_bolos_soltar = 50.0
+        self.grados_bolos_mantener = 0.0
+        self.grados_pale_alto = 10.0        # TODO: Cambiar
+        self.grados_pale_bajo = -10.0
+    
+        # Tiempos
+        self.tiempo_boli_subir = 1.5
+        self.tiempo_boli_bajar = 1.5
+        
+        self.tiempo_bolos_soltar = 0.1
+        self.tiempo_bolos_mantener = 0.5
+        
+        self.tiempo_pale_subir = 2.5
+        self.tiempo_pale_bajar = 2
+        
+        try:
+            self.setup_servo()
+        except:
+            print("RPi.GPIO no conectada correctamente")
+            global GPIO_ENABLED
+            GPIO_ENABLED = False
+                
+    def setup_servo(self):
+        self.PIN_SERVO = 11
+        GPIO.setmode(GPIO.BOARD)
+        GPIO.setup(self.PIN_SERVO, GPIO.OUT)
+        self.servo = GPIO.PWM(self.PIN_SERVO, 50)  # 50Hz pulse for servo
+        self.servo.start(0)
+        
+
+            
+    # ╔═════════════════════════════╗
+    # ║       TOOL FUNCTIONS        ║
+    # ╚═════════════════════════════╝
+
+    def herramienta_girar(self, grados_objetivo, tiempo=0):
+        """
+        tiempo: Tiempo que tarda en llegar al angulo objetivo (opcional)
+        """
+        
+        if tiempo <= 0:
+            step = abs(grados_objetivo - self.servo_current_angle)
+            delay = 0
+        else:
+            step = abs(grados_objetivo - self.servo_current_angle) / (tiempo / 0.05)
+            delay = 0.05
+            
+        direction = 1 if grados_objetivo > self.servo_current_angle else -1     # Evitamos que el servo gire en sentido contrario
+
+        # Gradually move the servo to the target angle
+        while abs(self.servo_current_angle - grados_objetivo) > step:
+            self.servo_current_angle += direction * step
+            duty_cycle = self.servo_angle_to_duty_cycle(self.servo_current_angle)
+            self.servo.ChangeDutyCycle(duty_cycle)                                      if GPIO_ENABLED else None
+            print(f"Moving angle: {self.servo_current_angle}")
+            time.sleep(delay)
+            
+        self.servo_current_angle = grados_objetivo
+        duty_cycle = self.servo_angle_to_duty_cycle(self.servo_current_angle)
+        self.servo.ChangeDutyCycle(duty_cycle)                                        if GPIO_ENABLED else None
+        print(f"Final angle: {self.servo_current_angle}")
+        # time.sleep(0.5)
+        # self.servo.ChangeDutyCycle(0)                                                 if GPIO_ENABLED else None
+
+    
+    def ver_angulos_herramienta(self):
+        """
+        Funcion que va pidiendo angulos.
+        Permite que el usuario introduzca un ángulo para observar en la herramienta.
+        El ángulo debe estar entre 0 y 180 grados.
+        El usuario también puede introducir un tiempo para llegar al ángulo.
+        Si no se especifica un tiempo, se utilizará un valor predeterminado de 2 segundos.
+        """
+
+        while True:
+            print(f"Ángulo actual: {self.servo_current_angle}")
+            angle_sent = input("Introduce un ángulo para observar en la herramienta (Entre 0 y 180), Enter para salir: ")
+            if angle_sent == "":
+                break
+            angle_sent = float(angle_sent)
+            if angle_sent < 0 or angle_sent > 180:
+                print("El ángulo debe estar entre 0 y 180 grados.")
+                continue
+            tiempo_sent = input("Introduce un tiempo para llegar al ángulo (0 o enter para llegar directamente): ")
+            if tiempo_sent == "":
+                tiempo_sent = 2   # 2 segundos por seguridad
+            else:
+                tiempo_sent = float(tiempo_sent)
+            self.herramienta_girar(angle_sent, tiempo=tiempo_sent)     # Dar tiempo a reaccionar y que no se rompa algo otra vez
+            self.servo_current_angle = angle_sent
+
+
+
+    def servo_angle_to_duty_cycle(self, angle):
+        """Convert an angle to the suitable duty cycle."""
+        return 2 + (angle / 18)
+    
+    def change_duty_cycle(self, duty_cycle, prints=False):
+        """
+        Change the duty cycle of the servo.
+        Args:
+            duty_cycle (float): The duty cycle value.
+            prints (bool, optional): If True, only print the duty cycle value without making any changes. Defaults to False.
+        """
+        if prints:
+            print(f"Changing duty cycle to: {duty_cycle}")
+        else:
+            # Uncomment the following line to actually change the duty cycle
+            # self.servo.ChangeDutyCycle(duty_cycle)
+            print(f"Changing duty cycle to: {duty_cycle}")
+
+
+    # Dibujar la figura
+    def boli_subir(self, prints=False):
+        if prints:
+            print("Boli subido")
+        self.herramienta_girar(self.grados_boli_alto, self.tiempo_boli_subir)
+
+    def boli_bajar(self, prints=False):
+        if prints:
+            print("Boli bajado")
+        self.herramienta_girar(self.grados_boli_bajo, self.tiempo_boli_bajar)
+    
+    # Bolos
+    def bolos_soltar(self, prints=False):
+        if prints:
+            print("Bolos soltados")
+        self.herramienta_girar(self.grados_bolos_soltar, self.tiempo_bolos_soltar)
+        
+    def bolos_mantener(self, prints=False):
+        if prints:
+            print("Bolos mantenidos")
+        self.herramienta_girar(self.grados_bolos_mantener, self.tiempo_bolos_mantener)
+        
+    # Mini-fábrica
+    def pale_subir(self, prints=False):
+        if prints:
+            print("Pale subido")
+        self.herramienta_girar(self.grados_pale_alto, self.tiempo_pale_subir)
+        
+    def pale_bajar(self, prints=False):
+        if prints:
+            print("Pale bajado")
+        self.herramienta_girar(self.grados_pale_bajo, self.tiempo_pale_bajar)
+
+
+
+
 
 
 class Movements(Node):
@@ -96,29 +252,29 @@ class Movements(Node):
         self.last_vel = (0.0, 0.0)
         
         # TOOL
-        self.servo_current_angle = 0.0
+        # self.servo_current_angle = 0.0
 
-        self.grados_boli_alto = 20.0     # TODO: Cambiar a valor correcto para cada prueba
-        self.grados_boli_bajo = -20.0     
-        self.grados_bolos_soltar = 50.0
-        self.grados_bolos_mantener = 0.0
-        self.grados_pale_alto = 10.0        # TODO: Cambiar
-        self.grados_pale_bajo = -10.0   
+        # self.grados_boli_alto = 20.0     # TODO: Cambiar a valor correcto para cada prueba
+        # self.grados_boli_bajo = -20.0     
+        # self.grados_bolos_soltar = 50.0
+        # self.grados_bolos_mantener = 0.0
+        # self.grados_pale_alto = 10.0        # TODO: Cambiar
+        # self.grados_pale_bajo = -10.0   
         
-        # Tiempos
-        self.tiempo_boli_subir = 1.5
-        self.tiempo_boli_bajar = 1.5
+        # # Tiempos
+        # self.tiempo_boli_subir = 1.5
+        # self.tiempo_boli_bajar = 1.5
         
-        self.tiempo_bolos_soltar = 0.1
-        self.tiempo_bolos_mantener = 0.5
+        # self.tiempo_bolos_soltar = 0.1
+        # self.tiempo_bolos_mantener = 0.5
         
-        self.tiempo_pale_subir = 2.5
-        self.tiempo_pale_bajar = 2
+        # self.tiempo_pale_subir = 2.5
+        # self.tiempo_pale_bajar = 2
         
-        # Activar pin del servo (si se puede)
-        if GPIO_ENABLED:
-            self.PIN_SERVO = 11
-            self.servo = self.setup_servo()  
+        # # Activar pin del servo (si se puede)
+        # if GPIO_ENABLED:
+        #     self.PIN_SERVO = 11
+        #     self.servo = self.setup_servo()  
         
         # SENSORS
         sensors = Sensors()     # TODO
@@ -413,123 +569,123 @@ class Movements(Node):
 
 
 
-    # ╔═════════════════════════════╗
-    # ║       TOOL FUNCTIONS        ║
-    # ╚═════════════════════════════╝
+    # # ╔═════════════════════════════╗
+    # # ║       TOOL FUNCTIONS        ║
+    # # ╚═════════════════════════════╝
 
-    def herramienta_girar(self, grados_objetivo, tiempo=0):
-        """
-        tiempo: Tiempo que tarda en llegar al angulo objetivo (opcional)
-        """
+    # def herramienta_girar(self, grados_objetivo, tiempo=0):
+    #     """
+    #     tiempo: Tiempo que tarda en llegar al angulo objetivo (opcional)
+    #     """
         
-        if tiempo <= 0:
-            step = abs(grados_objetivo - self.servo_current_angle)
-            delay = 0
-        else:
-            step = abs(grados_objetivo - self.servo_current_angle) / (tiempo / 0.05)
-            delay = 0.05
+    #     if tiempo <= 0:
+    #         step = abs(grados_objetivo - self.servo_current_angle)
+    #         delay = 0
+    #     else:
+    #         step = abs(grados_objetivo - self.servo_current_angle) / (tiempo / 0.05)
+    #         delay = 0.05
             
-        direction = 1 if grados_objetivo > self.servo_current_angle else -1     # Evitamos que el servo gire en sentido contrario
+    #     direction = 1 if grados_objetivo > self.servo_current_angle else -1     # Evitamos que el servo gire en sentido contrario
 
-        # Gradually move the servo to the target angle
-        while abs(self.servo_current_angle - grados_objetivo) > step:
-            self.servo_current_angle += direction * step
-            duty_cycle = self.servo_angle_to_duty_cycle(self.servo_current_angle)
-            self.servo.ChangeDutyCycle(duty_cycle)                                      if GPIO_ENABLED else None
-            print(f"Moving angle: {self.servo_current_angle}")
-            time.sleep(delay)
+    #     # Gradually move the servo to the target angle
+    #     while abs(self.servo_current_angle - grados_objetivo) > step:
+    #         self.servo_current_angle += direction * step
+    #         duty_cycle = self.servo_angle_to_duty_cycle(self.servo_current_angle)
+    #         self.servo.ChangeDutyCycle(duty_cycle)                                      if GPIO_ENABLED else None
+    #         print(f"Moving angle: {self.servo_current_angle}")
+    #         time.sleep(delay)
 
-        # Ensure the servo reaches the exact target angle
-        self.servo_current_angle = grados_objetivo
-        duty_cycle = self.servo_angle_to_duty_cycle(self.servo_current_angle)
-        self.servo.ChangeDutyCycle(duty_cycle)                                        if GPIO_ENABLED else None
-        print(f"Final angle: {self.servo_current_angle}")
-        time.sleep(0.5)
-        self.servo.ChangeDutyCycle(0)                                                 if GPIO_ENABLED else None
+    #     # Ensure the servo reaches the exact target angle
+    #     self.servo_current_angle = grados_objetivo
+    #     duty_cycle = self.servo_angle_to_duty_cycle(self.servo_current_angle)
+    #     self.servo.ChangeDutyCycle(duty_cycle)                                        if GPIO_ENABLED else None
+    #     print(f"Final angle: {self.servo_current_angle}")
+    #     time.sleep(0.5)
+    #     self.servo.ChangeDutyCycle(0)                                                 if GPIO_ENABLED else None
 
     
-    def ver_angulos_herramienta(self):
-        """
-        Funcion que va pidiendo angulos.
-        Permite que el usuario introduzca un ángulo para observar en la herramienta.
-        El ángulo debe estar entre 0 y 180 grados.
-        El usuario también puede introducir un tiempo para llegar al ángulo.
-        Si no se especifica un tiempo, se utilizará un valor predeterminado de 2 segundos.
-        """
+    # def ver_angulos_herramienta(self):
+    #     """
+    #     Funcion que va pidiendo angulos.
+    #     Permite que el usuario introduzca un ángulo para observar en la herramienta.
+    #     El ángulo debe estar entre 0 y 180 grados.
+    #     El usuario también puede introducir un tiempo para llegar al ángulo.
+    #     Si no se especifica un tiempo, se utilizará un valor predeterminado de 2 segundos.
+    #     """
 
-        while True:
-            print(f"Ángulo actual: {self.servo_current_angle}")
-            angle_sent = input("Introduce un ángulo para observar en la herramienta (Entre 0 y 180), Enter para salir: ")
-            if angle_sent == "":
-                break
-            angle_sent = float(angle_sent)
-            if angle_sent < 0 or angle_sent > 180:
-                print("El ángulo debe estar entre 0 y 180 grados.")
-                continue
-            tiempo_sent = input("Introduce un tiempo para llegar al ángulo (0 o enter para llegar directamente): ")
-            if tiempo_sent == "":
-                tiempo_sent = 2   # 2 segundos por seguridad
-            else:
-                tiempo_sent = float(tiempo_sent)
-            self.herramienta_girar(angle_sent, tiempo=tiempo_sent)     # Dar tiempo a reaccionar y que no se rompa algo otra vez
-            self.servo_current_angle = angle_sent
+    #     while True:
+    #         print(f"Ángulo actual: {self.servo_current_angle}")
+    #         angle_sent = input("Introduce un ángulo para observar en la herramienta (Entre 0 y 180), Enter para salir: ")
+    #         if angle_sent == "":
+    #             break
+    #         angle_sent = float(angle_sent)
+    #         if angle_sent < 0 or angle_sent > 180:
+    #             print("El ángulo debe estar entre 0 y 180 grados.")
+    #             continue
+    #         tiempo_sent = input("Introduce un tiempo para llegar al ángulo (0 o enter para llegar directamente): ")
+    #         if tiempo_sent == "":
+    #             tiempo_sent = 2   # 2 segundos por seguridad
+    #         else:
+    #             tiempo_sent = float(tiempo_sent)
+    #         self.herramienta_girar(angle_sent, tiempo=tiempo_sent)     # Dar tiempo a reaccionar y que no se rompa algo otra vez
+    #         self.servo_current_angle = angle_sent
 
 
-    def setup_servo(self):
-        GPIO.setmode(GPIO.BOARD)  # Use physical pin numbering
-        GPIO.setup(self.PIN_SERVO, GPIO.OUT)
-        servo = GPIO.PWM(self.PIN_SERVO, 50)  # 50Hz pulse for servo
-        servo.start(0)  # DEFAULT POSITION
-        return servo
+    # def setup_servo(self):
+    #     GPIO.setmode(GPIO.BOARD)  # Use physical pin numbering
+    #     GPIO.setup(self.PIN_SERVO, GPIO.OUT)
+    #     servo = GPIO.PWM(self.PIN_SERVO, 50)  # 50Hz pulse for servo
+    #     servo.start(0)  # DEFAULT POSITION
+    #     return servo
 
-    def servo_angle_to_duty_cycle(self, angle):
-        """Convert an angle to the suitable duty cycle."""
-        return 2 + (angle / 18)
+    # def servo_angle_to_duty_cycle(self, angle):
+    #     """Convert an angle to the suitable duty cycle."""
+    #     return 2 + (angle / 18)
     
-    def change_duty_cycle(self, duty_cycle, prints=False):
-        """
-        Change the duty cycle of the servo.
-        Args:
-            duty_cycle (float): The duty cycle value.
-            prints (bool, optional): If True, only print the duty cycle value without making any changes. Defaults to False.
-        """
-        if prints:
-            print(f"Changing duty cycle to: {duty_cycle}")
-        else:
-            # Uncomment the following line to actually change the duty cycle
-            # self.servo.ChangeDutyCycle(duty_cycle)
-            print(f"Changing duty cycle to: {duty_cycle}")
+    # def change_duty_cycle(self, duty_cycle, prints=False):
+    #     """
+    #     Change the duty cycle of the servo.
+    #     Args:
+    #         duty_cycle (float): The duty cycle value.
+    #         prints (bool, optional): If True, only print the duty cycle value without making any changes. Defaults to False.
+    #     """
+    #     if prints:
+    #         print(f"Changing duty cycle to: {duty_cycle}")
+    #     else:
+    #         # Uncomment the following line to actually change the duty cycle
+    #         # self.servo.ChangeDutyCycle(duty_cycle)
+    #         print(f"Changing duty cycle to: {duty_cycle}")
 
 
-    # Dibujar la figura
-    def boli_subir(self, prints=False):
-        if prints:
-            print("Boli subido")
-        self.herramienta_girar(self.grados_boli_alto, self.tiempo_boli_subir)
+    # # Dibujar la figura
+    # def boli_subir(self, prints=False):
+    #     if prints:
+    #         print("Boli subido")
+    #     self.herramienta_girar(self.grados_boli_alto, self.tiempo_boli_subir)
 
-    def boli_bajar(self, prints=False):
-        if prints:
-            print("Boli bajado")
-        self.herramienta_girar(self.grados_boli_bajo, self.tiempo_boli_bajar)
+    # def boli_bajar(self, prints=False):
+    #     if prints:
+    #         print("Boli bajado")
+    #     self.herramienta_girar(self.grados_boli_bajo, self.tiempo_boli_bajar)
     
-    # Bolos
-    def bolos_soltar(self, prints=False):
-        if prints:
-            print("Bolos soltados")
-        self.herramienta_girar(self.grados_bolos_soltar, self.tiempo_bolos_soltar)
+    # # Bolos
+    # # def bolos_soltar(self, prints=False):
+    # #     if prints:
+    # #         print("Bolos soltados")
+    # #     self.herramienta_girar(self.grados_bolos_soltar, self.tiempo_bolos_soltar)
         
-    def bolos_mantener(self, prints=False):
-        if prints:
-            print("Bolos mantenidos")
-        self.herramienta_girar(self.grados_bolos_mantener, self.tiempo_bolos_mantener)
+    # # def bolos_mantener(self, prints=False):
+    # #     if prints:
+    # #         print("Bolos mantenidos")
+    # #     self.herramienta_girar(self.grados_bolos_mantener, self.tiempo_bolos_mantener)
         
-    # Mini-fábrica
-    def pale_subir(self, prints=False):
-        if prints:
-            print("Pale subido")
-        self.herramienta_girar(self.grados_pale_alto, self.tiempo_pale_subir)
+    # # Mini-fábrica
+    # def pale_subir(self, prints=False):
+    #     if prints:
+    #         print("Pale subido")
+    #     self.herramienta_girar(self.grados_pale_alto, self.tiempo_pale_subir)
         
-    def pale_bajar(self, prints=False):
-        if prints:
-            print("Pale bajado")
-        self.herramienta_girar(self.grados_pale_bajo, self.tiempo_pale_bajar)
+    # def pale_bajar(self, prints=False):
+    #     if prints:
+    #         print("Pale bajado")
+    #     self.herramienta_girar(self.grados_pale_bajo, self.tiempo_pale_bajar)
