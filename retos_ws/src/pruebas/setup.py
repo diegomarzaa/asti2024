@@ -30,7 +30,8 @@ setup(
             'figuras = pruebas.pruebas_de_figuras:main',
             'cam_pub = pruebas.cam_pub:main',
             'prueba_mov = pruebas.prueba_mov:main',
-            'cam_sub = pruebas.camara_sub:main'
+            'cam_sub = pruebas.camara_sub:main',
+            'lector_de_archivo = pruebas.lector_de_archivo:main',
         ],
     },
 )

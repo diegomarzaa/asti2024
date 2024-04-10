@@ -68,6 +68,8 @@ class Figura(Node):
     El codigo entero puede ser completamente automatizado, pero se ha dejado la opcion de seleccionar una figura
     para que el usuario pueda ver el funcionamiento del programa.
 
+    Para que en la raspberry sea mas rapida, se puede quitar la parte de cv2.imshow("camera", img) y cv2.waitKey(1)
+
     """
 
     def __init__(self, autonomia=True):
@@ -158,7 +160,7 @@ class Figura(Node):
                     self.moverse_objetivo(self.mov, "ESTRELLA")
                     self.seleccion = True
 
-            elif self.tiempo >= 5.0:
+            elif self.tiempo >= 10.0:
                 # Obtenemos la forma con mayor frecuencia
                 maximo = max(self.formas, key=self.formas.get)
                 print("\n\n\n\n\n\n\n\n\n", maximo, "\n\n\n\n\n\n\n\n\n")
@@ -184,8 +186,8 @@ class Figura(Node):
                 self.seleccion = True
 
             # Display image
-            cv2.imshow("camera", img)
-            cv2.waitKey(1)
+            #cv2.imshow("camera", img)
+            #cv2.waitKey(1)
 
         else:
             print("Opcion no valida, 'q' para salir")
@@ -230,11 +232,11 @@ class Figura(Node):
 
         # Si el polígono aproximado tiene entre 9 y 10 lados, es una estrella.
         elif len(approximate) >= 9 and len(approximate) <= 10:
-            shape = 'estrella'
+            shape = 'ESTRELLA'
             self.formas["ESTRELLA"] += 1
         # Si el polígono aproximado tiene entre 7 y 8 lados, es un círculo.
         elif 7 <= len(approximate) <= 8:
-            shape = 'circulo'
+            shape = 'CIRCULO'
             self.formas["CIRCULO"] += 1
         # En cualquier otro caso, se considera un cilindro.
         else:

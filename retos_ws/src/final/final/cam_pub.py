@@ -10,15 +10,16 @@ from rclpy.node import Node  # Handles the creation of nodes
 from sensor_msgs.msg import Image  # Image is the message type
 from cv_bridge import CvBridge  # Package to convert between ROS and OpenCV Images
 import cv2  # OpenCV library
+from sensor_msgs.msg import CompressedImage  # CompressedImage is the message type
 
 
 class ImagePublisher(Node):
     def __init__(self):
         super().__init__('image_publisher')
-        self.publisher_ = self.create_publisher(Image, '/video_frames', 10)
+        self.publisher_ = self.create_publisher(CompressedImage, '/video_frames', 1)
 
-        # We will publish a message every 0.1 seconds
-        timer_period = 0.1  # seconds
+        # We will publish a message every 0.001 seconds
+        timer_period = 0.001  # seconds
 
         # Create the timer
         self.timer = self.create_timer(timer_period, self.timer_callback)
@@ -28,12 +29,18 @@ class ImagePublisher(Node):
         self.br = CvBridge()
 
     def timer_callback(self):
-        ret, frame = self.cap.read()
+        ret, img = self.cap.read()
 
         if ret:
-            self.publisher_.publish(self.br.cv2_to_imgmsg(frame))
+            msg = self.br.cv2_to_compressed_imgmsg(img, dst_format='png')
+            self.publisher_.publish(msg)
+            with open('Img_sub_sin_br.png', 'wb') as archivo:
+                archivo.write(msg.data)
 
         self.get_logger().info('Publishing video frame')
+
+
+
 
 
 def main(args=None):

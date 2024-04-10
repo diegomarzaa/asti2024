@@ -3,7 +3,7 @@ import imutils
 import numpy as np
 import rclpy
 from rclpy.node import Node
-from sensor_msgs.msg import Image  # Image is the message type
+from sensor_msgs.msg import CompressedImage  # CompressedImage is the message type
 from cv_bridge import CvBridge  # Package to convert between ROS and OpenCV Images
 
 from math import pi, atan
@@ -74,7 +74,7 @@ class Figura(Node):
 
     def __init__(self, autonomia=True):
         super().__init__('Figura')  # /video_frames  /camera/image_raw
-        self.subscription = self.create_subscription(Image, '/video_frames', self.listener_callback, 10)
+        self.subscription = self.create_subscription(CompressedImage, '/video_frames', self.listener_callback, 10)
         self.subscription
 
         self.br = CvBridge()
@@ -134,7 +134,7 @@ class Figura(Node):
             5 -> estrella - PLAZA ESPAÑA
             """
             # Convert ROS Image message to OpenCV image
-            img = self.br.imgmsg_to_cv2(msg)
+            img = self.br.compressed_imgmsg_to_cv2(msg)
 
             # Analizamos la imagen
             self.analizar(img)
