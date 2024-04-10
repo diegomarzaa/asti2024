@@ -5,6 +5,7 @@ import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import Twist
 from semifinal.misfunciones import *
+from final.Movements import Movements
 
 class LineaPublisher(Node):
 
@@ -32,6 +33,7 @@ class LineaPublisher(Node):
         self.h = True
         self.v = True
         self.count = 0
+        self.mov = Movements()
 
     def timer_callback(self):
         self.run()
@@ -155,15 +157,21 @@ class LineaPublisher(Node):
             
             
 # Intersección a izquierda
-            if (self.matrix[2:5, 0] == 1).any() and (self.matrix[2:5,3].all() == 1 or self.matrix[:,4].all() == 1) and self.h:
+            if (self.matrix[:, 0] == 1).any() and (self.matrix[:,3].all() == 1 or self.matrix[:,4].all() == 1) and self.h:
                 self.estacionado = False
                 self.giro = 'interizq'
-                if self.estado != 'interizq' and self.count >= 25:
+                if self.estado != 'interizq' and self.count >= 15:
                     self.puntos_h -= 1
-                    self. count
+                    self.count = 0
                 self.estado = 'interizq'
-                if self.puntos_h != 0:
+                if self.puntos_h > 0:
                     self.tupla = (0.3, 0.0)
+                elif self.puntos_h == 0:
+                    self.estado = None
+                    if self.puntos_v > 0:
+                        self.mov.girar_grados_der(90)
+                    else:
+                        self.mov.girar_grados_izq(90)
                 else:
                     self.h = False
                     
@@ -173,12 +181,14 @@ class LineaPublisher(Node):
             elif (self.matrix[:, 6] == 1).any() and (self.matrix[:,3].all() == 1 or self.matrix[:,4].all() == 1) and self.v:
                 self.estacionado = False
                 self.giro = 'interder'
-                if self.estado != 'interder' and self.count >= 25:
-                    self.puntos_h -= 1
+                if self.estado != 'interder' and self.count >= 15:
+                    self.puntos_v -= 1
                     self.count = 0
                 self.estado = 'interder'
-                if self.puntos_h != 0:
-                    self.tupla = (0.3, 0.0)
+                if self.puntos_v > 1:
+                    self.tupla = (0.4, 0.0)
+                elif self.puntos_v == 0:
+                    self.tupla = (0.0, 0.0)
                 else:
                     self.v = False
                     
@@ -192,7 +202,7 @@ class LineaPublisher(Node):
             # Derecha
             elif self.matrix[0, 6] == 1 and self.matrix[0, 0] == 0:
                 self.estacionado = False
-                self.tupla = (0.0, -0.2)
+                self.tupla = (0.3, -0.1)
                 self.estado = 'Derecha'
                 self.giro = 'der'
                 self.veces_derecha += 1
@@ -200,7 +210,7 @@ class LineaPublisher(Node):
             # Derecha 2
             elif self.matrix[1, 6] == 1 and self.matrix[1, 0] == 0:
                 self.estacionado = False
-                self.tupla = (0.0, -0.3)
+                self.tupla = (0.2, -0.2)
                 self.estado = 'Derecha'
                 self.giro = 'der'
                 self.veces_derecha += 1
@@ -208,7 +218,7 @@ class LineaPublisher(Node):
             # Derecha 3
             elif self.matrix[2, 6] == 1 and self.matrix[2, 0] == 0:
                 self.estacionado = False
-                self.tupla = (0.0, -0.4)
+                self.tupla = (0.1, -0.3)
                 self.estado = 'Derecha'
                 self.giro = 'der'
                 self.veces_derecha += 1
@@ -216,7 +226,7 @@ class LineaPublisher(Node):
             # Izquierda
             elif self.matrix[0, 0] == 1 and self.matrix[0, 6] == 0:
                 self.estacionado = False
-                self.tupla = (0.0, 0.2)
+                self.tupla = (0.3, 0.1)
                 self.estado = 'Izquierda1'
                 self.giro = 'izq'
                 self.veces_izquierda += 1
@@ -224,7 +234,7 @@ class LineaPublisher(Node):
             # Izquierda 2
             elif self.matrix[1, 0] == 1 and self.matrix[1, 6] == 0:
                 self.estacionado = False
-                self.tupla = (0.0, 0.3)
+                self.tupla = (0.3, 0.2)
                 self.estado = 'Izquierda2'
                 self.giro = 'izq'
                 self.veces_izquierda += 1
@@ -232,7 +242,7 @@ class LineaPublisher(Node):
             # Izquierda 3
             elif self.matrix[2, 0] == 1 and self.matrix[2, 6] == 0:
                 self.estacionado = False
-                self.tupla = (0.0, 0.4)
+                self.tupla = (0.3, 0.3)
                 self.estado = 'Izquierda3'
                 self.giro = 'izq'
                 self.veces_izquierda += 1            
@@ -249,30 +259,20 @@ class LineaPublisher(Node):
                 #self.tupla = (0.3, 0.0)
                 #self.estado = 'Recto'
                 
-            # 180º
-            elif self.matrix[0, 3] == 0 and self.matrix[0, 0] == 0 and self.matrix[0, 6] == 0 and self.matrix[
-                3, 3] == 1 and \
-                    self.matrix[6, 3] == 1:
-                self.estacionado = False
-                if self.giro == 'izq':
-                    self.tupla = (0.0, 1.0)
-                    self.estado = '+180º'
-                elif self.giro == 'der':
-                    self.tupla = (0.0, -1.0)
-                    self.estado = '-180º'
-                else:
-                    self.tupla = (0.0, -1.0)
                 
             # No detecta negro
             else:
                 todos_cero = np.all(self.matrix == 0)
                 if todos_cero:
+                    self.estacionado = False
                     if self.giro == 'izq':
                         self.tupla = (0.0, 1.0)
                         self.estado = '+180º'
                     elif self.giro == 'der':
                         self.tupla = (0.0, -1.0)
                         self.estado = '-180º'
+                    else:
+                        self.tupla = (0.0, -1.0)
             
 
 
@@ -280,10 +280,11 @@ class LineaPublisher(Node):
  
             msg = Twist()
             self.count += 1
-            print(self.tupla[0], self.tupla[1], self.puntos_h) 
+            print(self.puntos_h) 
             print(self.matrix)
-            msg.linear.x = self.tupla[0]
-            msg.angular.z = self.tupla[1]
+            if self.estado != None:
+                msg.linear.x = self.tupla[0]
+                msg.angular.z = self.tupla[1]
             print(self.estado)
             self.publisher_.publish(msg)
             self.get_logger().info(f'Publishing: velocity="({msg.linear.x}, {msg.angular.z})"')
