@@ -4,6 +4,7 @@ import numpy as np
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Image  # CompressedImage is the message type
+from sensor_msgs.msg import CompressedImage
 from cv_bridge import CvBridge  # Package to convert between ROS and OpenCV Images
 import time
 from math import pi, atan
@@ -82,7 +83,7 @@ class Figura(Node):
 
     def __init__(self, autonomia=True):
         super().__init__('Figura')  # /video_frames  /camera/image_raw
-        self.subscription = self.create_subscription(Image, '/video', self.listener_callback, 10)
+        self.subscription = self.create_subscription(CompressedImage, '/video_frames', self.listener_callback, 10)
         self.subscription
 
         self.br = CvBridge()
@@ -144,7 +145,7 @@ class Figura(Node):
             # Convert ROS Image message to OpenCV image
             if msg is None:
                 print("none")
-            img = self.br.imgmsg_to_cv2(msg)
+            img = self.br.compressed_imgmsg_to_cv2(msg)
 
             # Analizamos la imagen
             self.analizar(img)
