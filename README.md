@@ -33,9 +33,13 @@ network:
 
 ### Opción 100% Raspberry Pi
 
+
+0. Para ver la IP de la raspberry en cualquier wifi sin usar un monitor:
+  - sudo apt-get install arp-scan
+  - sudo arp-scan --interface=wlo1 --localnet
 1. Conectar raspberry a la corriente / batería.
 2. Entrar en la raspberry con ssh desde otro portátil conectado a la misma red wifi.
-  - ADRIA: `ssh -X pi@192.168.224.104` 
+  - ADRIA: `ssh -X pi@192.168.183.xxx` 
   - DIEGO: `ssh -X pi@192.168.54.22`
 
   - `ssh -X pi@192.168.113.22`            `ssh -X pi@192.168.245.104`           (`ssh -X pi@192.168.0.114` antes era este pero ya no)
