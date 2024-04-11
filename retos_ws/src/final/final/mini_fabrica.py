@@ -6,12 +6,12 @@ from final.Movements import Movements
 
 # Comprobar valores
 
-distancia_aparcamiento = 0.75
-grados_aparcamiento = 90
-radio_aparcamiento = 0.35
+distancia_aparcamiento = 0.80
+grados_aparcamiento = 107
+radio_aparcamiento = 0.4
 distancia_pale = 0.35 # Reducir velocidad y mejorar el control a esa distancia del pale
 vel_a_pale = 0.1      # Velocidad de aproximación al pale
-vel_defecto = mov.obj_linear_vel    # Si no funciona, función de Movements
+#vel_defecto = mov.obj_linear_vel    # Si no funciona, función de Movements
 pale = False
 
 def avanzar(mov, color):
@@ -28,10 +28,11 @@ def avanzar(mov, color):
 def aparcar(mov):
     
     # Uso de sensores?
-    
+    mov.actualizar_vel_lineal(0.23)
+    mov.actualizar_vel_angular(0.75)
     mov.avanzar_distancia(distancia_aparcamiento)
-    mov.girar_grados(grados_aparcamiento, radio_aparcamiento, False) # Gira y se posiciona para la marcha atras
-    mov.avanzar_distancia(-0.2) # Ultima marcha atras
+    mov.girar_grados(grados_aparcamiento, -radio_aparcamiento, False) # Gira y se posiciona para la marcha atras
+    mov.retroceder_distancia(0.4) # Ultima marcha atras
     
 def recoger_pale(mov):      # Cuando esta cerca del pale
     
