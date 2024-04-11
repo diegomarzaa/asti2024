@@ -367,8 +367,8 @@ class Movements(Node):
             if compar_der:
                 if compar_der == 2: # No hay nada en el lado
                     self.girar_grados(90, 0.3)  # Girar 90 grados con un radio de 30 cm
-                    if sensors.get_distancia_delante < 0.5 and sensors.get_distancia_derecha() < 0.1: # TODO Comprobar valores
-                        self.girar_grados(90, 0.2)
+                    if sensors.get_distancia_delante < 5 and sensors.get_distancia_derecha() < 30: # TODO Comprobar valores
+                        self.girar_grados(90, 0.3)
             elif distancias[1] < 30 and distancia[2] < 30:
                 if distancias[0] < 25:    # Suponemos que para la derecha no hay camino
                     self.girar_grados(180)
