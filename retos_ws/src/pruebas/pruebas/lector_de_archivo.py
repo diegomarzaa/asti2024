@@ -45,7 +45,7 @@ class ImagePublisher(Node):
             img = cv2.imdecode(buf, cv2.IMREAD_ANYCOLOR)
 
             self.publish_image(img)
-            #self.get_logger().info('Publishing video frame')
+            self.get_logger().info('Publishing video frame')
         except cv2.error:
             print("Error al leer la imagen")
             # continue
