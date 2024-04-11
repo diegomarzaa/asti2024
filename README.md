@@ -35,20 +35,21 @@ network:
 
 1. Conectar raspberry a la corriente / batería.
 2. Entrar en la raspberry con ssh desde otro portátil conectado a la misma red wifi.
+  - ADRIA: `ssh -X pi@192.168.224.104` 
   - `ssh -X pi@192.168.113.22`            `ssh -X pi@192.168.245.104`           (`ssh -X pi@192.168.0.114` antes era este pero ya no)
   - Contraseña: `qwerty`
   - La red wifi puede ser el router PIROBOTNET o los datos de cualquier móvil ya configurado.
   - Para conectarlo a los datos de un móvil o red no configurada, habría que hacerlo desde la interfaz gráfica de la raspberry, conectando un teclado, ratón y monitor... O conectando cable ethernet.
 
-3. Sources.
+1. Sources.
   - `cd Documents/asti2024/retos_ws`
   - `source install/setup.bash`  (O usar el alias `src` para hacerlo más rápido)
 
-4. Ejecutar el programa deseado.
+2. Ejecutar el programa deseado.
   - `ros2 run bringup motor_vel_controller`     (Para activar los motores, no se debe cerrar esta terminal. Asegurarse de que está los motores están bloqueados girando las ruedas con la mano)
   - `ros2 run final dibuja_figura`  (En otra terminal, aquí sería donde se ejecutaría el programa deseado)
 
-5. En caso de error:
+3. En caso de error:
   - Hacer sources:
     - `source /opt/ros/foxy/setup.bash`
     - `source install/setup.bash`
@@ -65,10 +66,10 @@ network:
     - Reiniciar la controladora de motores. Conectar USB + energia.
     - Cambiar el usb de sitio.
 
-6. Para cerrar la raspberry:
+4. Para cerrar la raspberry:
   - `sudo shutdown now`  (Esperar a que se apague la luz roja del led de la raspberry, no desconectar la corriente antes de que se apague)
 
-7. Para cerrar la conexión ssh:
+5. Para cerrar la conexión ssh:
   - `exit`
 
 
