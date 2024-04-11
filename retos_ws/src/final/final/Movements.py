@@ -250,7 +250,7 @@ class Movements(Node):
         self.wheel_publisher_ = self.create_publisher(Twist, 'cmd_vel', 10)   # cmd_vel has (m/s , rad/s)
 
         # WHEELS
-        self.obj_linear_vel = 0.1       # TODO: CAMBIAR A VALORES QUE SEAN BUENOS POR DEFECTO
+        self.obj_linear_vel = 0.2       # TODO: CAMBIAR A VALORES QUE SEAN BUENOS POR DEFECTO
         self.obj_angular_vel = 0.7
         self.linear_acc = 0.01
         self.angular_acc = 0.1
