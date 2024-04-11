@@ -6,6 +6,9 @@ import time
 from math import pi, atan
 from final.Movements import Movements
 #from pruebas.pruebas_de_figuras import Figura
+ERROR_ANGULO = 0.0        # TODO: Comprobar cual es el error sistematico
+DISTANCIA_EXTRA = 0.2
+
 
 # Estaban dadas en mm pero aquí están pasadas a metros
 COORDENADAS_CATEDRAL = (1.200, -0.248)   # TRIÁNGULO
@@ -56,7 +59,7 @@ def moverse_objetivo(mov, opcion_menu):
         y, x = objetivo
 
         # CALCULAMOS EL ÁNGULO
-        angulo = atan(y/abs(x))
+        angulo = atan(y/abs(x))         +  ERROR_ANGULO
         angulo = angulo * 180 / pi
         angulo_giro = 90 - angulo
 
@@ -64,7 +67,7 @@ def moverse_objetivo(mov, opcion_menu):
             angulo_giro = -angulo_giro
 
         # CALCULAMOS LA DISTANCIA QUE TIENE QUE AVANZAR
-        distancia = (x**2 + y**2)**0.5
+        distancia = (x**2 + y**2)**0.5  + DISTANCIA_EXTRA
 
         mov.girar_avanzar(angulo_giro, distancia)
 
