@@ -14,7 +14,7 @@ class Linea_sub(Node):
         super().__init__('linea_sub')                            # /video_frames   simulador: /camera/image_raw
         self.sim = input("¿Es raspberry? (s/n): ").lower() == 's'
         if self.sim:
-            self.subscription = self.create_subscription(Image, '/video', self.listener_callback, 10)
+            self.subscription = self.create_subscription(CompressedImage, '/video', self.listener_callback, 10)
         else:
             self.subscription = self.create_subscription(CompressedImage, '/video_frames', self.listener_callback, 10)
         self.subscription
@@ -26,7 +26,7 @@ class Linea_sub(Node):
 
         # Convert ROS Image message to OpenCV image
         if self.sim:
-            img = self.br.imgmsg_to_cv2(msg)
+            img = self.br.compressed_imgmsg_to_cv2(msg)
         else:
             img = self.br.compressed_imgmsg_to_cv2(msg)
         #img = cv2.imdecode(np.frombuffer(img, np.uint8), cv2.IMREAD_UNCHANGED)
