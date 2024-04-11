@@ -58,8 +58,8 @@ class ImagePublisher(Node):
         with open("cmd_vel", 'w') as archivo:
             archivo.write(str(msg))
 
-        print("prueba_lectura()")
-        print(self.prueba_lectura())
+        #print("prueba_lectura()")
+        #print(self.prueba_lectura())
 
     def prueba_lectura(self):
         with open("cmd_vel", 'r') as archivo:
