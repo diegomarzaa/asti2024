@@ -23,13 +23,11 @@ opciones = {
   '1': 'Ángulo a ojo',
   '2': 'Cálculo con trigonometría',
   '3': 'Posición final',
-  '4': 'Trampa zapato',
-  '5': 'Contar líneas',
-  '6': 'Ángulo a ojo + reconocimiento de letras',
   'u': 'Actualizar coordenadas',
   'm': 'Mostrar coordenadas',
   'a': 'Prueba de movimiento',
   'v': 'Actualizar velocidades',
+  'w': 'Actualizar error ángulo',
   'q': 'Salir'
 }
 
@@ -73,6 +71,13 @@ def mostrar_coordenadas():
   print("\n\tFilas:")
   for i in range(7):
     print(f"\t\t{i}-{i+1}: {FILA_LETRAS[i]}")
+    
+def actualizar_error_angulo():
+  global ERROR_ANGULO
+  print(f"Error actual: {ERROR_ANGULO}")
+  error_a_poner = input("Introduce el error del ángulo (Enter para omitir): ")
+  if error_a_poner:
+    ERROR_ANGULO = float(error_a_poner)
 
 def angulo_ojo(mov):
 
@@ -178,14 +183,10 @@ def ejecutar_cuadricula(mov, opcion_menu):
     calculo_trigonometria(mov)
   elif opcion_menu == '3':
     posicion_final(mov)
-  elif opcion_menu == '4':
-    pass
-  elif opcion_menu == '5':
-    pass
-  elif opcion_menu == '6':
-    pass
   elif opcion_menu == 'v':
     pedir_velocidades(mov)
+  elif opcion_menu == 'w':
+    actualizar_error_angulo()
   else:
     print("Opcion no valida, 'q' para salir")
 
@@ -215,9 +216,6 @@ def main():
       1 -> Ángulo a ojo
       2 -> Cálculo con trigonometría
       3 -> Posición final
-      4 -> Trampa zapato
-      5 -> Contar líneas
-      6 -> Ángulo a ojo + reconocimiento de letras
       """
       ejecutar_cuadricula(mov, opcion_menu)
     else:

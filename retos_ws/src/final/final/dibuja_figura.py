@@ -135,7 +135,7 @@ def main():
         print(f"Girando {angulo} grados")
         mov.girar_grados_der(angulo)
 
-        print("Moviendo hacia atras (sin pintar), {DIST_BOLI_CENTRO}")
+        print(f"Moviendo hacia atras (sin pintar), {DIST_BOLI_CENTRO}")
         mov.retroceder_distancia(DIST_BOLI_CENTRO)
 
         print("Bajando boli")

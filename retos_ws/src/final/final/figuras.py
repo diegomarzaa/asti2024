@@ -11,11 +11,11 @@ from math import pi, atan
 
 from final.Movements import Movements, pedir_velocidades
 
-ERROR_ANGULO = -0.2        # TODO: Comprobar cual es el error sistematico
+ERROR_ANGULO = 0.0        # TODO: Comprobar cual es el error sistematico
 DISTANCIA_EXTRA = 0.2
 
-TIEMPO_ANALISIS = 5.0  * 4
-SLEEP_TRAMPA = 3.0
+TIEMPO_ANALISIS = 1.5
+SLEEP_TRAMPA = 2.0
 
 MOSTRAR_CAMARA = False
 
@@ -364,9 +364,13 @@ class Figura(Node):
             y, x = objetivo
 
             # CALCULAMOS EL ÁNGULO
-            angulo = atan(y / abs(x))       + ERROR_ANGULO
-            angulo = angulo * 180 / pi
-            angulo_giro = 90 - angulo
+            if x != 0:
+                # TODO: COMPROBAR 
+                angulo = atan(y / abs(x))       + ERROR_ANGULO
+                angulo = angulo * 180 / pi
+                angulo_giro = 90 - angulo
+            else:
+                angulo_giro = 0
 
             if x > 0:
                 angulo_giro = -angulo_giro
