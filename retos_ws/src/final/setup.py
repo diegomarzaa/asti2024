@@ -38,7 +38,10 @@ setup(
             
             'cam_pub = final.cam_pub:main',
             'camara_sub = final.camara_sub:main',
-            'sensor_sub = final.Sensors:main'
+            'sensor_sub = final.Sensors:main',
+            
+            'Contar_lineas_cuadricula = final.contar_lineas_cuadricula:main'
+
         ],
     },
 )

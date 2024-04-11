@@ -319,41 +319,34 @@ class Movements(Node):
             self.girar_izquierda()
         self.detener()
 
-    def avanzar_paralelo_paredes(self, sensors):    # Con trigonometría para enderezarse. -1 si se para
-        distancias = sensors.distancias()
-        compar_der = self.comparar_distancias(sensors.get_distancia_derecha(), distancias[3], 0.05)
-        compar_izq = self.comparar_distancias(sensors.get_distancia_izquierda(), distancias[0], 0.05)
-        while self.detectar_pared(sensors, 0.10):
-            if compar_der:  # TODO: Mirar el radio de curvatura
-                if compar_der == 2: # Nos vamos para la derecha
-                    grados = sensors.get_distancia_delante_der() / sensors.get_distancia_derecha() 
-                    self.girar_grados_izq(grados)
-                else: # Nos vamos para la izquierda
-                    grados = sensors.get_distancia_delante_izq() / sensors.get_distancia_izquierda()
-                    self.girar_grados_der(grados)   
-            elif compar_izq:    # TODO No es necesario del todo, pero sirve para asegurar
-                if compar_izq == 2: # Nos vamos para la izquierda
-                    grados = sensors.get_distancia_delante_izq() /sensors.get_distancia_izquierda()
-                    self.girar_grados_der(grados) 
-                elif compar_der == 1:
-                    grados = sensors.get_distancia_delante_der() / sensors.get_distancia_derecha() 
-                    self.girar_grados_izq(grados)
-            else:
-                self.avanzar()
-            distancias = sensors.distancias()
-            compar_der = self.comparar_distancias(sensors.get_distancia_derecha(), distancias[3], 0.05)
-            compar_izq = self.comparar_distancias(sensors.get_distancia_izquierda(), distancias[0], 0.05)
-        self.detener()
-        return -1
-                
     def avanzar_derecha(self, sensors):
         """
         Se mantiene a la derecha
         -1 en caso de obstaculo
         """
         distancias = sensors.distancias()
-        compar_der = self.comparar_distancias(sensors.get_distancia_derecha(), distancias[3], 0.5)
-        while self.detectar_pared(sensors, 0.1):
+        compar_der_e = self.comparar_distancias(sensors.get_distancia_derecha(), distancias[3], 0.05)
+        compar_izq_e = self.comparar_distancias(sensors.get_distancia_izquierda(), distancias[0], 0.05)
+        compar_der = self.comparar_distancias(sensors.get_distancia_derecha(), distancias[3], 0.2)
+        while self.detectar_pared(sensors, 0.05):
+            # Enderezar el robot para mantenerlo paralelo
+            if compar_der_e:  # TODO: Mirar el radio de curvatura
+                if compar_der_e == 2: # Nos vamos para la derecha
+                    grados = sensors.get_distancia_delante_der() / sensors.get_distancia_derecha() 
+                    self.girar_grados_izq(grados)
+                else: # Nos vamos para la izquierda
+                    grados = sensors.get_distancia_delante_izq() / sensors.get_distancia_izquierda()
+                    self.girar_grados_der(grados)   
+            elif compar_izq_e:    # TODO No es necesario del todo, pero sirve para asegurar
+                if compar_izq_e == 2: # Nos vamos para la izquierda
+                    grados = sensors.get_distancia_delante_izq() /sensors.get_distancia_izquierda()
+                    self.girar_grados_der(grados) 
+                elif compar_der == 1:
+                    grados = sensors.get_distancia_delante_der() / sensors.get_distancia_derecha() 
+                    self.girar_grados_izq(grados)
+            
+            # Busca los caminos por la derecha
+            
             if compar_der:
                 if compar_der == 2: # No hay nada en el lado
                     self.girar_grados(90, 0.3)  # Girar 90 grados con un radio de 30 cm

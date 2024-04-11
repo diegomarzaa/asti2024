@@ -5,13 +5,17 @@ import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Image  # Image is the message type
 from cv_bridge import CvBridge  # Package to convert between ROS and OpenCV Images
+from sensor_msgs.msg import CompressedImage
 
 
 class Linea_sub(Node):
 
-    def __init__(self):
+    def __init__(self, sim=False):
         super().__init__('linea_sub')                            # /video_frames   simulador: /camera/image_raw
-        self.subscription = self.create_subscription(Image, '/video_frames', self.listener_callback, 10)
+        if sim:
+            self.subscription = self.create_subscription(Image, '/video_frames', self.listener_callback, 10)
+        else:
+            self.subscription = self.create_subscription(CompressedImage, '/video_frames', self.listener_callback, 10)
         self.subscription
 
         self.br = CvBridge()
@@ -20,7 +24,8 @@ class Linea_sub(Node):
         self.get_logger().info('Receiving video frame')
 
         # Convert ROS Image message to OpenCV image
-        img = self.br.imgmsg_to_cv2(msg)
+        img = self.br.compressed_imgmsg_to_cv2(msg)
+        #img = cv2.imdecode(np.frombuffer(img, np.uint8), cv2.IMREAD_UNCHANGED)
 
         # Display image
         cv2.imshow("camera", img)
