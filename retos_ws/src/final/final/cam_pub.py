@@ -30,6 +30,7 @@ class ImagePublisher(Node):
 
     def timer_callback(self):
         ret, img = self.cap.read()
+        img = cv2.resize(img, (640, 480))
 
         if ret:
             msg = self.br.cv2_to_compressed_imgmsg(img, dst_format='png')
