@@ -105,7 +105,7 @@ class Servo():
     # ║       TOOL FUNCTIONS        ║
     # ╚═════════════════════════════╝
 
-    def herramienta_girar(self, grados_objetivo, tiempo=0):
+    def herramienta_girar(self, grados_objetivo, tiempo=0, final_tranquilo = False):
         """
         tiempo: Tiempo que tarda en llegar al angulo objetivo (opcional)
         """
@@ -134,7 +134,8 @@ class Servo():
         self.servo.ChangeDutyCycle(duty_cycle)                                        if GPIO_ENABLED else None
         print(f"Final angle: {self.servo_current_angle}")
         time.sleep(0.3)
-        #self.servo.ChangeDutyCycle(0)                                                 if GPIO_ENABLED else None
+        if final_tranquilo:
+            self.servo.ChangeDutyCycle(0)                                                 if GPIO_ENABLED else None
 
     
     def ver_angulos_herramienta(self):
