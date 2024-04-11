@@ -7,6 +7,7 @@ from geometry_msgs.msg import Twist
 #from semifinal.misfunciones import *
 
 from sensor_msgs.msg import Image  # Image is the message type
+from sensor_msgs.msg import CompressedImage
 from cv_bridge import CvBridge  # Package to convert between ROS and OpenCV Images
 
 
@@ -28,6 +29,8 @@ class DetectLinea(Node):
 
         if sim:
             self.subscriber_cam = self.create_subscription(Image, 'camera/image_raw', self.camara_callback, 10)
+        elif camara_sub:
+            self.subscriber_cam = self.create_subscription(CompressedImage, 'video_frames', self.camara_callback, 10)
 
         timer_period = 0.001  # seconds
         self.timer = self.create_timer(timer_period, self.timer_callback)
@@ -38,9 +41,11 @@ class DetectLinea(Node):
         if sim:
             self.cap = cv2.VideoCapture(0)
         else:
-            self.cap = cv2.VideoCapture(0)  # /home/jcrex/Vídeos/siguelineas_largo.mp4
-            self.cap.set(3, 640)
-            self.cap.set(4, 480)
+            #self.cap = cv2.VideoCapture(0)  # /home/jcrex/Vídeos/siguelineas_largo.mp4
+            #self.cap.set(3, 640)
+            #self.cap.set(4, 480)
+            self.cap: cv2.VideoCapture
+
 
         self.br = CvBridge()
 
@@ -62,10 +67,13 @@ class DetectLinea(Node):
 
         self.priemra_vez = True
 
-    def camara_callback(self, msg: Image):
+    def camara_callback(self, msg):
         #self.camara_sub = True
         self.get_logger().info('Recibiendo video frame')
-        self.cap = self.br.imgmsg_to_cv2(msg)
+        if self.camara_sub:
+            self.cap = self.br.compressed_imgmsg_to_cv2(msg)
+        else:
+            self.cap = self.br.imgmsg_to_cv2(msg)
 
     def timer_callback(self):
         self.detectar()
@@ -84,7 +92,6 @@ class DetectLinea(Node):
     def rectificador_callback(self, msg):
         self.get_logger().info(f'Recibido: {msg.data}')
         self.memoria = msg.data
-
 
     def camara(self):
         # Uso para el testeo de camara
@@ -299,21 +306,6 @@ class DetectLinea(Node):
             cv2.destroyAllWindows()
             super().destroy_node()
             rclpy.shutdown()
-
-        """
-
-        if keyboard.is_pressed('s'):
-            self.memoria = 0
-        if keyboard.is_pressed('a'):
-            self.memoria = -1
-        if keyboard.is_pressed('d'):
-            self.memoria = 1
-        if keyboard.is_pressed('w'):
-            self.memoria = 0
-        if keyboard.is_pressed('q'):
-            print("Saliendo del bucle principal")
-            break
-        """
 
 
 def menu():

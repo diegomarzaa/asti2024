@@ -40,9 +40,6 @@ class ImagePublisher(Node):
         self.get_logger().info('Publishing video frame')
 
 
-
-
-
 def main(args=None):
     rclpy.init(args=args)
     image_publisher = ImagePublisher()
