@@ -86,7 +86,7 @@ class ButtonPublisher(Node):
                     self.x += 0.1
                     print(f'x: {self.x}')
                     self.publisher_.publish(msg)
-                    sleep(0.05)
+                    sleep(0.1)
 
             elif byte_of_interest == '0200' and self.side_counter == False: # B, retroceder rápido de forma progresiva
                 print('B')
@@ -102,7 +102,7 @@ class ButtonPublisher(Node):
                     self.x -= 0.1
                     print(f'x: {self.x}')
                     self.publisher_.publish(msg)
-                    sleep(0.05)
+                    sleep(0.1)
 
             elif byte_of_interest == '0004': # X, para detener el robot
 
@@ -199,7 +199,7 @@ class ButtonPublisher(Node):
                 msg.linear.x = self.tupla[0]
                 msg.angular.z = self.tupla[1]
                 self.publisher_.publish(msg)
-                sleep(0.5)
+                sleep(0.4)
                 self.y = 0.0
                 self.x = 0.0
                 self.tupla = (self.x, self.y)
@@ -218,7 +218,7 @@ class ButtonPublisher(Node):
                 msg.linear.x = self.tupla[0]
                 msg.angular.z = self.tupla[1]
                 self.publisher_.publish(msg)
-                sleep(0.5)
+                sleep(0.4)
                 self.y = 0.0
                 self.x = 0.0
                 self.tupla = (self.x, self.y)
@@ -258,3 +258,4 @@ def main(args=None):
 
 if __name__ == '__main__':
     main()
+

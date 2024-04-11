@@ -5,10 +5,18 @@ import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import CompressedImage  # CompressedImage is the message type
 from cv_bridge import CvBridge  # Package to convert between ROS and OpenCV Images
-
+import time
 from math import pi, atan
 
 from final.Movements import Movements
+
+ERROR_ANGULO = 0.0        # TODO: Comprobar cual es el error sistematico
+DISTANCIA_EXTRA = 0.2
+
+TIEMPO_ANALISIS = 5.0  * 4
+SLEEP_TRAMPA = 3.0
+
+MOSTRAR_CAMARA = True
 
 
 class Figura(Node):
@@ -144,6 +152,7 @@ class Figura(Node):
 
             # Si no estamos en autonomia, pedimos al usuario que seleccione una figura
             if not self.autonomia:
+                # time.sleep(SLEEP_TRAMPA)
                 if self.seleccion == "1":
                     self.moverse_objetivo(self.mov, "TRIANGULO")
                     self.seleccion = True
@@ -160,13 +169,15 @@ class Figura(Node):
                     self.moverse_objetivo(self.mov, "ESTRELLA")
                     self.seleccion = True
 
-            elif self.tiempo >= 2.0:
+
+            elif self.tiempo >= TIEMPO_ANALISIS:
+
                 # Obtenemos la forma con mayor frecuencia
                 maximo = max(self.formas, key=self.formas.get)
                 print("\n\n\n\n\n\n\n\n\n", maximo, "\n\n\n\n\n\n\n\n\n")
 
                 # Pedimos al usuario que presione cualquier boton para arrancar el robot
-                _ = input("Presion cualquier boton para arrancar")
+                # _ = input("Presion cualquier boton para arrancar")
 
                 # Movemos el robot hacia el objetivo
                 self.moverse_objetivo(self.mov, maximo)
@@ -186,8 +197,10 @@ class Figura(Node):
                 self.seleccion = True
 
             # Display image
-            cv2.imshow("camera", img)
-            cv2.waitKey(1)
+
+            if MOSTRAR_CAMARA:
+                cv2.imshow("camera", img)
+                cv2.waitKey(1)
 
         else:
             print("Opcion no valida, 'q' para salir")
@@ -267,7 +280,7 @@ class Figura(Node):
         # El valor tonos indica la minima media de colores que permite, si se indica 30 tomara todos los colores que
         # tenga una media de color RGB por encima de 30
 
-        thresholded = cv2.threshold(blurred, self.tonos["Tibios"][0], 255, cv2.THRESH_BINARY)[1]
+        thresholded = cv2.threshold(blurred,90, 255, cv2.THRESH_BINARY)[1]
         #cv2.imshow("thresholded", thresholded)
         #cv2.waitKey(1)
 
@@ -341,12 +354,13 @@ class Figura(Node):
     def moverse_objetivo(self, mov, figura):
 
         objetivo = self.conseguir_objetivo(figura)
+        print(f'Moviendo a {figura}')
 
         if objetivo is not None:
             y, x = objetivo
 
             # CALCULAMOS EL ÁNGULO
-            angulo = atan(y / abs(x))
+            angulo = atan(y / abs(x))       + ERROR_ANGULO
             angulo = angulo * 180 / pi
             angulo_giro = 90 - angulo
 
@@ -354,7 +368,7 @@ class Figura(Node):
                 angulo_giro = -angulo_giro
 
             # CALCULAMOS LA DISTANCIA QUE TIENE QUE AVANZAR
-            distancia = (x ** 2 + y ** 2) ** 0.5
+            distancia = (x ** 2 + y ** 2) ** 0.5        + DISTANCIA_EXTRA
 
             mov.girar_avanzar(angulo_giro, distancia)
 
