@@ -32,7 +32,7 @@ def aparcar(mov):
     mov.actualizar_vel_angular(0.75)
     mov.avanzar_distancia(distancia_aparcamiento)
     mov.girar_grados(grados_aparcamiento, -radio_aparcamiento, False) # Gira y se posiciona para la marcha atras
-    mov.retroceder_distancia(0.4) # Ultima marcha atras
+    mov.retroceder_distancia(0.3) # Ultima marcha atras
     
 def recoger_pale(mov):      # Cuando esta cerca del pale
     
