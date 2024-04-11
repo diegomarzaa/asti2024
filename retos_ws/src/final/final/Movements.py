@@ -341,10 +341,10 @@ class Movements(Node):
         -1 en caso de obstaculo
         """
         distancias = sensors.distancias()
-        compar_der_e = self.comparar_distancias(sensors.get_distancia_derecha(), distancias[3], 0.05)
-        compar_izq_e = self.comparar_distancias(sensors.get_distancia_izquierda(), distancias[0], 0.05)
-        compar_der = self.comparar_distancias(sensors.get_distancia_derecha(), distancias[3], 0.2)
-        while self.detectar_pared(sensors, 0.05):
+        compar_der_e = self.comparar_distancias(sensors.get_distancia_derecha(), distancias[3], 0.5)
+        compar_izq_e = self.comparar_distancias(sensors.get_distancia_izquierda(), distancias[0], 0.5)
+        compar_der = self.comparar_distancias(sensors.get_distancia_derecha(), distancias[3], 5)
+        while self.detectar_pared(sensors, 5):
             # Enderezar el robot para mantenerlo paralelo
             if compar_der_e:  # TODO: Mirar el radio de curvatura
                 if compar_der_e == 2: # Nos vamos para la derecha
@@ -368,15 +368,15 @@ class Movements(Node):
                     self.girar_grados(90, 0.3)  # Girar 90 grados con un radio de 30 cm
                     if sensors.get_distancia_delante < 0.5 and sensors.get_distancia_derecha() < 0.1: # TODO Comprobar valores
                         self.girar_grados(90, 0.2)
-            elif distancias[1] < 0.3 and distancia[2] < 0.3:
-                if distancias[0] < 0.25:    # Suponemos que para la derecha no hay camino
+            elif distancias[1] < 30 and distancia[2] < 30:
+                if distancias[0] < 25:    # Suponemos que para la derecha no hay camino
                     self.girar_grados(180)
                 else:
                     self.girar_grados_izq(90)
             else:
                 self.avanzar()
             distancias = sensors.distancias()
-            compar_der = self.comparar_distancias(sensors.get_distancia_derecha(), distancias[3], 0.5)
+            compar_der = self.comparar_distancias(sensors.get_distancia_derecha(), distancias[3], 5)
         self.detener()
         return -1
         
