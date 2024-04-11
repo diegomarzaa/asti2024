@@ -88,7 +88,7 @@ class ButtonPublisher(Node):
 
             elif byte_of_interest == '4000' and self.x <= 0.6 and self.side_counter == False: # UP, aumentar velocidad linear cada vez que pulsemos cruz hacia arriba
                 self.side_counter = True
-                self.fig.moverse_objetivo(self.mov, 'RECTANGULO')
+                self.fig.moverse_objetivo(self.mov, 'CUADRADO')
                 print('up')
 
             elif byte_of_interest == '8000' and self.x >= -0.6 and self.side_counter == False: # DOWN, disminuir velocidad linear cada vez que pulsemos cruz hacia abajo
