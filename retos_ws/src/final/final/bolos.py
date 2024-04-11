@@ -68,6 +68,7 @@ def main(args=None):
             bolos.grados_bolos_mantener = float(input_mantener_guardar)
           break
 
+      # SOLTAR
       print(f'\nGrados actuales soltar: {bolos.grados_bolos_soltar} grados.')
       input_soltar_guardar = bolos.grados_bolos_soltar
       while True:
@@ -127,9 +128,7 @@ def main(args=None):
 
     print("Lanzando los bolos mientras retrocede")
     bolos.mov.actualizar_vel_lineal(bolos.vel_lanzamiento)
-    bolos.mov.retroceder_distancia(bolos.distancia_final/2, aceleracion=False)
+    bolos.mov.retroceder_distancia(bolos.distancia_final, aceleracion=False)
     bolos.bolos_soltar()
-    bolos.mov.retroceder_distancia(bolos.distancia_final/2, aceleracion=False)
-    
     
   rclpy.shutdown()
