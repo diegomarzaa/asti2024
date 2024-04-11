@@ -83,7 +83,7 @@ class Figura(Node):
 
     def __init__(self, autonomia=True):
         super().__init__('Figura')  # /video_frames  /camera/image_raw
-        self.subscription = self.create_subscription(CompressedImage, '/video_frames', self.listener_callback, 10)
+        self.subscription = self.create_subscription(CompressedImage, '/video', self.listener_callback, 10)
         self.subscription
 
         self.br = CvBridge()

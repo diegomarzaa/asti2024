@@ -1,6 +1,7 @@
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Image
+from sensor_msgs.msg import CompressedImage
 from cv_bridge import CvBridge, CvBridgeError
 import cv2
 import numpy as np
@@ -12,7 +13,7 @@ class ImagePublisher(Node):
 
     def __init__(self):
         super().__init__('image_publisher')
-        self.publisher_ = self.create_publisher(Image, '/video', 10)
+        self.publisher_ = self.create_publisher(CompressedImage, '/video', 10)
         self.bridge = CvBridge()
 
         # We will publish a message every 0.001 seconds
@@ -27,7 +28,7 @@ class ImagePublisher(Node):
         try:
             if img is None:
                 return
-            ros_image = self.bridge.cv2_to_imgmsg(img)
+            ros_image = self.bridge.cv2_to_compressed_imgmsg(img)
         except CvBridgeError as e:
             self.get_logger().info('Error in conversion to image message: %s' % e)
             return
