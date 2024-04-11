@@ -58,7 +58,7 @@ class Servo():
         self.grados_boli_bajo = 0.0     
         self.grados_bolos_soltar = 50.0
         self.grados_bolos_mantener = 0.0
-        self.grados_pale_alto = 0.0       # TODO: Cambiar
+        self.grados_pale_alto = 10.0       # TODO: Cambiar
         self.grados_pale_bajo = 0.0
     
         # Tiempos
