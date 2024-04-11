@@ -40,52 +40,52 @@ def get_figure_params(opcion_menu):
 
 
 
-def dibujar_figura(mov, servo, opcion_menu):
-  angulo, largo, ancho, lados = get_figure_params(opcion_menu)
+# def dibujar_figura(mov, servo, opcion_menu):
+#   angulo, largo, ancho, lados = get_figure_params(opcion_menu)
   
-  servo.boli_bajar()
+#   servo.boli_bajar()
   
-  for i in range(lados):
-    if i % 2:
-      distancia = largo
-    else:
-      distancia = ancho
+#   for i in range(lados):
+#     if i % 2:
+#       distancia = largo
+#     else:
+#       distancia = ancho
     
-    print(f"Moviendo hacia adelante (pintando), distancia: {distancia}")
-    mov.avanzar_distancia(distancia)
-    servo.boli_subir(prints=True)
-    time.sleep(SLEEP_TIME_BOLI)
+#     print(f"Moviendo hacia adelante (pintando), distancia: {distancia}")
+#     mov.avanzar_distancia(distancia)
+#     servo.boli_subir(prints=True)
+#     time.sleep(SLEEP_TIME_BOLI)
 
-    print(f"Avanzando para corregir (sin pintar) {DIST_BOLI_CENTRO}")
-    mov.avanzar_distancia(DIST_BOLI_CENTRO)
+#     print(f"Avanzando para corregir (sin pintar) {DIST_BOLI_CENTRO}")
+#     mov.avanzar_distancia(DIST_BOLI_CENTRO)
 
-    print(f"Girando {angulo} grados")
-    mov.girar_grados_der(angulo)
+#     print(f"Girando {angulo} grados")
+#     mov.girar_grados_der(angulo)
 
-    print(f"Moviendo hacia atras (sin pintar), {DIST_BOLI_CENTRO}")
-    mov.retroceder_distancia(DIST_BOLI_CENTRO)
+#     print(f"Moviendo hacia atras (sin pintar), {DIST_BOLI_CENTRO}")
+#     mov.retroceder_distancia(DIST_BOLI_CENTRO)
 
-    print("Bajando boli")
-    servo.boli_bajar(prints=True)
+#     print("Bajando boli")
+#     servo.boli_bajar(prints=True)
     
 
 class Dibujar:
   def __init__(self):
     self.grados_dibujar_arriba = 15.0
     self.grados_dibujar_abajo = 0.0
-    self.tiempo_dibujar_arriba = 0.0
-    self.tiempo_dibujar_abajo = 0.0
+    self.tiempo_dibujar_arriba = 0.2
+    self.tiempo_dibujar_abajo = 0.2
     self.servo = Servo()
     
   def boli_subir(self, prints=False):
     if prints:
       print(f"Boli subir: {self.grados_dibujar_arriba} grados")
-    self.servo.herramienta_girar(self.grados_dibujar_arriba, self.tiempo_dibujar_arriba)
+    self.servo.herramienta_girar(self.grados_dibujar_arriba, self.tiempo_dibujar_arriba, final_tranquilo=True)
     
   def boli_bajar(self, prints=False):
     if prints:
       print(f"Boli bajar: {self.grados_dibujar_abajo} grados")
-    self.servo.herramienta_girar(self.grados_dibujar_abajo, self.tiempo_dibujar_abajo)
+    self.servo.herramienta_girar(self.grados_dibujar_abajo, self.tiempo_dibujar_abajo, final_tranquilo=True)
 
     
 
