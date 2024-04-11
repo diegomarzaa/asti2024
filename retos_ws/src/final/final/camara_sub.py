@@ -12,7 +12,7 @@ class Linea_sub(Node):
 
     def __init__(self):
         super().__init__('linea_sub')                            # /video_frames   simulador: /camera/image_raw
-        self.sim = input("¿Es simulación? (s/n): ").lower() == 's'
+        self.sim = input("¿Es raspberry? (s/n): ").lower() == 's'
         if self.sim:
             self.subscription = self.create_subscription(Image, '/video', self.listener_callback, 10)
         else:
