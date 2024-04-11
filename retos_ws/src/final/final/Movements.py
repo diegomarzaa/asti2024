@@ -112,13 +112,15 @@ class Servo():
             self.servo.ChangeDutyCycle(duty_cycle)                                      if GPIO_ENABLED else None
             print(f"Moving angle: {self.servo_current_angle}")
             time.sleep(delay)
+            # self.servo.ChangeDutyCycle(0)     # Eliminar jitter
+
             
         self.servo_current_angle = grados_objetivo
         duty_cycle = self.servo_angle_to_duty_cycle(self.servo_current_angle)
         self.servo.ChangeDutyCycle(duty_cycle)                                        if GPIO_ENABLED else None
         print(f"Final angle: {self.servo_current_angle}")
-        # time.sleep(0.5)
-        # self.servo.ChangeDutyCycle(0)                                                 if GPIO_ENABLED else None
+        time.sleep(0.3)
+        self.servo.ChangeDutyCycle(0)                                                 if GPIO_ENABLED else None
 
     
     def ver_angulos_herramienta(self):
@@ -250,7 +252,7 @@ class Movements(Node):
         self.wheel_publisher_ = self.create_publisher(Twist, 'cmd_vel', 10)   # cmd_vel has (m/s , rad/s)
 
         # WHEELS
-        self.obj_linear_vel = 0.1       # TODO: CAMBIAR A VALORES QUE SEAN BUENOS POR DEFECTO
+        self.obj_linear_vel = 0.2       # TODO: CAMBIAR A VALORES QUE SEAN BUENOS POR DEFECTO
         self.obj_angular_vel = 0.7
         self.linear_acc = 0.01
         self.angular_acc = 0.1
