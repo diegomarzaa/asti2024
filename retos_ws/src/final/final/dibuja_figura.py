@@ -14,6 +14,8 @@ DIST_BOLI_CENTRO = 0.12
 VELOCIDAD_LINEAL = 0.05
 VELOCIDAD_ANGULAR = 0.5
 
+TIEMPO_TESTEOS = 1
+
 def get_figure_params(opcion_menu):
   figura = int(opcion_menu)
   
@@ -60,18 +62,38 @@ def dibujar_figura(mov, servo, opcion_menu):
     print(f"Girando {angulo} grados")
     mov.girar_grados_der(angulo)
 
-    print("Moviendo hacia atras (sin pintar), {DIST_BOLI_CENTRO}")
+    print(f"Moviendo hacia atras (sin pintar), {DIST_BOLI_CENTRO}")
     mov.retroceder_distancia(DIST_BOLI_CENTRO)
 
     print("Bajando boli")
     servo.boli_bajar(prints=True)
+    
 
+class Dibujar:
+  def __init__(self):
+    self.grados_dibujar_arriba = 15.0
+    self.grados_dibujar_abajo = 0.0
+    self.tiempo_dibujar_arriba = 0.0
+    self.tiempo_dibujar_abajo = 0.0
+    self.servo = Servo()
+    
+  def boli_subir(self, prints=False):
+    if prints:
+      print(f"Boli subir: {self.grados_dibujar_arriba} grados")
+    self.servo.herramienta_girar(self.grados_dibujar_arriba, self.tiempo_dibujar_arriba)
+    
+  def boli_bajar(self, prints=False):
+    if prints:
+      print(f"Boli bajar: {self.grados_dibujar_abajo} grados")
+    self.servo.herramienta_girar(self.grados_dibujar_abajo, self.tiempo_dibujar_abajo)
+
+    
 
 
 def main():
   rclpy.init(args=None)
   mov = Movements()
-  servo = Servo()
+  dibujar = Dibujar()
           
   mov.actualizar_vel_lineal(VELOCIDAD_LINEAL)
   mov.actualizar_vel_angular(VELOCIDAD_ANGULAR)
@@ -86,13 +108,98 @@ def main():
     print(" q. Salir")
     opcion_menu = input("Seleccione una opcion: ")
     
+    
+    
+    
     # OPCIONES
     
     if opcion_menu in ['1', '2', '3']:  # Triangulo, cuadrado, rectangulo
-      dibujar_figura(mov, servo, opcion_menu)
+      angulo, largo, ancho, lados = get_figure_params(opcion_menu)
+      
+      dibujar.boli_bajar()
+      
+      for i in range(lados):
+        if i % 2:
+          distancia = largo
+        else:
+          distancia = ancho
+        
+        print(f"Moviendo hacia adelante (pintando), distancia: {distancia}")
+        mov.avanzar_distancia(distancia)
+        dibujar.boli_subir(prints=True)
+        time.sleep(SLEEP_TIME_BOLI)
+
+        print(f"Avanzando para corregir (sin pintar) {DIST_BOLI_CENTRO}")
+        mov.avanzar_distancia(DIST_BOLI_CENTRO)
+
+        print(f"Girando {angulo} grados")
+        mov.girar_grados_der(angulo)
+
+        print("Moviendo hacia atras (sin pintar), {DIST_BOLI_CENTRO}")
+        mov.retroceder_distancia(DIST_BOLI_CENTRO)
+
+        print("Bajando boli")
+        dibujar.boli_bajar(prints=True)
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
       
     elif opcion_menu == 'c':
-      servo.ver_angulos_herramienta()
+      
+      # ARRIBA
+      print(f'\nGrados actuales arriba: {dibujar.grados_dibujar_arriba} grados.')
+      input_dibujar_arriba_guardar = dibujar.grados_dibujar_arriba
+      while True:
+        input_dibujar_arriba = input("Introduce un nuevo ángulo para arriba (Enter para confirmar u omitir): ")
+        if input_dibujar_arriba:
+          dibujar.servo.herramienta_girar(float(input_dibujar_arriba), TIEMPO_TESTEOS)
+          input_dibujar_arriba_guardar = input_dibujar_arriba
+        else:
+          if input_dibujar_arriba_guardar:
+            dibujar.grados_dibujar_arriba = float(input_dibujar_arriba_guardar)
+          break
+
+      # ABAJO
+      print(f'\nGrados actuales soltar: {dibujar.grados_dibujar_abajo} grados.')
+      input_dibujar_abajo_guardar = dibujar.grados_dibujar_abajo
+      while True:
+        input_dibujar_abajo = input("Introduce un nuevo ángulo para abajo (Enter para confirmar u omitir): ")
+        if input_dibujar_abajo:
+          dibujar.servo.herramienta_girar(float(input_dibujar_abajo), TIEMPO_TESTEOS)
+          input_dibujar_abajo_guardar = input_dibujar_abajo
+        else:
+          if input_dibujar_abajo_guardar:
+            dibujar.grados_dibujar_abajo = float(input_dibujar_abajo_guardar)
+          break
+
       
     elif opcion_menu == 'q':
       break
