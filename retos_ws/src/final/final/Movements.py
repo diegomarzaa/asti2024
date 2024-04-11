@@ -9,7 +9,21 @@ try:
 except ImportError:
     print("RPi.GPIO no encontrada en el sistema")
     GPIO_ENABLED = False
-
+    
+def pedir_velocidades(mov):
+    velocidad_lineal = input(f"Velocidad linear actual: {mov.obj_linear_vel} m/s.\nNueva velocidad lineal (Enter para omitir): ")
+    if velocidad_lineal:
+        try:
+            mov.obj_linear_vel = float(velocidad_lineal)
+        except:
+            print("Introduce un número válido")
+    
+    velocidad_angular = input(f"Velocidad angular actual: {mov.obj_angular_vel} rad/s.\nNueva velocidad angular (Enter para omitir): ")
+    if velocidad_angular:
+        try:
+            mov.obj_angular_vel = float(velocidad_angular)
+        except:
+            print("Introduce un número válido")
     
 def get_movements():
     # TODO: Importante mantener actualizado get_movements() con las funciones que se vayan añadiendo
