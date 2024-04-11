@@ -4,7 +4,8 @@ from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
 import cv2
 import numpy as np
-from geometry_msgs.msg import Twist
+from geometry_msgs.msg import Twist, Vector3
+import re
 
 
 class ImagePublisher(Node):
@@ -52,8 +53,32 @@ class ImagePublisher(Node):
     def listener_callback(self, msg):
         self.get_logger().info('Receiving cmd_vel')
         print(msg)
-        with open("cmd_vel", 'wb') as archivo:
-            archivo.write(msg)
+        with open("cmd_vel", 'w') as archivo:
+            archivo.write(str(msg))
+
+        print("prueba_lectura()")
+        print(self.prueba_lectura())
+
+    def prueba_lectura(self):
+        with open("cmd_vel", 'r') as archivo:
+            s = archivo.read()
+        return self.str_to_twist(s)
+
+    def str_to_twist(self, s):
+        # Extraer los valores de los componentes lineales y angulares
+        matches = re.findall(r"[-+]?\d*\.\d+|\d+", s)
+        print(matches)
+
+        # Crear un nuevo mensaje Twist con los valores extraídos
+        twist = Twist()
+        twist.linear.x = float(matches[1])
+        twist.linear.y = float(matches[2])
+        twist.linear.z = float(matches[3])
+        twist.angular.x = float(matches[5])
+        twist.angular.y = float(matches[6])
+        twist.angular.z = float(matches[7])
+
+        return twist
 
 
 def main(args=None):

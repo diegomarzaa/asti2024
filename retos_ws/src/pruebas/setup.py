@@ -32,6 +32,7 @@ setup(
             'prueba_mov = pruebas.prueba_mov:main',
             'cam_sub = pruebas.camara_sub:main',
             'lector_de_archivo = pruebas.lector_de_archivo:main',
+            'lector_cmd_vel = pruebas.lector_cmd_vel:main',
         ],
     },
 )
