@@ -160,7 +160,7 @@ class Figura(Node):
                     self.moverse_objetivo(self.mov, "ESTRELLA")
                     self.seleccion = True
 
-            elif self.tiempo >= 10.0:
+            elif self.tiempo >= 2.0:
                 # Obtenemos la forma con mayor frecuencia
                 maximo = max(self.formas, key=self.formas.get)
                 print("\n\n\n\n\n\n\n\n\n", maximo, "\n\n\n\n\n\n\n\n\n")
@@ -186,8 +186,8 @@ class Figura(Node):
                 self.seleccion = True
 
             # Display image
-            #cv2.imshow("camera", img)
-            #cv2.waitKey(1)
+            cv2.imshow("camera", img)
+            cv2.waitKey(1)
 
         else:
             print("Opcion no valida, 'q' para salir")
