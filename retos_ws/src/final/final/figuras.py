@@ -8,7 +8,7 @@ from cv_bridge import CvBridge  # Package to convert between ROS and OpenCV Imag
 import time
 from math import pi, atan
 
-from final.Movements import Movements
+from final.Movements import Movements, pedir_velocidades
 
 ERROR_ANGULO = 0.0        # TODO: Comprobar cual es el error sistematico
 DISTANCIA_EXTRA = 0.2
@@ -355,6 +355,7 @@ class Figura(Node):
 
         objetivo = self.conseguir_objetivo(figura)
         print(f'Moviendo a {figura}')
+        mov.actualizar_vel_lineal(0.4)
 
         if objetivo is not None:
             y, x = objetivo
@@ -384,6 +385,7 @@ class Figura(Node):
                 "\n 3. Arco"
                 "\n 4. Cilindro"
                 "\n 5. Estrella"
+                "\n v. Actualizar velocidades"
                 "\n ----------------- "
                 "\n a. Testeo"
                 "\n q. Salir")
@@ -401,6 +403,8 @@ class Figura(Node):
             return "CILINDRO"
         elif opcion_menu == '5':
             return "ESTRELLA"
+        elif opcion_menu == 'v':
+            pedir_velocidades(self.mov)
         else:
             return None
 
