@@ -4,7 +4,11 @@
 import rclpy
 import time
 from math import pi, atan
-from final.Movements import Movements
+from final.Movements import Movements, pedir_velocidades
+
+ERROR_ANGULO = 0.0        # TODO: Comprobar cual es el error sistematico
+DISTANCIA_EXTRA = 0.2
+
 
 DISTANCIA_TABLERO_COL = 2.45   # Suma de las distancias de las columnas
 DISTANCIA_TABLERO_FILA = 2.45 # Suma de las distancias de las filas
@@ -25,6 +29,7 @@ opciones = {
   'u': 'Actualizar coordenadas',
   'm': 'Mostrar coordenadas',
   'a': 'Prueba de movimiento',
+  'v': 'Actualizar velocidades',
   'q': 'Salir'
 }
 
@@ -89,11 +94,11 @@ def calculo_trigonometria(mov):
 
   # CALCULAMOS EL ÁNGULO
   angulo = atan(y/x)
-  angulo = angulo * 180 / pi
+  angulo = angulo * 180 / pi  + ERROR_ANGULO      #TODO: REVISAR
   angulo_giro = 90 - angulo
 
   # CALCULAMOS LA DISTANCIA QUE TIENE QUE AVANZAR
-  distancia = (x**2 + y**2)**0.5
+  distancia = (x**2 + y**2)**0.5    +  DISTANCIA_EXTRA 
 
   # GIRAMOS Y AVANZAMOS
   if giro == 'izq':
@@ -152,14 +157,14 @@ def posicion_final(mov):
       angulo_giro = 0
     else:
       angulo = atan(abs(y)/abs(x))
-      angulo = angulo * 180 / pi
+      angulo = angulo * 180 / pi    + ERROR_ANGULO
       angulo_giro = 90 - angulo
 
     if x < 0 or y < 0:
       angulo_giro = -angulo_giro
     
     # CALCULAMOS LA DISTANCIA QUE TIENE QUE AVANZAR
-    distancia = (x**2 + y**2)**0.5
+    distancia = (x**2 + y**2)**0.5    + DISTANCIA_EXTRA
   
     # GIRAMOS Y AVANZAMOS
     print(f"X: {x}, Y: {y}")
@@ -179,6 +184,8 @@ def ejecutar_cuadricula(mov, opcion_menu):
     pass
   elif opcion_menu == '6':
     pass
+  elif opcion_menu == 'v':
+    pedir_velocidades(mov)
   else:
     print("Opcion no valida, 'q' para salir")
 

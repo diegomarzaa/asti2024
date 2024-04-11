@@ -68,16 +68,16 @@ class Servo():
         # Grados
         self.servo_current_angle = 0.0
         
-        self.grados_boli_alto = 15.0     # TODO: Cambiar a valor correcto para cada prueba
-        self.grados_boli_bajo = 0.0     
+        # self.grados_boli_alto = 15.0     # TODO: Cambiar a valor correcto para cada prueba
+        # self.grados_boli_bajo = 0.0     
         self.grados_bolos_soltar = 50.0
         self.grados_bolos_mantener = 0.0
         self.grados_pale_alto = 10.0       # TODO: Cambiar
         self.grados_pale_bajo = 0.0
     
         # Tiempos
-        self.tiempo_boli_subir = 0.1
-        self.tiempo_boli_bajar = 0.1
+        # self.tiempo_boli_subir = 0.1
+        # self.tiempo_boli_bajar = 0.1
         
         self.tiempo_bolos_soltar = 0.1
         self.tiempo_bolos_mantener = 0.5
@@ -185,15 +185,15 @@ class Servo():
 
 
     # Dibujar la figura
-    def boli_subir(self, prints=False):
-        if prints:
-            print("Boli subido")
-        self.herramienta_girar(self.grados_boli_alto, self.tiempo_boli_subir)
+    # def boli_subir(self, prints=False):
+    #     if prints:
+    #         print("Boli subido")
+    #     self.herramienta_girar(self.grados_boli_alto, self.tiempo_boli_subir)
 
-    def boli_bajar(self, prints=False):
-        if prints:
-            print("Boli bajado")
-        self.herramienta_girar(self.grados_boli_bajo, self.tiempo_boli_bajar)
+    # def boli_bajar(self, prints=False):
+    #     if prints:
+    #         print("Boli bajado")
+    #     self.herramienta_girar(self.grados_boli_bajo, self.tiempo_boli_bajar)
     
     # Bolos
     def bolos_soltar(self, prints=False):
