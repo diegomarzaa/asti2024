@@ -23,6 +23,7 @@ setup(
             'rosbag = final.rosbag:main',
             'keyboard_teleop = final.keyboard_teleop:main',
             'nintendo_teleop = final.nintendo_teleop:main',
+            'nintendo_figs = final.nintendo_figs:main',
             
             'dibuja_figura = final.dibuja_figura:main',
             'siguelineas_sim = final.siguelineas_sim:main',

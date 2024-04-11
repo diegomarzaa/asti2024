@@ -351,6 +351,7 @@ class Figura(Node):
     def moverse_objetivo(self, mov, figura):
 
         objetivo = self.conseguir_objetivo(figura)
+        print(f'Moviendo a {figura}')
 
         if objetivo is not None:
             y, x = objetivo
