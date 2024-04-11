@@ -10,7 +10,7 @@ from math import pi, atan
 
 from final.Movements import Movements, pedir_velocidades
 
-ERROR_ANGULO = -1.0        # TODO: Comprobar cual es el error sistematico
+ERROR_ANGULO = -0.2        # TODO: Comprobar cual es el error sistematico
 DISTANCIA_EXTRA = 0.2
 
 TIEMPO_ANALISIS = 5.0  * 4
