@@ -10,8 +10,8 @@ from final.Movements import Movements, Servo
 from final.mini_fabrica import aparcar
 from final.figuras import Figura
 
-DISPOSITIVO_WIFI = 'wlo1'     # Adrià
-#DISPOSITIVO_WIFI = 'wlan0'      # Raspberry
+#DISPOSITIVO_WIFI = 'wlo1'     # Adrià
+DISPOSITIVO_WIFI = 'wlan0'      # Raspberry
 
 
 class ButtonPublisher(Node):
