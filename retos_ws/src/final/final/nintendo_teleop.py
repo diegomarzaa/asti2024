@@ -6,6 +6,7 @@ from time import sleep
 from rclpy.node import Node
 from geometry_msgs.msg import Twist
 from final.Movements import Movements, Servo
+from final.mini_fabrica import aparcar
 
 #DISPOSITIVO_WIFI = 'wlo1'     # Adrià
 DISPOSITIVO_WIFI = 'wlan0'      # Raspberry
@@ -26,6 +27,8 @@ class ButtonPublisher(Node):
         self.side_counter = False # Distinguir entre pulsar cruz por primera vez o tenerla mantenida
         
         self.servo = Servo()
+        
+        self.pale = 0
     
     def run_tcpdump(self, port):
 
@@ -223,21 +226,26 @@ class ButtonPublisher(Node):
                 self.publisher_.publish(msg)
                 print('SELECT')
             
-            elif byte_of_interest == '0001' and self.side_counter == False: # R, sube pale al pulsar botón R
+            elif byte_of_interest == '0001' and self.side_counter == False: # R, sube o baja pale al pulsar botón R
                 self.side_counter = True
                 print('R')
-                self.servo.pale_subir()
+                if self.pale == 0:
+                    self.servo.pale_subir()
+                    self.pale = 1
+                elif self.pale == 1:
+                    self.servo.pale_bajar()
+                    self.pale = 0
                 
             elif byte_of_interest == '0002' and self.side_counter == False: # L, baja pale al pulsar botón L
                 self.side_counter = True
                 print('L')
-                self.servo.pale_bajar()
+                aparcar(mov)
+                
             
             elif byte_of_interest == '0800': # START
                 diego_putero # Detiene ejecución
 
 def main(args=None):
-    
     rclpy.init(args=args)
     button_publisher = ButtonPublisher()
     button_publisher.run_tcpdump('8888')
