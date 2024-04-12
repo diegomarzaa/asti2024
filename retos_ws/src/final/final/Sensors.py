@@ -37,6 +37,7 @@ class Sensors(Node):
         self.distancia_delante_izq = msg.data
         
     def get_distancia_derecha(self):
+        print(self.distancia_der)
         return self.distancia_der
     
     def get_distancia_izquierda(self):

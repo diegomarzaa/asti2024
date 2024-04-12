@@ -43,6 +43,7 @@ setup(
             
             'Contar_lineas_cuadricula = final.contar_lineas_cuadricula:main',
             'new_siguelineas_puntos = final.new_siguelineas_puntos:main',
+            'prueba_laberinto = final.prueba_laberinto:main'
         ],
     },
 )
