@@ -34,13 +34,13 @@ def basico(mov, sensors):
     # sensores.distancias() -> [izq, izq_f, der_f, der]
     distancias = sensors.distancias()
     if distancias[1] > 5 and distancias[2] > 5:
-        if round(distancia[3],1) < 10:    # Demasiado cerca de la paredes
+        if round(distancias[3],1) < 10:    # Demasiado cerca de la paredes
             mov.girar_der(10)
-        elif round(distancia[3], 1) > 10 and distancia[3] < 30:
+        elif round(distancias[3], 1) > 10 and distancias[3] < 30:
             mov.girar_izq(8)
         else:
             mov.avanzar()
-        if distancia[3] > 30:
+        if distancias[3] > 30:
             mov.girar_grados_der(90)
     else:
         while round(distancias[2], 1) == round(distancias[1], 1) and distancias[1] < 25:
@@ -70,7 +70,7 @@ def paralelo_paredes(mov, sensors): # Cambia el valor de las ruedas según la di
     else:
         mov.girar_grados_der(180)
 
-def mano_derecho(mov, sensors):
+def mano_derecha(mov, sensors):
     mov.avanzar_derecha(mov, sensors)
 
 
