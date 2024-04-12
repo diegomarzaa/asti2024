@@ -159,6 +159,8 @@ class DetectLinea(Node):
         - suma_central: La suma de puntos en la columna central.
         - vel: La velocidad actual del robot.
         """
+
+        velocidad_lineal = 0.05
         # Definir la velocidad angular base
         velocidad_angular = 0.1
 
@@ -172,19 +174,19 @@ class DetectLinea(Node):
             if self.memoria == 0:
                 # Mantener la trayectoria recta (si no hay memoria de giro previo)
                 print("Mantener la trayectoria recta")
-                self.publish_velocity((0.1, 0.0))
+                self.publish_velocity((0.05, 0.0))
                 #time.sleep(1)
             elif self.memoria == -1:
                 # Girar hacia la izquierda (usando la memoria de giro previa)
                 print("Girar hacia la izquierda (usando la memoria de giro previa)")
-                self.publish_velocity((0.1 - self.giro, self.contador))
+                self.publish_velocity((velocidad_lineal - self.giro, self.contador))
                 self.contador -= aumento_contador_memoria
                 self.giro += aumento_giro_memoria * 2
 
             elif self.memoria == 1:
                 # Girar hacia la derecha (usando la memoria de giro previa)
                 print("Girar hacia la derecha (usando la memoria de giro previa)")
-                self.publish_velocity((0.1 - self.giro, -self.contador))
+                self.publish_velocity((velocidad_lineal - self.giro, -self.contador))
                 self.contador += aumento_contador_memoria
                 self.giro += aumento_giro_memoria * 2
 
@@ -193,13 +195,13 @@ class DetectLinea(Node):
             if self.contador > 0:
                 # Ajustar la velocidad angular para una rotación más suave
                 print("Girar hacia la izquierda con mayor suavidad")
-                self.publish_velocity((0.1 - self.giro, -velocidad_angular + self.contador))
+                self.publish_velocity((velocidad_lineal - self.giro, -velocidad_angular + self.contador))
                 self.contador -= aumento_contador
                 self.giro += aumento_giro
             else:
                 # Giro estándar hacia la izquierda
                 print("Girar hacia la izquierda")
-                self.publish_velocity((0.1, -velocidad_angular))
+                self.publish_velocity((velocidad_lineal, -velocidad_angular))
             self.memoria = -1
 
         # Caso 3: La velocidad es positiva (girar hacia la derecha)
@@ -207,20 +209,20 @@ class DetectLinea(Node):
             if self.contador > 0:
                 # Ajustar la velocidad angular para una rotación más suave
                 print("Girar hacia la derecha con mayor suavidad")
-                self.publish_velocity((0.1 - self.giro, velocidad_angular - self.contador))
+                self.publish_velocity((velocidad_lineal - self.giro, velocidad_angular - self.contador))
                 self.contador += aumento_contador
                 self.giro += aumento_giro
             else:
                 # Giro estándar hacia la derecha
                 print("Girar hacia la derecha")
-                self.publish_velocity((0.1, velocidad_angular))
+                self.publish_velocity((velocidad_lineal, velocidad_angular))
             self.memoria = 1
 
         # Caso 4: Velocidad positiva o nula (ir recto)
         else:
             print("Ir recto")
             # Publicar velocidad para avanzar recto
-            self.publish_velocity((0.18, 0.0))
+            self.publish_velocity((velocidad_lineal, 0.0))
             # Reiniciar el contador de ajuste de giro
             self.contador = 0.15
             self.giro = 0.01
