@@ -231,7 +231,7 @@ class DetectLinea(Node):
         # Leer un frame de la cámara
         if not self.sim or self.priemra_vez:
             if self.camara_sub:
-                img = self.br.compressed_imgmsg_to_cv2(self.cap)
+                img = self.cap
             else:
                 success, img = self.cap.read()
             self.priemra_vez = False
