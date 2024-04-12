@@ -7,6 +7,7 @@ from math import pi, atan
 from final.Movements import Movements
 from final.Sensors import Sensors
 
+
 FACTOR = 2
 
 opciones = {
@@ -30,6 +31,7 @@ def pruebas(mov, sensors):
   mov.detectar_pared(sensors)
 
 def basico(mov, sensors):
+    # sensores.distancias() -> [izq, izq_f, der_f, der]
     distancias = sensors.distancias()
     if distancias[1] > 5 and distancias[2] > 5:
         if round(distancia[3],1) < 10:    # Demasiado cerca de la paredes
@@ -51,8 +53,8 @@ def basico(mov, sensors):
     
 def paralelo_paredes(mov, sensors): # Cambia el valor de las ruedas según la distancia a las paredes 
     distancias = sensors.distancias()
-    diferencia = distancia[3] - distancia[0] # distancia entre derecha e izquierda
-    if distancia[2] < 5 and distancia[1] < 5:
+    diferencia = distancias[3] - distancias[0] # distancia entre derecha e izquierda
+    if distancias[2] < 5 and distancias[1] < 5:
         while round(distancias[2], 1) == round(distancias[1], 1) and distancias[1] < 5:
             mov.actualizar_vel_lineal(0.0)
             mov.actualizar_vel_angular(-0.1)
@@ -63,7 +65,7 @@ def paralelo_paredes(mov, sensors): # Cambia el valor de las ruedas según la di
         mov.actualizar_vel_angular(diferencia/FACTOR)    # Revisar signo y factor
     elif diferencia > 0:                            # Camino derecha
         mov.girar_grados_der(90, 0.2)
-    elif distancia[1] < 25 and diferencia < 0:     # Única posibilida izquierda
+    elif distancias[1] < 25 and diferencia < 0:     # Única posibilida izquierda
         mov.girar_grados_izq(90, 0.2)
     else:
         mov.girar_grados_der(180)

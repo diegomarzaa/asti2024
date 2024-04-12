@@ -41,10 +41,10 @@ class DetectLinea(Node):
         if sim:
             self.cap = cv2.VideoCapture(0)
         else:
-            #self.cap = cv2.VideoCapture(0)  # /home/jcrex/Vídeos/siguelineas_largo.mp4
-            #self.cap.set(3, 640)
-            #self.cap.set(4, 480)
-            self.cap: cv2.VideoCapture
+            self.cap = cv2.VideoCapture(0)  # /home/jcrex/Vídeos/siguelineas_largo.mp4
+            self.cap.set(3, 640)
+            self.cap.set(4, 480)
+
 
 
         self.br = CvBridge()
