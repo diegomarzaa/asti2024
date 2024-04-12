@@ -104,7 +104,8 @@ class ButtonPublisher(Node):
                     self.publisher_.publish(msg)
                     sleep(0.1)
 
-            elif byte_of_interest == '0004': # X, para detener el robot
+            elif byte_of_interest == '0004' and self.side_counter == False: # X, para detener el robot
+                self.side_counter = True
 
                 """
                 En caso de querer frenar de forma gradual (funciona rarete)
