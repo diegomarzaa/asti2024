@@ -9,26 +9,39 @@ from final.Sensors import Sensors
 
 
 FACTOR = 2
+DISTANCIA_ENTRE_SENSORES = 10.7
 
 opciones = {
-  '1': 'Pruebas',
-  '2': 'Prueba mano derecha (opción 1)',
-  '3': 'Prueba paralelo a paredes (opción 2)',
-  '4': 'Prueba de laberinto básico (opción 3)',
-  '5': 'Programa principal (sin acabar)',
-  'q': 'Salir'
+    '1': 'Pruebas',
+    '2': 'Prueba mano derecha (opción 1)',
+    '3': 'Prueba paralelo a paredes (opción 2)',
+    '4': 'Prueba de laberinto básico (opción 3)',
+    '5': 'Programa principal (sin acabar)',
+    'q': 'Salir'
 }
 
+def girar_pared_diagonal(mov, sensors):
+    distancia_delante_izq = sensors.get_distancia_delante_izq()
+    distancia_delante_der = sensors.get_distancia_delante_der()
+    y = abs(distancia_delante_izq - distancia_delante_der)
+    x = DISTANCIA_ENTRE_SENSORES
+    angulo_giro = atan(y/x)
+    angulo_giro = angulo_giro * 180 / pi  
+    if distancia_delante_der < distancia_delante_izq:
+        mov.girar_grados_izq(angulo_giro)
+    else:
+        mov.girar_grados_der(angulo_giro)
+
 def pedir_opcion_menu():
-  print("\nOpciones laberinto:")
-  for key, value in opciones.items():
-    print(f" {key}. {value}")
-    
-  return input("Seleccione una opcion: ")
+    print("\nOpciones laberinto:")
+    for key, value in opciones.items():
+        print(f" {key}. {value}")
+
+    return input("Seleccione una opcion: ")
 
 def pruebas(mov, sensors):
-  print("Pruebas")
-  mov.detectar_pared(sensors)
+    print("Pruebas")
+    mov.detectar_pared(sensors)
 
 def basico(mov, sensors):
     # sensores.distancias() -> [izq, izq_f, der_f, der]
@@ -75,49 +88,49 @@ def mano_derecha(mov, sensors):
 
 
 def ejecutar_laberinto(mov, sensors, opcion_menu):
-  if opcion_menu == '1':
-    pruebas(mov, sensors)
-  elif opcion_menu == '2':
-    mano_derecha(mov, sensors)
-  elif opcion_menu == '3':
-    paralelo_paredes(mov, sensors)
-  elif opcion_menu == '4':
-    basico(mov, sensors)
-  elif opcion_menu == '5':
-    main()
-  elif opcion_menu == '6':
-    pass
-  else:
-    print("Opcion no valida, 'q' para salir")
+    if opcion_menu == '1':
+        pruebas(mov, sensors)
+    elif opcion_menu == '2':
+        mano_derecha(mov, sensors)
+    elif opcion_menu == '3':
+        paralelo_paredes(mov, sensors)
+    elif opcion_menu == '4':
+        basico(mov, sensors)
+    elif opcion_menu == '5':
+        main()
+    elif opcion_menu == '6':
+        pass
+    else:
+        print("Opcion no valida, 'q' para salir")
 
 def main():
-  rclpy.init(args=None)
-  node = rclpy.create_node('laberinto')
-  mov = Movements()
-  sensors = Sensors()
-  mov.actualizar_vel_lineal(0.4)
-  mov.actualizar_vel_angular(0.2)
-  
-  
-  while rclpy.ok():
-    opcion_menu = pedir_opcion_menu()
+    rclpy.init(args=None)
+    node = rclpy.create_node('laberinto')
+    mov = Movements()
+    sensors = Sensors()
+    mov.actualizar_vel_lineal(0.4)
+    mov.actualizar_vel_angular(0.2)
     
-    # Testeos
-    if opcion_menu == 'a':
-      mov.prueba_movimientos()
-    elif opcion_menu == 'q':
-      break
+    
+    while rclpy.ok():
+        opcion_menu = pedir_opcion_menu()
+        
+        # Testeos
+        if opcion_menu == 'a':
+        mov.prueba_movimientos()
+        elif opcion_menu == 'q':
+        break
 
-    # Cuadrícula
-    elif opcion_menu in opciones:
-      """
-      1 -> Pruebas
-      """
-      rclpy.spin_once(sensors)    # ESTO MAMAHUEVO, ACTUALIZAR LOS SUSCRIBERS ANTES DE LLAMAR A NADA (Si está al final, no se actualizarán hasta que se llegue al final, en este caso aún no se ha llegado, por lo que sensors.distancia_der = None)
-      ejecutar_laberinto(mov, sensors, opcion_menu)
-    else:
-      print("Opcion no valida, 'q' para salir")
-    rclpy.spin_once(sensors)
+        # Cuadrícula
+        elif opcion_menu in opciones:
+        """
+        1 -> Pruebas
+        """
+        rclpy.spin_once(sensors)    # ESTO MAMAHUEVO, ACTUALIZAR LOS SUSCRIBERS ANTES DE LLAMAR A NADA (Si está al final, no se actualizarán hasta que se llegue al final, en este caso aún no se ha llegado, por lo que sensors.distancia_der = None)
+        ejecutar_laberinto(mov, sensors, opcion_menu)
+        else:
+        print("Opcion no valida, 'q' para salir")
+        rclpy.spin_once(sensors)
 
-  mov.detener()
-  rclpy.shutdown()
+    mov.detener()
+    rclpy.shutdown()
