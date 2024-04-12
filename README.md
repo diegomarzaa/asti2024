@@ -1,5 +1,63 @@
 # UJI ROBOTICS - ASTI2024
 
+# ROSBAG
+
+- `ros2 bag record /cmd_vel`
+- Mandar cosas
+- `ros2 bag play rosbag2_2024_04_12-09_48_08/rosbag2_2024_04_12-09_48_08_0.db3`
+
+
+# IP
+
+Para ver la IP de la raspberry en cualquier wifi sin usar un monitor:
+  - sudo apt-get install arp-scan
+  - sudo arp-scan --interface=wlo1 --localnet
+
+
+# COMPILACIÓN / ERRORES
+
+- Hacer sources:
+  - `source /opt/ros/foxy/setup.bash`
+  - `source install/setup.bash`
+- Compilar el código en la raspberry, en principio ya estará siempre hecho.
+  - `colcon build --packages-select custom_interfaces`
+  - `colcon build --packages-select dynamixel_sdk`
+  - `source install/setup.bash`
+  - `colcon build --symlink-install --packages-select bringup`
+  - Compilar los programas restantes (final...)
+  - `source install/setup.bash`
+- Si sigue sin funcionar
+  - `sudo usermod -aG dialout pi`
+  - `sudo chmod 777 /dev/ttyUSB0`  (o el puerto que sea, podría ser ttyUSB1, ttyUSB2, etc. Usar `ls /dev/ttyUSB*` para verlo)
+  - Reiniciar la controladora de motores. Conectar USB + energia.
+  - Cambiar el usb de sitio.
+
+
+# Otros comandos
+
+`ros2 run final keyboard_teleop`
+
+`ros2 run teleop_twist_keyboard teleop_twist_keyboard`
+
+`ros2 topic pub cmd_vel geometry_msgs/Twist "{linear: {x: 0.1, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: 0.0}}"`
+
+`ros2 topic pub -1 /set_velocity custom_interfaces/SetVelocity "{id: 1, velocity: 50}"`  
+(Id puede ser 1 o 2, y velocity puede ser + o -)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ## ¿Cómo ejecutar un programa ya hecho en el CyberCrex o en el portátil?
 
 ### Pequeño tutorial de WIFI en la raspberry
@@ -122,13 +180,4 @@ network:
 
 5. No haría falta compilar cada cambio que hagamos al programa si habíamos usado --symlink-install para compilar, pero si se cambia el `setup.py` otra vez sí que habría que hacerlo.
 
-
-## Otros comandos
-
-`ros2 topic pub cmd_vel geometry_msgs/Twist "{linear: {x: 0.1, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: 0.0}}"`
-
-`ros2 topic pub -1 /set_velocity custom_interfaces/SetVelocity "{id: 1, velocity: 50}"`  
-(Id puede ser 1 o 2, y velocity puede ser + o -)
-
-`ros2 run teleop_twist_keyboard teleop_twist_keyboard`
 

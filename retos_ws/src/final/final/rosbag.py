@@ -211,23 +211,29 @@ def main(args=None):
         saver.last_action = None
         saver.show_menu()
         
-        
         # Ask for required parameters
+        cancelar_mov = False
         for param in params_required:
             avisar_requerido = False
             while True:
                 saver.show_menu(param=param, action=action_name)
                 if avisar_requerido:
                     print(RED + f"\nEl parámetro {param} es obligatorio ponerlo." + RESET, end=' ')
-                user_input = input(f"\nIntroduce el parámetro obligatorio {param}: ")
+                user_input = input(f"\nIntroduce el parámetro obligatorio {param}   ('x' para cancelar este movimiento): ")
                 if user_input == '':
                     avisar_requerido = True
                     continue
+                elif user_input == "x":
+                    cancelar_mov = True
                 break
             
-            user_input = float(user_input)
-            args.append(user_input)
+            if not cancelar_mov:
+                user_input = float(user_input)
+                args.append(user_input)
             
+        if cancelar_mov:
+            continue
+                
         
         # Ask for optional parameters
         for param in params_optional:
@@ -240,7 +246,7 @@ def main(args=None):
             else:
                 user_input = saver.get_valid_input(user_input)
                 kwargs[param] = user_input
-            
+                 
         saver.action_playing = action_name
         if saver.recording:
             saver.actions_to_do.append([action_name, args, kwargs])
