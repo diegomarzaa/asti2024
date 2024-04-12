@@ -4,7 +4,7 @@ from time import sleep
 import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import Twist
-from semifinal.misfunciones import *
+from final.misfunciones import *
 
 class LineaPublisher(Node):
 
