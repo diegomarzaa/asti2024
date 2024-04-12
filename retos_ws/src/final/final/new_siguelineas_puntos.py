@@ -40,7 +40,7 @@ class DetectLinea(Node):
 
         if sim:
             self.cap = cv2.VideoCapture(0)
-        else:
+        elif not camara_sub:
             self.cap = cv2.VideoCapture(0)  # /home/jcrex/Vídeos/siguelineas_largo.mp4
             self.cap.set(3, 640)
             self.cap.set(4, 480)
@@ -232,7 +232,10 @@ class DetectLinea(Node):
     def detectar(self):
         # Leer un frame de la cámara
         if not self.sim or self.priemra_vez:
-            success, img = self.cap.read()
+            if self.camara_sub:
+                img = self.cap
+            else:
+                success, img = self.cap.read()
             self.priemra_vez = False
         else:
             img = self.cap
