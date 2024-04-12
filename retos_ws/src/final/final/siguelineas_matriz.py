@@ -151,7 +151,7 @@ class LineaPublisher(Node):
             # Derecha
             elif self.matrix[0, 6] == 1 and self.matrix[0, 0] == 0:
                 self.estacionado = False
-                self.tupla = (0.0, -0.2)
+                self.tupla = (0.1, -0.2)
                 self.estado = 'Derecha'
                 self.giro = 'der'
                 self.veces_derecha += 1
@@ -159,7 +159,7 @@ class LineaPublisher(Node):
             # Derecha 2
             elif self.matrix[1, 6] == 1 and self.matrix[1, 0] == 0:
                 self.estacionado = False
-                self.tupla = (0.0, -0.3)
+                self.tupla = (0.1, -0.3)
                 self.estado = 'Derecha'
                 self.giro = 'der'
                 self.veces_derecha += 1
@@ -167,7 +167,7 @@ class LineaPublisher(Node):
             # Derecha 3
             elif self.matrix[2, 6] == 1 and self.matrix[2, 0] == 0:
                 self.estacionado = False
-                self.tupla = (0.0, -0.4)
+                self.tupla = (0.1, -0.4)
                 self.estado = 'Derecha'
                 self.giro = 'der'
                 self.veces_derecha += 1
@@ -175,7 +175,7 @@ class LineaPublisher(Node):
             # Izquierda
             elif self.matrix[0, 0] == 1 and self.matrix[0, 6] == 0:
                 self.estacionado = False
-                self.tupla = (0.0, 0.2)
+                self.tupla = (0.1, 0.2)
                 self.estado = 'Izquierda'
                 self.giro = 'izq'
                 self.veces_izquierda += 1
@@ -183,7 +183,7 @@ class LineaPublisher(Node):
             # Izquierda 2
             elif self.matrix[1, 0] == 1 and self.matrix[1, 6] == 0:
                 self.estacionado = False
-                self.tupla = (0.0, 0.3)
+                self.tupla = (0.1, 0.3)
                 self.estado = 'Izquierda'
                 self.giro = 'izq'
                 self.veces_izquierda += 1
@@ -191,7 +191,7 @@ class LineaPublisher(Node):
             # Izquierda 3
             elif self.matrix[2, 0] == 1 and self.matrix[2, 6] == 0:
                 self.estacionado = False
-                self.tupla = (0.0, 0.4)
+                self.tupla = (0.1, 0.4)
                 self.estado = 'Izquierda'
                 self.giro = 'izq'
                 self.veces_izquierda += 1            
