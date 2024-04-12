@@ -245,6 +245,9 @@ class DetectLinea(Node):
         if img is None:
             print("No se ha podido leer el frame de la cámara")
             return None
+
+        print(type(img))
+
         # Convertir el formato de color de BGR a RGB
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         # Convertir la imagen al espacio de color HSV
