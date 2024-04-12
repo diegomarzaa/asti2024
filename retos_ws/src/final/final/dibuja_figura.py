@@ -11,7 +11,7 @@ SLEEP_MOV = 0.1
 
 DIST_BOLI_CENTRO = 0.12
 
-VELOCIDAD_LINEAL = 0.05
+VELOCIDAD_LINEAL = 0.1
 VELOCIDAD_ANGULAR = 0.5
 
 TIEMPO_TESTEOS = 1
@@ -38,36 +38,6 @@ def get_figure_params(opcion_menu):
     raise ValueError("Invalid figure")
   return angulo, largo, ancho, lados
 
-
-
-# def dibujar_figura(mov, servo, opcion_menu):
-#   angulo, largo, ancho, lados = get_figure_params(opcion_menu)
-  
-#   servo.boli_bajar()
-  
-#   for i in range(lados):
-#     if i % 2:
-#       distancia = largo
-#     else:
-#       distancia = ancho
-    
-#     print(f"Moviendo hacia adelante (pintando), distancia: {distancia}")
-#     mov.avanzar_distancia(distancia)
-#     servo.boli_subir(prints=True)
-#     time.sleep(SLEEP_TIME_BOLI)
-
-#     print(f"Avanzando para corregir (sin pintar) {DIST_BOLI_CENTRO}")
-#     mov.avanzar_distancia(DIST_BOLI_CENTRO)
-
-#     print(f"Girando {angulo} grados")
-#     mov.girar_grados_der(angulo)
-
-#     print(f"Moviendo hacia atras (sin pintar), {DIST_BOLI_CENTRO}")
-#     mov.retroceder_distancia(DIST_BOLI_CENTRO)
-
-#     print("Bajando boli")
-#     servo.boli_bajar(prints=True)
-    
 
 class Dibujar:
   def __init__(self):
@@ -114,15 +84,45 @@ def main():
     # OPCIONES
     
     if opcion_menu in ['1', '2', '3']:  # Triangulo, cuadrado, rectangulo
-      angulo, largo, ancho, lados = get_figure_params(opcion_menu)
       
-      dibujar.boli_bajar()
+      if opcion_menu != "3":
+        angulo, largo, ancho, lados = get_figure_params(opcion_menu)
+        
+        dibujar.boli_bajar()
+        
+        for i in range(lados):
+          if i % 2:
+            distancia = largo
+          else:
+            distancia = ancho
+          
+          print(f"Moviendo hacia adelante (pintando), distancia: {distancia}")
+          mov.avanzar_distancia(distancia)
+          dibujar.boli_subir(prints=True)
+          time.sleep(SLEEP_TIME_BOLI)
+
+          print(f"Avanzando para corregir (sin pintar) {DIST_BOLI_CENTRO}")
+          mov.avanzar_distancia(DIST_BOLI_CENTRO)
+
+          print(f"Girando {angulo} grados")
+          mov.girar_grados_der(angulo)
+
+          print(f"Moviendo hacia atras (sin pintar), {DIST_BOLI_CENTRO}")
+          mov.retroceder_distancia(DIST_BOLI_CENTRO)
+
+          print("Bajando boli")
+          dibujar.boli_bajar(prints=True)
+          
+          
+      # TRIANGULO BUG
       
-      for i in range(lados):
-        if i % 2:
-          distancia = largo
-        else:
-          distancia = ancho
+      if opcion_menu == "3":
+        angulo, largo, ancho, lados = get_figure_params(opcion_menu)
+        
+        dibujar.boli_bajar()
+        distancia = largo
+        
+        # 1
         
         print(f"Moviendo hacia adelante (pintando), distancia: {distancia}")
         mov.avanzar_distancia(distancia)
@@ -140,35 +140,26 @@ def main():
 
         print("Bajando boli")
         dibujar.boli_bajar(prints=True)
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
+        
+        # 2
+        
+        print(f"Moviendo hacia adelante (pintando), distancia: {distancia}")
+        mov.avanzar_distancia(distancia)
+        dibujar.boli_subir(prints=True)
+        time.sleep(SLEEP_TIME_BOLI)
+
+        print(f"Avanzando para corregir (sin pintar) {DIST_BOLI_CENTRO}")
+        mov.avanzar_distancia(DIST_BOLI_CENTRO)
+
+        print(f"Girando {angulo} - 20 grados")
+        mov.girar_grados_der(angulo - 20)
+
+        print(f"Moviendo hacia atras (sin pintar), {DIST_BOLI_CENTRO}")
+        mov.retroceder_distancia(DIST_BOLI_CENTRO)
+
+        print("Bajando boli")
+        dibujar.boli_bajar(prints=True)
+
       
       
       
