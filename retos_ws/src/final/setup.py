@@ -41,7 +41,8 @@ setup(
             'camara_sub = final.camara_sub:main',
             'sensor_sub = final.Sensors:main',
             
-            'Contar_lineas_cuadricula = final.contar_lineas_cuadricula:main'
+            'Contar_lineas_cuadricula = final.contar_lineas_cuadricula:main',
+            'new_siguelineas_puntos = final.new_siguelineas_puntos:main',
 
         ],
     },
