@@ -230,7 +230,7 @@ class DetectLinea(Node):
     def detectar(self):
         # Leer un frame de la cámara
         if not self.sim or self.priemra_vez:
-            if self.camara_sub:
+            if not self.camara_sub:
                 img = self.cap
             else:
                 success, img = self.cap.read()
