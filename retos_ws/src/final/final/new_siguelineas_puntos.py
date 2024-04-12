@@ -232,10 +232,10 @@ class DetectLinea(Node):
     def detectar(self):
         # Leer un frame de la cámara
         if not self.sim or self.priemra_vez:
-            if not self.camara_sub:
+            try:
+                _, img = self.cap.read()
+            except AttributeError:
                 img = self.cap
-            else:
-                success, img = self.cap.read()
             self.priemra_vez = False
         else:
             img = self.cap
