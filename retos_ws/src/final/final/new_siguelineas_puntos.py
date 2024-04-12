@@ -234,7 +234,7 @@ class DetectLinea(Node):
         if not self.sim or self.priemra_vez:
             try:
                 _, img = self.cap.read()
-            except AttributeError:
+            except:
                 img = self.cap
             self.priemra_vez = False
         else:
