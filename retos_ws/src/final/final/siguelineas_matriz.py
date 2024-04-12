@@ -72,7 +72,7 @@ class LineaPublisher(Node):
                     else:
                         self.matrix[i, j] = 0
 
-            cv2.imshow('frame', frame)
+            #cv2.imshow('frame', frame)
             
             # Dibujar líneas horizontales
             for i in range(1, 7):
@@ -82,7 +82,7 @@ class LineaPublisher(Node):
             for j in range(1, 7):
                 cv2.line(frame, (j * cell_size_x, 0), (j * cell_size_x, rows), (0, 255, 0), 1)
 
-            cv2.imshow('frame', frame)
+            #cv2.imshow('frame', frame)
             if cv2.waitKey(10) & 0xFF == ord('q'):
                 break
 
@@ -135,7 +135,7 @@ class LineaPublisher(Node):
             for j in range(1, 7):
                 cv2.line(frame, (j * cell_size_x, 0), (j * cell_size_x, rows), (0, 255, 0), 1)
 
-            cv2.imshow('frame', frame)
+            #cv2.imshow('frame', frame)
             
             
             #Bobo
