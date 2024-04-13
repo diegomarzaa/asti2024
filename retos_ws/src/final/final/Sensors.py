@@ -9,7 +9,7 @@ class Sensors(Node):
     def __init__(self):
         super().__init__('distance_sensor_subscriber')
         
-        self.array_subscriber_ = self.create_subscription(Float32MultiArray, '/distancias_sensores', self.array_callback, 10)
+        self.array_subscriber_ = self.create_subscription(Float32MultiArray, '/distancias_sensores', self.array_callback, 200)
         
         self.distancia_izq = 0.0
         self.distancia_delante_izq = 0.0
