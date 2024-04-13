@@ -10,14 +10,14 @@ ERROR_ANGULO = 0.0        # TODO: Comprobar cual es el error sistematico
 DISTANCIA_EXTRA = 0.2
 
 
-DISTANCIA_TABLERO_COL = 2.45   # Suma de las distancias de las columnas
-DISTANCIA_TABLERO_FILA = 2.45 # Suma de las distancias de las filas
+DISTANCIA_TABLERO_COL = 2.87   # Suma de las distancias de las columnas
+DISTANCIA_TABLERO_FILA = 2.83 # Suma de las distancias de las filas
 
-COL_NUM = [0.23, 0.46, 0.20, 0.26, 0.17, 0.53, 0.35, 0.24]
-COL_LETRAS = [0.23, 0.46, 0.20, 0.26, 0.17, 0.53, 0.35, 0.24]
+COL_NUM = [0.34, 0.11, 0.63, 0.52, 0.46, 0.24, 0.23, 0.34]
+COL_LETRAS = [0.34, 0.11, 0.63, 0.52, 0.46, 0.24, 0.23, 0.34]
 
-FILA_NUM = [0.37, 0.22, 0.57, 0.38, 0.52, 0.23, 0.16]
-FILA_LETRAS = [0.37, 0.22, 0.57, 0.38, 0.52, 0.23, 0.16]
+FILA_NUM = [0.40, 0.33, 0.50, 0.14, 0.745, 0.215, 0.50]
+FILA_LETRAS = [0.40, 0.33, 0.50, 0.14, 0.745, 0.215, 0.50]
 
 opciones = {
   '1': 'Ángulo a ojo',
