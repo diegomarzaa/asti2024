@@ -18,7 +18,6 @@ class Sensors(Node):
         self.get_sensor_derecha_
         self.get_sensor_izquierda_ = self.create_subscription(Float32, '/distance_izq', self.callback_izquierda, 200)
         self.get_sensor_izquierda_
-        self.principal()
 
         self.distancia_der = 0.0
         self.distancia_izq = 0.0
@@ -31,6 +30,7 @@ class Sensors(Node):
         
     def callback_izquierda(self, msg):
         self.distancia_izq = msg.data
+        self.principal()
         #print(f'Distancia izquierda: {self.distancia_izq} \n')
 
     def callback_delante_der(self, msg):
