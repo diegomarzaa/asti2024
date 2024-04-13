@@ -74,7 +74,10 @@ def main():
     print(" 1. Triangulo")
     print(" 2. Cuadrado")
     print(" 3. Rectangulo")
+    print("\nOpciones:")
+    print(" 0. Posicion 0")
     print(" c. Calibrar boli")
+    
     print(" q. Salir")
     opcion_menu = input("Seleccione una opcion: ")
     
@@ -179,6 +182,9 @@ def main():
         print("Bajando boli")
         dibujar.boli_bajar(prints=True)
       
+      
+    if opcion_menu == '0':
+      dibujar.boli_bajar()
       
       
     elif opcion_menu == 'c':

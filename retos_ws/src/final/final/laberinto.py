@@ -17,6 +17,7 @@ opciones = {
     '3': 'Prueba paralelo a paredes (opción 2)',
     '4': 'Prueba de laberinto básico (opción 3)',
     '5': 'Programa principal (sin acabar)',
+    '6': 'Prueba de laberinto hacia izquierda (opción Guillem)',
     'q': 'Salir'
 }
 
@@ -42,6 +43,51 @@ def pedir_opcion_menu():
 def pruebas(mov, sensors):
     print("Pruebas")
     mov.detectar_pared(sensors)
+
+def avanzar_izquierda_guillem(mov, sensors):
+    distancias = sensors.get_distancias()
+    distancia_izq = distancias[0]
+    distancia_delante_izq = distancias[1]
+    distancia_delante_der = sensors.distancia_delante_der
+    distancia_der = distancias[3]
+    while True:
+        print("holaa")
+        mov.avanzar()
+        time.sleep(1)
+        print("holaaaaa")
+        if mov.detectar_izquierda_libre(sensors):
+            print("izquierda libre")
+            mov.detener()
+            mov.girar_izq(90)
+            time.sleep(1)
+        elif mov.detectar_pared(sensors):
+            print("pared")
+            mov.detener()
+            if abs(distancia_delante_izq - distancia_delante_der) < 5:
+                if distancia_izq > distancia_der:
+                    mov.girar_izq(90)
+                else:
+                    mov.girar_der(90)
+            else:
+                girar_pared_diagonal(mov, sensors)
+            time.sleep(1)
+        elif mov.detectar_derecha_libre(sensors):
+            print("derecha libre")
+            mov.detener()
+            mov.girar_der(90)
+            time.sleep(1)
+        elif distancia_izq < 15:
+            print("izquierda lejos")
+            mov.detener()
+            mov.girar_der(10)
+            time.sleep(1)
+        elif distancia_der < 15:
+            print("derecha lejos")
+            mov.detener()
+            mov.girar_izq(10)
+            time.sleep(1)
+
+
 
 def basico(mov, sensors):
     # sensores.distancias() -> [izq, izq_f, der_f, der]
@@ -99,7 +145,7 @@ def ejecutar_laberinto(mov, sensors, opcion_menu):
     elif opcion_menu == '5':
         main()
     elif opcion_menu == '6':
-        pass
+        avanzar_izquierda_guillem(mov, sensors)
     else:
         print("Opcion no valida, 'q' para salir")
 
@@ -117,20 +163,20 @@ def main():
         
         # Testeos
         if opcion_menu == 'a':
-        mov.prueba_movimientos()
+            mov.prueba_movimientos()
         elif opcion_menu == 'q':
-        break
+            break
 
         # Cuadrícula
         elif opcion_menu in opciones:
-        """
-        1 -> Pruebas
-        """
-        rclpy.spin_once(sensors)    # ESTO MAMAHUEVO, ACTUALIZAR LOS SUSCRIBERS ANTES DE LLAMAR A NADA (Si está al final, no se actualizarán hasta que se llegue al final, en este caso aún no se ha llegado, por lo que sensors.distancia_der = None)
-        ejecutar_laberinto(mov, sensors, opcion_menu)
+            """
+            1 -> Pruebas
+            """
+            rclpy.spin_once(sensors)    # ESTO MAMAHUEVO, ACTUALIZAR LOS SUSCRIBERS ANTES DE LLAMAR A NADA (Si está al final, no se actualizarán hasta que se llegue al final, en este caso aún no se ha llegado, por lo que sensors.distancia_der = None)
+            ejecutar_laberinto(mov, sensors, opcion_menu)
         else:
-        print("Opcion no valida, 'q' para salir")
-        rclpy.spin_once(sensors)
+            print("Opcion no valida, 'q' para salir")
+            rclpy.spin_once(sensors)
 
     mov.detener()
     rclpy.shutdown()

@@ -2,7 +2,7 @@ import time
 import math
 from rclpy.node import Node
 from geometry_msgs.msg import Twist
-from final.Sensors import Sensors
+#from final.Sensors import Sensors
 try:
     import RPi.GPIO as GPIO
     GPIO_ENABLED = True
@@ -72,7 +72,7 @@ class Servo():
         self.grados_boli_bajo = 0.0     
         self.grados_bolos_soltar = 50.0
         self.grados_bolos_mantener = 0.0
-        self.grados_pale_alto = 10.0       # TODO: Cambiar
+        self.grados_pale_alto = 18.0       # TODO: Cambiar
         self.grados_pale_bajo = 0.0
     
         # Tiempos
@@ -82,8 +82,8 @@ class Servo():
         self.tiempo_bolos_soltar = 0.1
         self.tiempo_bolos_mantener = 0.5
         
-        self.tiempo_pale_subir = 2.5
-        self.tiempo_pale_bajar = 2
+        self.tiempo_pale_subir = 0.3
+        self.tiempo_pale_bajar = 0.3
         
         try:
             self.setup_servo()
@@ -215,7 +215,7 @@ class Servo():
     def pale_bajar(self, prints=False):
         if prints:
             print("Pale bajado")
-        self.herramienta_girar(self.grados_pale_bajo, self.tiempo_pale_bajar)
+        self.herramienta_girar(self.grados_pale_bajo, self.tiempo_pale_bajar, final_tranquilo=True)
 
 
 
@@ -298,7 +298,6 @@ class Movements(Node):
         #     self.servo = self.setup_servo()  
         
         # SENSORS
-        sensors = Sensors()     # TODO
 
     # ╔═════════════════════════════════════════╗
     # ║ MOVIMIENTOS BÁSICOS RUEDAS CON SENSORES ║
@@ -307,7 +306,22 @@ class Movements(Node):
     def detectar_pared(self, sensors, dist_pared = 20):
         distancia_delante_izq = sensors.get_distancia_delante_izq()
         distancia_delante_der = sensors.get_distancia_delante_der()
+        print(f"Distancia delante izq: {distancia_delante_izq}, Distancia delante der: {distancia_delante_der}")
         if (distancia_delante_izq < dist_pared) or (distancia_delante_der < dist_pared):
+            return True
+        else:
+            return False
+    
+    def detectar_izquierda_libre(self, sensors, dist_izq_libre = 30):
+        distancia_izq = sensors.get_distancia_izquierda()
+        if distancia_izq > dist_izq_libre:
+            return True
+        else:
+            return False
+
+    def detectar_derecha_libre(self, sensors, dist_der_libre = 30):
+        distancia_der = sensors.get_distancia_derecha()
+        if distancia_der > dist_der_libre:
             return True
         else:
             return False
@@ -315,6 +329,13 @@ class Movements(Node):
     def avanzar_hasta_pared(self, sensors):
         while True:
             if self.detectar_pared(sensors):
+                break
+            self.avanzar()
+        self.detener()
+
+    def avanzar_hasta_pared_izquierda(self, sensors):
+        while True:
+            if self.detectar_izquierda_libre(sensors):
                 break
             self.avanzar()
         self.detener()

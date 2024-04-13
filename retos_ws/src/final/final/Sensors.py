@@ -2,62 +2,117 @@ import time
 import math
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import Float32
-#from final.Movements import Movements
+from std_msgs.msg import Float32MultiArray
+from final.Movements import Movements
+
+DISTANCIA_ENTRE_SENSORES = 10.7
 
 class Sensors(Node):
     def __init__(self):
         super().__init__('distance_sensor_subscriber')
         
-        self.get_sensor_delante_izq_ = self.create_subscription(Float32, '/distance_delante_der', self.callback_delante_der, 10)
-        self.get_sensor_delante_izq_
-        self.get_sensor_delante_der_ = self.create_subscription(Float32, '/distance_delante_izq', self.callback_delante_izq, 10)
-        self.get_sensor_delante_der_
+        self.array_subscriber_ = self.create_subscription(Float32MultiArray, '/distancias_sensores', self.array_callback, 10)
 
-        self.get_sensor_derecha_ = self.create_subscription(Float32, '/distance_der', self.callback_derecha, 10)
-        self.get_sensor_derecha_
-        self.get_sensor_izquierda_ = self.create_subscription(Float32, '/distance_izq', self.callback_izquierda, 10)
-        self.get_sensor_izquierda_
-        
-        self.distancia_der = 0.0
-        self.distancia_izq = 0.0
-        self.distancia_delante_der = 0.0
-        self.distancia_delante_izq = 0.0
-        
-    def callback_derecha(self, msg):
-        self.distancia_der = msg.data
-        
-    def callback_izquierda(self, msg):
-        self.distancia_izq = msg.data
+    def array_callback(self, msg):
 
-    def callback_delante_der(self, msg):
-        self.distancia_delante_der = msg.data
-        
-    def callback_delante_izq(self, msg):
-        self.distancia_delante_izq = msg.data
-        
-    def get_distancia_derecha(self):
-        print(self.distancia_der)
-        return self.distancia_der
-    
-    def get_distancia_izquierda(self):
-        return self.distancia_izq
+        def girar_pared_diagonal(mov, sensor_del_izq, sensor_del_der):
+            y = abs(sensor_del_izq - sensor_del_der)
+            x = DISTANCIA_ENTRE_SENSORES
+            angulo_giro = math.atan(y/x)
+            angulo_giro = angulo_giro * 180 / math.pi  
+            if distancia_delante_der < distancia_delante_izq:
+                mov.girar_grados_izq(angulo_giro)
+            else:
+                mov.girar_grados_der(angulo_giro)
 
-    def get_distancia_delante_der(self):
-        return self.distancia_delante_der
-    
-    def get_distancia_delante_izq(self):
-        return self.distancia_delante_izq
-    
-    def get_distancias(self):
+        def detectar_pared(sensor_del_izq, sensor_del_der, dist_pared = 40):
+            print(f"Distancia delante izq: {sensor_del_izq}, Distancia delante der: {sensor_del_der}")
+            if (sensor_del_izq < dist_pared) or (sensor_del_der < dist_pared):
+                return True
+            else:
+                return False
+            
+        def avanzar_hasta_pared(mov, sensor_del_izq, sensor_del_der):
+            if detectar_pared(sensor_del_izq, sensor_del_der):
+                mov.detener()
+            else:
+                mov.avanzar_distancia(0.05)
+
+        def detectar_izquierda_libre(sensor_izq, dist_izq_libre = 35):
+            if sensor_izq > dist_izq_libre:
+                return True
+            else:
+                return False
+
+        def detectar_derecha_libre(sensor_der, dist_der_libre = 35):
+            if sensor_der > dist_der_libre:
+                return True
+            else:
+                return False
+
+        def avanzar_hasta_pared_izquierda(mov, sensor_izq):
+            while True:
+                if detectar_izquierda_libre(sensor_izq):
+                    break
+                mov.avanzar_distancia(0.05)
+            mov.detener()
+            
+        self.get_logger().info('Received array: ' + str(msg.data))
+
+        mov = Movements()
+        mov.actualizar_vel_lineal(0.1)
+        distancia_izq = msg.data[0]
+        distancia_delante_izq = msg.data[1]
+        distancia_delante_der = msg.data[2]
+        distancia_der = msg.data[3]
+        
+        mov.avanzar_distancia(0.04)
+        print("--RECTO--")
+        if detectar_izquierda_libre(distancia_izq):
+            print("*izquierda libre*")
+            mov.detener()
+            time.sleep(1)
+            mov.girar_grados_izq(90)
+            mov.avanzar_distancia(0.4)
+            time.sleep(1)
+        elif detectar_pared(distancia_delante_izq, distancia_delante_der):
+            print("*pared*")
+            mov.detener()
+            time.sleep(1)
+            if detectar_izquierda_libre(distancia_izq):
+                print("*correccion: izquierda libre*")
+                mov.girar_grados_izq(90)
+                mov.avanzar_distancia(0.4)
+            elif abs(distancia_delante_izq - distancia_delante_der) < 10:
+                if distancia_izq > distancia_der:
+                    mov.girar_grados_izq(45)
+                else:
+                    mov.girar_grados_der(45)
+                mov.avanzar_distancia(0.1)
+            else:
+                girar_pared_diagonal(mov, distancia_delante_izq, distancia_delante_der)
+            time.sleep(1)
+        elif detectar_derecha_libre(distancia_der):
+            print("*derecha libre*")
+            mov.detener()
+            time.sleep(1)
+            mov.girar_grados_der(90)
+            mov.avanzar_distancia(0.4)
+            time.sleep(1)
         """
-        Return: tupla izquierda, delante_izq, delante_der, derecha
+        elif distancia_izq < 10:
+            print("reajuste, izquierda muy cerca")
+            mov.detener()
+            mov.girar_grados_der(10)
+            time.sleep(1)
+        elif distancia_der < 15:
+            print("reajuste, derecha muy cerca")
+            mov.detener()
+            mov.girar_grados_izq(10)
+            time.sleep(1)
         """
-        izquierda = self.get_distancia_izquierda()
-        delante_izq = self.get_distancia_delante_izq()
-        delante_der = self.get_distancia_delante_der()
-        derecha = self.get_distancia_derecha()
-        return (izquierda, delante_izq, delante_der, derecha)
+        
+
 
 def main(args=None):
     rclpy.init(args=args)

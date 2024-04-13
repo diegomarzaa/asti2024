@@ -2,6 +2,7 @@
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import Float32
+from std_msgs.msg import Float32MultiArray
 import RPi.GPIO as GPIO
 import time
 
@@ -32,10 +33,7 @@ class DistanceSensorPublisher(Node):
     
         def __init__(self):
             super().__init__('distance_sensor_publisher')
-            self.publisher_der = self.create_publisher(Float32, '/distance_der', 200)
-            self.publisher_izq = self.create_publisher(Float32, '/distance_izq', 200)
-            self.publisher_delante_der = self.create_publisher(Float32, '/distance_delante_der', 200)
-            self.publisher_delante_izq = self.create_publisher(Float32, '/distance_delante_izq', 200)
+            self.publisher_distancias = self.create_publisher(Float32MultiArray, '/distancias_sensores', 10)
             
             timer_period = 0.2  # seconds
             self.timer = self.create_timer(timer_period, self.timer_callback)
@@ -47,49 +45,25 @@ class DistanceSensorPublisher(Node):
             distance_delante_izq = self.distance(GPIO_TRIGGERdelante_izq, GPIO_ECHOdelante_izq)
             
             # DER
-            msg_der = Float32()
-            if distance_der is not None and distance_der > 0.0:
-                msg_der.data = distance_der
-            else:
-                msg_der.data = 0.0
-            self.publisher_der.publish(msg_der)
-            #print("Sensor derecha: \t", msg_der.data)
-            self.get_logger().info('Sensor derecha: \t"%s"' % msg_der.data)
-            
+            if distance_der is None:
+                distance_der = 0.0
             
             # IZQ
-            msg_izq = Float32()
-            if distance_izq is not None and distance_izq > 0.0:
-                msg_izq.data = distance_izq
-            else:
-                msg_izq.data = 0.0
-            self.publisher_izq.publish(msg_izq)
-            #print("Sensor izquierda: \t", msg_izq.data)
-            #print("\n")
-            self.get_logger().info('Sensor izquierda: \t"%s"' % msg_izq.data)
-            
+            if distance_izq is None:
+                distance_izq = 0.0
             
             # DELANTE IZQ
-            msg_delante_izq = Float32()
-            if distance_delante_izq is not None and distance_delante_izq > 0.0:
-                msg_delante_izq.data = distance_delante_izq
-            else:
-                msg_delante_izq.data = 0.0
-            self.publisher_delante_izq.publish(msg_delante_izq)
-            #print("Sensor delanta: \t", msg_delante_izq.data)
-            self.get_logger().info('Sensor delante: \t"%s" \n' % msg_delante_izq.data)
-            
+            if distance_delante_izq is None:
+                distance_delante_izq = 0.0
             
             # DELANTE DER
-            msg_delante_der = Float32()
-            if distance_delante_der is not None and distance_delante_der > 0.0:
-                msg_delante_der.data = distance_delante_der
-            else:
-                msg_delante_der.data = 0.0
-            self.publisher_delante_der.publish(msg_delante_der)
-            #print("Sensor delante: \t", msg_delante_der.data)
-            self.get_logger().info('Sensor delante: \t"%s" \n' % msg_delante_der.data)
-    
+            if distance_delante_der is None:
+                distance_delante_der = 0.0
+
+            msg = Float32MultiArray()
+            msg.data = [distance_izq, distance_delante_izq, distance_delante_der, distance_der]
+            self.publisher_distancias.publish(msg)
+            self.get_logger().info('Float32MultiArray (izq, delante_izq, delante_der, der): ' + str(msg.data))
     
         def distance(self, TRIG, ECHO):
             GPIO.output(TRIG, True)

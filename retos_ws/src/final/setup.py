@@ -36,6 +36,7 @@ setup(
             'figuras = final.figuras:main',
             
             'distance_sensor = final.distance_sensor:main',
+            'distance_sensor_last = final.distance_sensor_last:main',
             
             'cam_pub = final.cam_pub:main',
             'camara_sub = final.camara_sub:main',
