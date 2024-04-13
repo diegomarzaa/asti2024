@@ -132,7 +132,7 @@ def ejecutar_laberinto(mov, sensors, opcion_menu):
     elif opcion_menu == '5':
         main()
     elif opcion_menu == '6':
-        pass
+        avanzar_izquierda_guillem(mov, sensors)
     else:
         print("Opcion no valida, 'q' para salir")
 
@@ -150,20 +150,20 @@ def main():
         
         # Testeos
         if opcion_menu == 'a':
-        mov.prueba_movimientos()
+            mov.prueba_movimientos()
         elif opcion_menu == 'q':
-        break
+            break
 
         # Cuadrícula
         elif opcion_menu in opciones:
-        """
-        1 -> Pruebas
-        """
-        rclpy.spin_once(sensors)    # ESTO MAMAHUEVO, ACTUALIZAR LOS SUSCRIBERS ANTES DE LLAMAR A NADA (Si está al final, no se actualizarán hasta que se llegue al final, en este caso aún no se ha llegado, por lo que sensors.distancia_der = None)
-        ejecutar_laberinto(mov, sensors, opcion_menu)
+            """
+            1 -> Pruebas
+            """
+            rclpy.spin_once(sensors)    # ESTO MAMAHUEVO, ACTUALIZAR LOS SUSCRIBERS ANTES DE LLAMAR A NADA (Si está al final, no se actualizarán hasta que se llegue al final, en este caso aún no se ha llegado, por lo que sensors.distancia_der = None)
+            ejecutar_laberinto(mov, sensors, opcion_menu)
         else:
-        print("Opcion no valida, 'q' para salir")
-        rclpy.spin_once(sensors)
+            print("Opcion no valida, 'q' para salir")
+            rclpy.spin_once(sensors)
 
     mov.detener()
     rclpy.shutdown()
