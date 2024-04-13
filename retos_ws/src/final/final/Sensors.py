@@ -71,13 +71,19 @@ class Sensors(Node):
         if detectar_izquierda_libre(distancia_izq):
             print("*izquierda libre*")
             mov.detener()
+            time.sleep(1)
             mov.girar_grados_izq(90)
             mov.avanzar_distancia(0.4)
             time.sleep(1)
         elif detectar_pared(distancia_delante_izq, distancia_delante_der):
             print("*pared*")
             mov.detener()
-            if abs(distancia_delante_izq - distancia_delante_der) < 10:
+            time.sleep(1)
+            if detectar_izquierda_libre(distancia_izq):
+                print("*correccion: izquierda libre*")
+                mov.girar_grados_izq(90)
+                mov.avanzar_distancia(0.4)
+            elif abs(distancia_delante_izq - distancia_delante_der) < 10:
                 if distancia_izq > distancia_der:
                     mov.girar_grados_izq(60)
                 else:
@@ -88,6 +94,7 @@ class Sensors(Node):
         elif detectar_derecha_libre(distancia_der):
             print("*derecha libre*")
             mov.detener()
+            time.sleep(1)
             mov.girar_grados_der(90)
             mov.avanzar_distancia(0.4)
             time.sleep(1)
