@@ -9,7 +9,7 @@ from final.Movements import Movements, Servo     # Contiene los angulos de la he
 SLEEP_TIME_BOLI = 1
 SLEEP_MOV = 0.1
 
-DIST_BOLI_CENTRO = 0.12
+DIST_BOLI_CENTRO = 0.18
 
 VELOCIDAD_LINEAL = 0.1
 VELOCIDAD_ANGULAR = 0.5
@@ -85,7 +85,7 @@ def main():
     
     if opcion_menu in ['1', '2', '3']:  # Triangulo, cuadrado, rectangulo
       
-      if opcion_menu != "3":
+      if opcion_menu != "1":
         angulo, largo, ancho, lados = get_figure_params(opcion_menu)
         
         dibujar.boli_bajar()
@@ -116,7 +116,7 @@ def main():
           
       # TRIANGULO BUG
       
-      if opcion_menu == "3":
+      if opcion_menu == "1":
         angulo, largo, ancho, lados = get_figure_params(opcion_menu)
         
         dibujar.boli_bajar()
@@ -136,7 +136,7 @@ def main():
         mov.girar_grados_der(angulo)
 
         print(f"Moviendo hacia atras (sin pintar), {DIST_BOLI_CENTRO}")
-        mov.retroceder_distancia(DIST_BOLI_CENTRO)
+        mov.retroceder_distancia(DIST_BOLI_CENTRO-0.1)
 
         print("Bajando boli")
         dibujar.boli_bajar(prints=True)
@@ -151,8 +151,8 @@ def main():
         print(f"Avanzando para corregir (sin pintar) {DIST_BOLI_CENTRO}")
         mov.avanzar_distancia(DIST_BOLI_CENTRO)
 
-        print(f"Girando {angulo} - 20 grados")
-        mov.girar_grados_der(angulo - 20)
+        print(f"Girando {angulo} - 27 grados")
+        mov.girar_grados_der(angulo - 27)
 
         print(f"Moviendo hacia atras (sin pintar), {DIST_BOLI_CENTRO}")
         mov.retroceder_distancia(DIST_BOLI_CENTRO)
@@ -160,6 +160,7 @@ def main():
         print("Bajando boli")
         dibujar.boli_bajar(prints=True)
 
+	# 3
       
       
       
