@@ -3,7 +3,7 @@ import math
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import Float32
-#from final.Movements import Movements
+from final.Movements import Movements
 
 class Sensors(Node):
     def __init__(self):
@@ -18,7 +18,8 @@ class Sensors(Node):
         self.get_sensor_derecha_
         self.get_sensor_izquierda_ = self.create_subscription(Float32, '/distance_izq', self.callback_izquierda, 200)
         self.get_sensor_izquierda_
-        
+        self.principal()
+
         self.distancia_der = 0.0
         self.distancia_izq = 0.0
         self.distancia_delante_der = 0.0
@@ -26,19 +27,19 @@ class Sensors(Node):
         
     def callback_derecha(self, msg):
         self.distancia_der = msg.data
-        print(f'Distancia derecha: {self.distancia_der}')
+        #print(f'Distancia derecha: {self.distancia_der}')
         
     def callback_izquierda(self, msg):
         self.distancia_izq = msg.data
-        print(f'Distancia izquierda: {self.distancia_izq} \n')
+        #print(f'Distancia izquierda: {self.distancia_izq} \n')
 
     def callback_delante_der(self, msg):
         self.distancia_delante_der = msg.data
-        print(f'Distancia delante derecha: {self.distancia_delante_der}')
+        #print(f'Distancia delante derecha: {self.distancia_delante_der}')
         
     def callback_delante_izq(self, msg):
         self.distancia_delante_izq = msg.data
-        print(f'Distancia delante izquierda: {self.distancia_delante_izq}')
+        #print(f'Distancia delante izquierda: {self.distancia_delante_izq}')
         
     def get_distancia_derecha(self):
         return self.distancia_der
@@ -61,11 +62,24 @@ class Sensors(Node):
         delante_der = self.get_distancia_delante_der()
         derecha = self.get_distancia_derecha()
         return (izquierda, delante_izq, delante_der, derecha)
+    
+    def principal(self):
+        pass
 
 def main(args=None):
     rclpy.init(args=args)
+    mov = Movements()
     sensors = Sensors()
     rclpy.spin(sensors)
+
+    while True:
+        op = input("Introduce una opción: (1-pruebas/2-salir)")
+        if op == '1':
+            print("Pruebas")
+            mov.prueba_movimientos(sensors)
+        elif op == '2':
+            break
+
     sensors.destroy_node()
     rclpy.shutdown()
 
