@@ -2,47 +2,30 @@ import time
 import math
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import Float32
+from std_msgs.msg import Float32MultiArray
 from final.Movements import Movements
 
 class Sensors(Node):
     def __init__(self):
         super().__init__('distance_sensor_subscriber')
         
-        self.get_sensor_delante_izq_ = self.create_subscription(Float32, '/distance_delante_der', self.callback_delante_der, 200)
-        self.get_sensor_delante_izq_
-        self.get_sensor_delante_der_ = self.create_subscription(Float32, '/distance_delante_izq', self.callback_delante_izq, 200)
-        self.get_sensor_delante_der_
-
-        self.get_sensor_derecha_ = self.create_subscription(Float32, '/distance_der', self.callback_derecha, 200)
-        self.get_sensor_derecha_
-        self.get_sensor_izquierda_ = self.create_subscription(Float32, '/distance_izq', self.callback_izquierda, 200)
-        self.get_sensor_izquierda_
-
-        self.distancia_der = 0.0
+        self.array_subscriber_ = self.create_subscription(Float32MultiArray, '/distancias_sensores', self.array_callback, 10)
+        
         self.distancia_izq = 0.0
-        self.distancia_delante_der = 0.0
         self.distancia_delante_izq = 0.0
-        
-    def callback_derecha(self, msg):
-        self.distancia_der = msg.data
-        #print(f'Distancia derecha: {self.distancia_der}')
-        
-    def callback_izquierda(self, msg):
-        self.distancia_izq = msg.data
-        op = input("Introduce una opción (1-pruebas): ")
+        self.distancia_delante_der = 0.0
+        self.distancia_der = 0.0
+
+    def array_callback(self, msg):
+        self.get_logger().info('Received array: ' + str(msg.data))
+        self.distancia_der = msg.data[0]
+        self.distancia_delante_izq = msg.data[1]
+        self.distancia_delante_der = msg.data[2]
+        self.distancia_der = msg.data[3]
+        op = input("Introduce una opción (1-pruebas/2-salir): ")
         if op == '1':
             print("Pruebas")
-            self.detectar_pared(self)
-        #print(f'Distancia izquierda: {self.distancia_izq} \n')
-
-    def callback_delante_der(self, msg):
-        self.distancia_delante_der = msg.data
-        #print(f'Distancia delante derecha: {self.distancia_delante_der}')
-        
-    def callback_delante_izq(self, msg):
-        self.distancia_delante_izq = msg.data
-        #print(f'Distancia delante izquierda: {self.distancia_delante_izq}')
+            self.detectar_pared()
         
     def get_distancia_derecha(self):
         return self.distancia_der
