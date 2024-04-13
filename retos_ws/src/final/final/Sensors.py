@@ -88,18 +88,18 @@ class Sensors(Node):
         elif detectar_derecha_libre(distancia_der):
             print("derecha libre")
             mov.detener()
-            mov.girar_der(90)
+            mov.girar_grados_der(90)
             mov.avanzar_distancia(0.4)
             time.sleep(1)
         elif distancia_izq > 15 and distancia_izq < 30:
             print("reajuste, izquierda lejos")
             mov.detener()
-            mov.girar_der(10)
+            mov.girar_grados_der(10)
             time.sleep(1)
         elif distancia_der > 15 and distancia_der < 30:
             print("reajuste, derecha lejos")
             mov.detener()
-            mov.girar_izq(10)
+            mov.girar_grados_izq(10)
             time.sleep(1)
         
 
