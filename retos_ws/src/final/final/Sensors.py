@@ -29,8 +29,8 @@ class Sensors(Node):
             
         self.get_logger().info('Received array: ' + str(msg.data))
 
-        mov.actualizar_vel_lineal(0.1)
         mov = Movements()
+        mov.actualizar_vel_lineal(0.1)
         distancia_der = msg.data[0]
         distancia_delante_izq = msg.data[1]
         distancia_delante_der = msg.data[2]
