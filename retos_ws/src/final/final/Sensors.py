@@ -38,13 +38,13 @@ class Sensors(Node):
             else:
                 mov.avanzar_distancia(0.05)
 
-        def detectar_izquierda_libre(sensor_izq, dist_izq_libre = 60):
+        def detectar_izquierda_libre(sensor_izq, dist_izq_libre = 35):
             if sensor_izq > dist_izq_libre:
                 return True
             else:
                 return False
 
-        def detectar_derecha_libre(sensor_der, dist_der_libre = 60):
+        def detectar_derecha_libre(sensor_der, dist_der_libre = 35):
             if sensor_der > dist_der_libre:
                 return True
             else:
