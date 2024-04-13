@@ -85,9 +85,10 @@ class Sensors(Node):
                 mov.avanzar_distancia(0.4)
             elif abs(distancia_delante_izq - distancia_delante_der) < 10:
                 if distancia_izq > distancia_der:
-                    mov.girar_grados_izq(60)
+                    mov.girar_grados_izq(45)
                 else:
-                    mov.girar_grados_der(60)
+                    mov.girar_grados_der(45)
+                mov.avanzar_distancia(0.1)
             else:
                 girar_pared_diagonal(mov, distancia_delante_izq, distancia_delante_der)
             time.sleep(1)
@@ -99,13 +100,13 @@ class Sensors(Node):
             mov.avanzar_distancia(0.4)
             time.sleep(1)
         """
-        elif distancia_izq > 30 and distancia_izq < 60:
-            print("reajuste, izquierda lejos")
+        elif distancia_izq < 10:
+            print("reajuste, izquierda muy cerca")
             mov.detener()
             mov.girar_grados_der(10)
             time.sleep(1)
-        elif distancia_der > 30 and distancia_der < 60:
-            print("reajuste, derecha lejos")
+        elif distancia_der < 15:
+            print("reajuste, derecha muy cerca")
             mov.detener()
             mov.girar_grados_izq(10)
             time.sleep(1)
