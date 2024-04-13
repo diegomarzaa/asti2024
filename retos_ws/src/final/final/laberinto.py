@@ -46,10 +46,10 @@ def pruebas(mov, sensors):
 
 def avanzar_izquierda_guillem(mov, sensors):
     distancias = sensors.get_distancias()
-    distancia_izq = distancias[1]
-    distancia_delante_izq = distancias[2]
-    distancia_delante_der = distancias[3]
-    distancia_der = distancias[4]
+    distancia_izq = distancias[0]
+    distancia_delante_izq = distancias[1]
+    distancia_delante_der = distancias[2]
+    distancia_der = distancias[3]
     while True:
         if mov.detectar_izquierda_libre(sensors):
             mov.detener()
