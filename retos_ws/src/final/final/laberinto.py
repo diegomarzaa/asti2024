@@ -45,7 +45,7 @@ def pruebas(mov, sensors):
     mov.detectar_pared(sensors)
 
 def avanzar_izquierda_guillem(mov, sensors):
-    distancias = sensors.distancias()
+    distancias = sensors.get_distancias()
     distancia_izq = distancias[1]
     distancia_delante_izq = distancias[2]
     distancia_delante_der = distancias[3]
