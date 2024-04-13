@@ -164,10 +164,10 @@ class DetectLinea(Node):
         # Definir la velocidad angular base
         velocidad_angular = 0.1
 
-        aumento_contador = 0.001
-        aumento_contador_memoria = 0.002
-        aumento_giro = 0.01
-        aumento_giro_memoria = 0.01
+        aumento_contador = 0.01
+        aumento_contador_memoria = 0.02
+        aumento_giro = 0.1
+        aumento_giro_memoria = 0.1
 
         # Caso 1: No hay puntos y la velocidad es cero
         if suma_central == vel == 0:
