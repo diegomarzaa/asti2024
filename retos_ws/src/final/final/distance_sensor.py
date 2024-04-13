@@ -32,10 +32,10 @@ class DistanceSensorPublisher(Node):
     
         def __init__(self):
             super().__init__('distance_sensor_publisher')
-            self.publisher_der = self.create_publisher(Float32, '/distance_der', 10)
-            self.publisher_izq = self.create_publisher(Float32, '/distance_izq', 10)
-            self.publisher_delante_der = self.create_publisher(Float32, '/distance_delante_der', 10)
-            self.publisher_delante_izq = self.create_publisher(Float32, '/distance_delante_izq', 10)
+            self.publisher_der = self.create_publisher(Float32, '/distance_der', 200)
+            self.publisher_izq = self.create_publisher(Float32, '/distance_izq', 200)
+            self.publisher_delante_der = self.create_publisher(Float32, '/distance_delante_der', 200)
+            self.publisher_delante_izq = self.create_publisher(Float32, '/distance_delante_izq', 200)
             
             timer_period = 0.2  # seconds
             self.timer = self.create_timer(timer_period, self.timer_callback)
