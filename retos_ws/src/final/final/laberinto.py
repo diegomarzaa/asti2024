@@ -42,7 +42,7 @@ def pedir_opcion_menu():
 
 def pruebas(mov, sensors):
     print("Pruebas")
-    mov.detectar_pared(sensors)
+    mov.avanzar(sensors)
 
 def avanzar_izquierda_guillem(mov, sensors):
     distancias = sensors.get_distancias()
@@ -53,6 +53,7 @@ def avanzar_izquierda_guillem(mov, sensors):
     while True:
         print("holaa")
         mov.avanzar()
+        time.sleep(1)
         print("holaaaaa")
         if mov.detectar_izquierda_libre(sensors):
             print("izquierda libre")
