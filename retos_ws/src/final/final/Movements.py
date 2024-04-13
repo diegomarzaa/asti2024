@@ -2,7 +2,7 @@ import time
 import math
 from rclpy.node import Node
 from geometry_msgs.msg import Twist
-from final.Sensors import Sensors
+#from final.Sensors import Sensors
 try:
     import RPi.GPIO as GPIO
     GPIO_ENABLED = True
@@ -298,7 +298,6 @@ class Movements(Node):
         #     self.servo = self.setup_servo()  
         
         # SENSORS
-        sensors = Sensors()     # TODO
 
     # ╔═════════════════════════════════════════╗
     # ║ MOVIMIENTOS BÁSICOS RUEDAS CON SENSORES ║
