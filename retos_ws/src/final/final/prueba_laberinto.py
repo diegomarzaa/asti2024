@@ -1,37 +1,46 @@
-from final.Sensors import Sensors
+#!/usr/bin/env python3
+
+# Import the necessary ROS2 libraries
 import rclpy
-from rclpy.node import Node
-from final.Movements import Movements
 from time import sleep
+from math import pi, atan
+from final.Movements import Movements
+from final.Sensors import Sensors
 
-class MazeSolver(Node):
-    def __init__(self):
-        super().__init__('maze_solver')
-        self.sensors = Sensors()
-        self.mov = Movements()
-        self.always_right_wall_following_strategy()
+def run(mov, sensors):
+    mov.actualizar_vel_lineal(0.2)
+    mov.actualizar_vel_angular(0.2)
+    while True:
+        # sensores.distancias() -> [izq, izq_f, der_f, der]
+        distancias = sensors.distancias()
+        while distancias[3] == 5.0:
+            mov.avanzar()
 
-    def always_right_wall_following_strategy(self):
-        while rclpy.ok():
-            # If there is a wall on the right side and in front, move left
-            if self.sensors.distancia_der < 5 and self.sensors.distancia_delante_der < 10: 
-                self.mov.girar_izquierda()
-            # If there's no wall on the right side, move right
-            elif self.sensors.distancia_der > 5:
-                self.mov.girar_derecha()
-            # Else, keep moving forward
-            else:
-                self.mov.avanzar()
-            sleep(0.1)  
-            rclpy.spin(self.sensors)
-            
+        if distancias[3] > 5.0:
+            mov.publish_wheel_velocity(0.2, -0.3)
+
+        elif distancias[3] < 5.0:
+            mov.publish_wheel_velocity(0.2, 0.3)
+
+        elif distancias[2] < 15.0 and distancias[1] < 15.0:
+            while distancias[2] < distancias[1]:
+                mov.girar_izquierda()
+
+        elif distancias[2] < 5.0 or distancias[1] < 5.0 or (distancias[2] < 5.0 and distancias[1] < 5.0):
+            while distancias[1] < 5.0 and distancias[2] < 5.0:
+                mov.girar_derecha()
+                
+        elif distancias[0] < 5.0:
+            while distancias[0] < 5.0:
+                mov.girar_derecha()
+        sleep(0.1)
+
 def main(args=None):
-    rclpy.init(args=args)
-    maze_solver = MazeSolver()
-    rclpy.spin(maze_solver)
-    maze_solver.destroy_node()
-    rclpy.shutdown()
+    rclpy.init(args=None)
+    node = rclpy.create_node('laberinto')
+    mov = Movements()
+    sensors = Sensors()
+    run(mov, sensors)
 
 if __name__ == '__main__':
     main()
-
