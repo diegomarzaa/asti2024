@@ -167,7 +167,7 @@ class DetectLinea(Node):
 
         aumento_contador = 0.01
         aumento_contador_memoria = 0.01
-        aumento_giro = 0.1
+        aumento_giro = 0.0001
         aumento_giro_memoria = 0.1
 
         # Caso 1: No hay puntos y la velocidad es cero
