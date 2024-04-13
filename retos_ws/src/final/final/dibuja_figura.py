@@ -160,7 +160,24 @@ def main():
         print("Bajando boli")
         dibujar.boli_bajar(prints=True)
 
-	# 3
+	      # 3
+       
+        print(f"Moviendo hacia adelante (pintando), distancia: {distancia}")
+        mov.avanzar_distancia(distancia)
+        dibujar.boli_subir(prints=True)
+        time.sleep(SLEEP_TIME_BOLI)
+
+        print(f"Avanzando para corregir (sin pintar) {DIST_BOLI_CENTRO}")
+        mov.avanzar_distancia(DIST_BOLI_CENTRO)
+
+        print(f"Girando {angulo} - 10 grados")
+        mov.girar_grados_der(angulo - 10)
+
+        print(f"Moviendo hacia atras (sin pintar), {DIST_BOLI_CENTRO}")
+        mov.retroceder_distancia(DIST_BOLI_CENTRO)
+
+        print("Bajando boli")
+        dibujar.boli_bajar(prints=True)
       
       
       
