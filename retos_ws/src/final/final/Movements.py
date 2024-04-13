@@ -307,6 +307,7 @@ class Movements(Node):
     def detectar_pared(self, sensors, dist_pared = 20):
         distancia_delante_izq = sensors.get_distancia_delante_izq()
         distancia_delante_der = sensors.get_distancia_delante_der()
+        print(f"Distancia delante izq: {distancia_delante_izq}, Distancia delante der: {distancia_delante_der}")
         if (distancia_delante_izq < dist_pared) or (distancia_delante_der < dist_pared):
             return True
         else:
