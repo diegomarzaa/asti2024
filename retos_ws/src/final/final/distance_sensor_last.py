@@ -33,7 +33,7 @@ class DistanceSensorPublisher(Node):
     
         def __init__(self):
             super().__init__('distance_sensor_publisher')
-            self.publisher_distancias = self.create_publisher(Float32MultiArray, '/distancias_sensores', 200)
+            self.publisher_distancias = self.create_publisher(Float32MultiArray, '/distancias_sensores', 10)
             
             timer_period = 0.2  # seconds
             self.timer = self.create_timer(timer_period, self.timer_callback)
