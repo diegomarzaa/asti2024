@@ -283,7 +283,7 @@ class Figura(Node):
         # El valor tonos indica la minima media de colores que permite, si se indica 30 tomara todos los colores que
         # tenga una media de color RGB por encima de 30
 
-        thresholded = cv2.threshold(blurred,90, 255, cv2.THRESH_BINARY)[1]
+        thresholded = cv2.threshold(blurred, self.tonos["Tibios"][0], 255, cv2.THRESH_BINARY)[1]
         #cv2.imshow("thresholded", thresholded)
         #cv2.waitKey(1)
 
