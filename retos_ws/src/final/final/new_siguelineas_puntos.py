@@ -161,12 +161,12 @@ class DetectLinea(Node):
         - vel: La velocidad actual del robot.
         """
 
-        velocidad_lineal = 0.05
+        velocidad_lineal = 0.1
         # Definir la velocidad angular base
         velocidad_angular = 0.1
 
         aumento_contador = 0.01
-        aumento_contador_memoria = 0.02
+        aumento_contador_memoria = 0.01
         aumento_giro = 0.1
         aumento_giro_memoria = 0.1
 
@@ -182,14 +182,14 @@ class DetectLinea(Node):
                 print("Girar hacia la izquierda (usando la memoria de giro previa)")
                 self.publish_velocity((velocidad_lineal - self.giro, self.contador))
                 self.contador -= aumento_contador_memoria
-                self.giro += aumento_giro_memoria * 2
+                self.giro += aumento_giro_memoria #* 2
 
             elif self.memoria == 1:
                 # Girar hacia la derecha (usando la memoria de giro previa)
                 print("Girar hacia la derecha (usando la memoria de giro previa)")
                 self.publish_velocity((velocidad_lineal - self.giro, -self.contador))
                 self.contador += aumento_contador_memoria
-                self.giro += aumento_giro_memoria * 2
+                self.giro += aumento_giro_memoria #* 2
 
         # Caso 2: La velocidad es negativa (girar hacia la izquierda)
         elif vel < -10:
