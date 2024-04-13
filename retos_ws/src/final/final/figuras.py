@@ -83,7 +83,12 @@ class Figura(Node):
 
     def __init__(self, autonomia=True):
         super().__init__('Figura')  # /video_frames  /camera/image_raw
-        self.subscription = self.create_subscription(CompressedImage, '/video', self.listener_callback, 10)
+        op = input("video").lower() == 's'
+        if op:
+            self.subscription = self.create_subscription(CompressedImage, '/video', self.listener_callback, 10)
+        else:
+            self.subscription = self.create_subscription(CompressedImage, '/video_frames', self.listener_callback, 10)
+
         self.subscription
 
         self.br = CvBridge()
@@ -102,7 +107,7 @@ class Figura(Node):
 
         self.formas = {
             "TRIANGULO": 0,
-            "CUADRADO": 0,
+            "RECTANGULO": 0,
             "ARCO": 0,
             "CILINDRO": 0,
             "CIRCULO": 0,
@@ -160,7 +165,7 @@ class Figura(Node):
                     self.moverse_objetivo(self.mov, "TRIANGULO")
                     self.seleccion = True
                 elif self.seleccion == "2":
-                    self.moverse_objetivo(self.mov, "CUADRADO")
+                    self.moverse_objetivo(self.mov, "RECTANGULO")
                     self.seleccion = True
                 elif self.seleccion == "3":
                     self.moverse_objetivo(self.mov, "ARCO")
@@ -180,7 +185,19 @@ class Figura(Node):
                 print("\n\n\n\n\n\n\n\n\n", maximo, "\n\n\n\n\n\n\n\n\n")
 
                 # Pedimos al usuario que presione cualquier boton para arrancar el robot
-                # _ = input("Presion cualquier boton para arrancar")
+                opcion_menu = input("Presion cualquier boton para arrancar")
+
+                if opcion_menu == '1':
+                    maximo = "TRIANGULO"
+                elif opcion_menu == '2':
+                    maximo = "RECTANGULO"
+                elif opcion_menu == '3':
+                    maximo = "ARCO"
+                elif opcion_menu == '4':
+                    maximo = "CILINDRO"
+                elif opcion_menu == '5':
+                    maximo = "ESTRELLA"
+
 
                 # Movemos el robot hacia el objetivo
                 self.moverse_objetivo(self.mov, maximo)
@@ -189,7 +206,7 @@ class Figura(Node):
                 self.tiempo = 0.0
                 self.formas = {
                     "TRIANGULO": 0,
-                    "CUADRADO": 0,
+                    "RECTANGULO": 0,
                     "ARCO": 0,
                     "CILINDRO": 0,
                     "CIRCULO": 0,
@@ -236,11 +253,11 @@ class Figura(Node):
             # La figura será un cuadrado si la relación de aspecto está entre 95% y 105%, es decir, si todos los lados miden
             # más o menos lo mismo. En caso contrario, se trata de un rectángulo.
             if .95 <= aspect_ratio <= 1.05:
-                shape = 'CUADRADO'
-                self.formas["CUADRADO"] += 1
+                shape = 'RECTANGULO'
+                self.formas["RECTANGULO"] += 1
             else:
-                shape = 'CUADRADO'
-                self.formas["CUADRADO"] += 1
+                shape = 'RECTANGULO'
+                self.formas["RECTANGULO"] += 1
         # Si el polígono aproximado tiene 5 lados, es un pentágono.
         elif len(approximate) == 5:
             shape = 'ARCO'
@@ -342,7 +359,7 @@ class Figura(Node):
 
         if figura == 'TRIANGULO':
             return COORDENADAS_CATEDRAL
-        elif figura == 'CUADRADO':
+        elif figura == 'RECTANGULO':
             return COORDENADAS_MUSEO
         elif figura == 'ARCO':
             return COORDENADAS_UNIVERSIDAD
@@ -398,7 +415,7 @@ class Figura(Node):
         if opcion_menu == '1':
             return "TRIANGULO"
         elif opcion_menu == '2':
-            return "CUADRADO"
+            return "RECTANGULO"
         elif opcion_menu == '3':
             return "ARCO"
         elif opcion_menu == '4':

@@ -16,7 +16,11 @@ from sensor_msgs.msg import CompressedImage  # CompressedImage is the message ty
 class ImagePublisher(Node):
     def __init__(self):
         super().__init__('image_publisher')
-        self.publisher_ = self.create_publisher(CompressedImage, '/video_frames', 1)
+        op = input("video").lower() == 's'
+        if op:
+            self.publisher_ = self.create_publisher(CompressedImage, '/video', 1)
+        else:
+            self.publisher_ = self.create_publisher(CompressedImage, '/video_frames', 1)
 
         # We will publish a message every 0.001 seconds
         timer_period = 0.001  # seconds
@@ -24,7 +28,7 @@ class ImagePublisher(Node):
         # Create the timer
         self.timer = self.create_timer(timer_period, self.timer_callback)
 
-        self.cap = cv2.VideoCapture(0)
+        self.cap = cv2.VideoCapture(2)
 
         self.br = CvBridge()
 
