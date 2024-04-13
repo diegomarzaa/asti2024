@@ -9,14 +9,14 @@ class Sensors(Node):
     def __init__(self):
         super().__init__('distance_sensor_subscriber')
         
-        self.get_sensor_delante_izq_ = self.create_subscription(Float32, '/distance_delante_der', self.callback_delante_der, 10)
+        self.get_sensor_delante_izq_ = self.create_subscription(Float32, '/distance_delante_der', self.callback_delante_der, 200)
         self.get_sensor_delante_izq_
-        self.get_sensor_delante_der_ = self.create_subscription(Float32, '/distance_delante_izq', self.callback_delante_izq, 10)
+        self.get_sensor_delante_der_ = self.create_subscription(Float32, '/distance_delante_izq', self.callback_delante_izq, 200)
         self.get_sensor_delante_der_
 
-        self.get_sensor_derecha_ = self.create_subscription(Float32, '/distance_der', self.callback_derecha, 10)
+        self.get_sensor_derecha_ = self.create_subscription(Float32, '/distance_der', self.callback_derecha, 200)
         self.get_sensor_derecha_
-        self.get_sensor_izquierda_ = self.create_subscription(Float32, '/distance_izq', self.callback_izquierda, 10)
+        self.get_sensor_izquierda_ = self.create_subscription(Float32, '/distance_izq', self.callback_izquierda, 200)
         self.get_sensor_izquierda_
         
         self.distancia_der = 0.0
