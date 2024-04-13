@@ -48,7 +48,7 @@ class ImagePublisher(Node):
             self.publish_image(img)
             #cv2.imshow("camera", img)
             #cv2.waitKey(1)
-            #self.get_logger().info('Publishing video frame')
+            self.get_logger().info('Publishing video frame')
         except cv2.error:
             print("Error al leer la imagen")
             # continue

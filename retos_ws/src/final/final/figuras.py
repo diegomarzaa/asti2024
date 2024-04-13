@@ -322,7 +322,7 @@ class Figura(Node):
 
             # Dibujamos el contorno y lo etiquetamos con el nombre de la figura geométrica identificada.
             cv2.drawContours(image, [contour], -1, (0, 255, 0), 2)
-            cv2.putText(image, shape, (center_x, center_y), cv2.FONT_HERSHEY_SIMPLEX, .7, (255, 0, 0), 2)
+            #cv2.putText(image, shape, (center_x, center_y), cv2.FONT_HERSHEY_SIMPLEX, .7, (255, 0, 0), 2)
 
             # Mostramos el contorno en la imagen original.
             # cv2.imshow('Imagen', image)
