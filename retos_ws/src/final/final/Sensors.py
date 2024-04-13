@@ -23,7 +23,8 @@ class Sensors(Node):
         def avanzar_hasta_pared(mov, sensor_del_izq, sensor_del_der):
             if detectar_pared(sensor_del_izq, sensor_del_der):
                 mov.detener()
-            mov.avanzar_distancia(0.05)
+            else:
+                mov.avanzar_distancia(0.05)
             
         self.get_logger().info('Received array: ' + str(msg.data))
 
@@ -33,10 +34,8 @@ class Sensors(Node):
         distancia_delante_izq = msg.data[1]
         distancia_delante_der = msg.data[2]
         distancia_der = msg.data[3]
-        op = input("Introduce una opción (1-pruebas/2-salir): ")
-        if op == '1':
-            print("Pruebas")
-            avanzar_hasta_pared(mov, distancia_delante_izq, distancia_delante_der)
+        
+        avanzar_hasta_pared(mov, distancia_delante_izq, distancia_delante_der)
         
     def get_distancia_derecha(self):
         return self.distancia_der
