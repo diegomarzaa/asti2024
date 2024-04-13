@@ -10,11 +10,6 @@ class Sensors(Node):
         super().__init__('distance_sensor_subscriber')
         
         self.array_subscriber_ = self.create_subscription(Float32MultiArray, '/distancias_sensores', self.array_callback, 10)
-        
-        self.distancia_izq = 0.0
-        self.distancia_delante_izq = 0.0
-        self.distancia_delante_der = 0.0
-        self.distancia_der = 0.0
 
     def array_callback(self, msg):
 
@@ -25,7 +20,16 @@ class Sensors(Node):
             else:
                 return False
             
+        def avanzar_hasta_pared(mov, sensor_del_izq, sensor_del_der):
+            while True:
+                if detectar_pared(sensor_del_izq, sensor_del_der):
+                    break
+                mov.avanzar()
+            mov.detener()
+            
         self.get_logger().info('Received array: ' + str(msg.data))
+
+        mov = Movements()
         distancia_der = msg.data[0]
         distancia_delante_izq = msg.data[1]
         distancia_delante_der = msg.data[2]
@@ -33,7 +37,7 @@ class Sensors(Node):
         op = input("Introduce una opción (1-pruebas/2-salir): ")
         if op == '1':
             print("Pruebas")
-            detectar_pared(distancia_delante_izq, distancia_delante_der)
+            avanzar_hasta_pared(mov, distancia_delante_izq, distancia_delante_der)
         
     def get_distancia_derecha(self):
         return self.distancia_der
