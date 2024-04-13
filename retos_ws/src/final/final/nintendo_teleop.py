@@ -153,7 +153,7 @@ class ButtonPublisher(Node):
 
             elif byte_of_interest == '4000' and self.x <= 0.6 and self.side_counter == False: # UP, aumentar velocidad linear cada vez que pulsemos cruz hacia arriba
                 self.side_counter = True
-                self.x += 0.1
+                self.x += 0.05
                 self.tupla = (self.x, self.y)
                 msg = Twist()
                 msg.linear.x = self.tupla[0]
@@ -163,7 +163,7 @@ class ButtonPublisher(Node):
 
             elif byte_of_interest == '8000' and self.x >= -0.6 and self.side_counter == False: # DOWN, disminuir velocidad linear cada vez que pulsemos cruz hacia abajo
                 self.side_counter = True
-                self.x -= 0.1
+                self.x -= 0.05
                 self.tupla = (self.x, self.y)
                 msg = Twist()
                 msg.linear.x = self.tupla[0]
