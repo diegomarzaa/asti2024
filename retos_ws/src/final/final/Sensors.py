@@ -77,11 +77,11 @@ class Sensors(Node):
         elif detectar_pared(distancia_delante_izq, distancia_delante_der):
             print("pared")
             mov.detener()
-            if abs(distancia_delante_izq - distancia_delante_der) < 5:
+            if abs(distancia_delante_izq - distancia_delante_der) < 10:
                 if distancia_izq > distancia_der:
-                    mov.girar_grados_izq(45)
+                    mov.girar_grados_izq(60)
                 else:
-                    mov.girar_grados_der(45)
+                    mov.girar_grados_der(60)
             else:
                 girar_pared_diagonal(mov, distancia_delante_izq, distancia_delante_der)
             time.sleep(1)
