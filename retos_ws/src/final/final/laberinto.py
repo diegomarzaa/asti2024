@@ -42,7 +42,7 @@ def pedir_opcion_menu():
 
 def pruebas(mov, sensors):
     print("Pruebas")
-    mov.avanzar(sensors)
+    mov.detectar_pared(sensors)
 
 def avanzar_izquierda_guillem(mov, sensors):
     distancias = sensors.get_distancias()
