@@ -12,7 +12,7 @@ def run(mov, sensors):
     mov.actualizar_vel_angular(0.2)
     while True:
         # sensores.distancias() -> [izq, izq_f, der_f, der]
-        distancias = sensors.distancias()
+        distancias = sensors.get_distancias()
         while distancias[3] == 5.0:
             mov.avanzar()
 
