@@ -91,16 +91,18 @@ class Sensors(Node):
             mov.girar_grados_der(90)
             mov.avanzar_distancia(0.4)
             time.sleep(1)
-        elif distancia_izq > 15 and distancia_izq < 30:
+        """
+        elif distancia_izq > 30 and distancia_izq < 60:
             print("reajuste, izquierda lejos")
             mov.detener()
             mov.girar_grados_der(10)
             time.sleep(1)
-        elif distancia_der > 15 and distancia_der < 30:
+        elif distancia_der > 30 and distancia_der < 60:
             print("reajuste, derecha lejos")
             mov.detener()
             mov.girar_grados_izq(10)
             time.sleep(1)
+        """
         
 
 
