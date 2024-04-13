@@ -17,15 +17,23 @@ class Sensors(Node):
         self.distancia_der = 0.0
 
     def array_callback(self, msg):
+
+        def detectar_pared(self, sensor_del_izq, sensor_del_der, dist_pared = 20):
+            print(f"Distancia delante izq: {sensor_del_izq}, Distancia delante der: {sensor_del_der}")
+            if (sensor_del_izq < dist_pared) or (sensor_del_der < dist_pared):
+                return True
+            else:
+                return False
+            
         self.get_logger().info('Received array: ' + str(msg.data))
-        self.distancia_der = msg.data[0]
-        self.distancia_delante_izq = msg.data[1]
-        self.distancia_delante_der = msg.data[2]
-        self.distancia_der = msg.data[3]
+        distancia_der = msg.data[0]
+        distancia_delante_izq = msg.data[1]
+        distancia_delante_der = msg.data[2]
+        distancia_der = msg.data[3]
         op = input("Introduce una opción (1-pruebas/2-salir): ")
         if op == '1':
             print("Pruebas")
-            self.detectar_pared()
+            detectar_pared(distancia_delante_izq, distancia_delante_der)
         
     def get_distancia_derecha(self):
         return self.distancia_der
