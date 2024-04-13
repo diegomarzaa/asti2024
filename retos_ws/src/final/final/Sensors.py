@@ -80,10 +80,10 @@ class Sensors(Node):
                 break
 
     def detectar_pared(self, dist_pared = 20):
-        distancia_delante_izq = self.get_distancia_delante_izq()
-        distancia_delante_der = self.get_distancia_delante_der()
-        print(f"Distancia delante izq: {distancia_delante_izq}, Distancia delante der: {distancia_delante_der}")
-        if (distancia_delante_izq < dist_pared) or (distancia_delante_der < dist_pared):
+        dist_delante_izq = self.get_distancia_delante_izq()
+        dist_delante_der = self.get_distancia_delante_der()
+        print(f"Distancia delante izq: {dist_delante_izq}, Distancia delante der: {dist_delante_der}")
+        if (dist_delante_izq < dist_pared) or (dist_delante_der < dist_pared):
             return True
         else:
             return False
