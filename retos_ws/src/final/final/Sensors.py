@@ -66,10 +66,10 @@ class Sensors(Node):
     def principal(self):
         mov = Movements()
         while True:
-            op = input("Introduce una opción: (1-pruebas/2-salir)")
+            op = input("Introduce una opción (1-pruebas/2-salir: ")
             if op == '1':
                 print("Pruebas")
-                mov.prueba_movimientos(self)
+                mov.detectar_pared(self)
             elif op == '2':
                 break
 
