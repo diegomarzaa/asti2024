@@ -24,7 +24,7 @@ class Sensors(Node):
             while True:
                 if detectar_pared(sensor_del_izq, sensor_del_der):
                     break
-                mov.avanzar()
+                mov.avanzar_distancia(0.05)
             mov.detener()
             
         self.get_logger().info('Received array: ' + str(msg.data))
