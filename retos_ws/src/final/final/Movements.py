@@ -311,10 +311,31 @@ class Movements(Node):
             return True
         else:
             return False
+    
+    def detectar_izquierda_libre(self, sensors, dist_izq_libre = 30):
+        distancia_izq = sensors.get_distancia_izquierda()
+        if distancia_izq > dist_izq_libre:
+            return True
+        else:
+            return False
+
+    def detectar_derecha_libre(self, sensors, dist_der_libre = 30):
+        distancia_der = sensors.get_distancia_derecha()
+        if distancia_der > dist_der_libre:
+            return True
+        else:
+            return False
 
     def avanzar_hasta_pared(self, sensors):
         while True:
             if self.detectar_pared(sensors):
+                break
+            self.avanzar()
+        self.detener()
+
+    def avanzar_hasta_pared_izquierda(self, sensors):
+        while True:
+            if self.detectar_izquierda_libre(sensors):
                 break
             self.avanzar()
         self.detener()

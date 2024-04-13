@@ -17,6 +17,7 @@ opciones = {
     '3': 'Prueba paralelo a paredes (opción 2)',
     '4': 'Prueba de laberinto básico (opción 3)',
     '5': 'Programa principal (sin acabar)',
+    '6': 'Prueba de laberinto hacia izquierda (opción Guillem)',
     'q': 'Salir'
 }
 
@@ -42,6 +43,38 @@ def pedir_opcion_menu():
 def pruebas(mov, sensors):
     print("Pruebas")
     mov.detectar_pared(sensors)
+
+def avanzar_izquierda_guillem(mov, sensors):
+    distancias = sensors.distancias()
+    distancia_izq = distancias[1]
+    distancia_delante_izq = distancias[2]
+    distancia_delante_der = distancias[3]
+    distancia_der = distancias[4]
+    while True:
+        if mov.detectar_izquierda_libre(sensors):
+            mov.detener()
+            mov.girar_izq(90)
+        elif mov.detectar_pared(sensors):
+            mov.detener()
+            if abs(distancia_delante_izq - distancia_delante_der) < 5:
+                if distancia_izq > distancia_der:
+                    mov.girar_izq(90)
+                else:
+                    mov.girar_der(90)
+            else:
+                girar_pared_diagonal(mov, sensors)
+        elif mov.detectar_derecha_libre(sensors):
+            mov.detener()
+            mov.girar_der(90)
+        elif distancia_izq < 15:
+            mov.detener()
+            mov.girar_der(10)
+        elif distancia_der < 15:
+            mov.detener()
+            mov.girar_izq(10)
+        mov.avanzar()
+
+
 
 def basico(mov, sensors):
     # sensores.distancias() -> [izq, izq_f, der_f, der]
