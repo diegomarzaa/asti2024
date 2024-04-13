@@ -21,16 +21,14 @@ class Sensors(Node):
                 return False
             
         def avanzar_hasta_pared(mov, sensor_del_izq, sensor_del_der):
-            while True:
-                if detectar_pared(sensor_del_izq, sensor_del_der):
-                    break
-                mov.avanzar_distancia(0.05)
-            mov.detener()
+            if detectar_pared(sensor_del_izq, sensor_del_der):
+                mov.detener()
+            mov.avanzar_distancia(0.05)
             
         self.get_logger().info('Received array: ' + str(msg.data))
 
         mov = Movements()
-        mov.actualizar_vel_lineal(0.1)
+        mov.actualizar_vel_lineal(0.2)
         distancia_der = msg.data[0]
         distancia_delante_izq = msg.data[1]
         distancia_delante_der = msg.data[2]
