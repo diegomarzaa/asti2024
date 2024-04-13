@@ -18,7 +18,7 @@ class Sensors(Node):
 
     def array_callback(self, msg):
 
-        def detectar_pared(self, sensor_del_izq, sensor_del_der, dist_pared = 20):
+        def detectar_pared(sensor_del_izq, sensor_del_der, dist_pared = 20):
             print(f"Distancia delante izq: {sensor_del_izq}, Distancia delante der: {sensor_del_der}")
             if (sensor_del_izq < dist_pared) or (sensor_del_der < dist_pared):
                 return True
