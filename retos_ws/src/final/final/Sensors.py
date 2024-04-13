@@ -64,22 +64,19 @@ class Sensors(Node):
         return (izquierda, delante_izq, delante_der, derecha)
     
     def principal(self):
-        pass
+        mov = Movements()
+        while True:
+            op = input("Introduce una opción: (1-pruebas/2-salir)")
+            if op == '1':
+                print("Pruebas")
+                mov.prueba_movimientos(self)
+            elif op == '2':
+                break
 
 def main(args=None):
     rclpy.init(args=args)
-    mov = Movements()
     sensors = Sensors()
     rclpy.spin(sensors)
-
-    while True:
-        op = input("Introduce una opción: (1-pruebas/2-salir)")
-        if op == '1':
-            print("Pruebas")
-            mov.prueba_movimientos(sensors)
-        elif op == '2':
-            break
-
     sensors.destroy_node()
     rclpy.shutdown()
 
