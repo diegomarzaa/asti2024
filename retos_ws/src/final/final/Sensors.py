@@ -30,7 +30,7 @@ class Sensors(Node):
         
     def callback_izquierda(self, msg):
         self.distancia_izq = msg.data
-        print(f'Distancia izquierda: {self.distancia_izq}')
+        print(f'Distancia izquierda: {self.distancia_izq} \n')
 
     def callback_delante_der(self, msg):
         self.distancia_delante_der = msg.data
@@ -38,7 +38,7 @@ class Sensors(Node):
         
     def callback_delante_izq(self, msg):
         self.distancia_delante_izq = msg.data
-        print(f'Distancia delante izquierda: {self.distancia_delante_izq} \n')
+        print(f'Distancia delante izquierda: {self.distancia_delante_izq}')
         
     def get_distancia_derecha(self):
         return self.distancia_der
