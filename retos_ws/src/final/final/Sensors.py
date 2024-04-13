@@ -30,12 +30,11 @@ class Sensors(Node):
         
     def callback_izquierda(self, msg):
         self.distancia_izq = msg.data
-        mov = Movements()
         while True:
             op = input("Introduce una opción (1-pruebas/2-salir): ")
             if op == '1':
                 print("Pruebas")
-                mov.detectar_pared(self)
+                self.detectar_pared(self)
             elif op == '2':
                 break
         #print(f'Distancia izquierda: {self.distancia_izq} \n')
@@ -79,6 +78,15 @@ class Sensors(Node):
                 mov.detectar_pared(self)
             elif op == '2':
                 break
+
+    def detectar_pared(self, dist_pared = 20):
+        distancia_delante_izq = self.get_distancia_delante_izq()
+        distancia_delante_der = self.get_distancia_delante_der()
+        print(f"Distancia delante izq: {distancia_delante_izq}, Distancia delante der: {distancia_delante_der}")
+        if (distancia_delante_izq < dist_pared) or (distancia_delante_der < dist_pared):
+            return True
+        else:
+            return False
 
 def main(args=None):
     rclpy.init(args=args)
