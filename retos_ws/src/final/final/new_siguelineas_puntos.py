@@ -288,7 +288,7 @@ class DetectLinea(Node):
         else:
             # cv2.imshow("Result", resultado)
             # print("Mostrando imagen")
-            cv2.imshow("Video", img)
+            #cv2.imshow("Video", img)
 
         # Esperar a que se presione la tecla 'q' para salir del bucle
 
