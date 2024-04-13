@@ -387,11 +387,6 @@ class Figura(Node):
 
         print("\nFiguras:"
                 "\n 0. Autonomia"
-                "\n 1. Triangulo"
-                "\n 2. Cuadrado"
-                "\n 3. Arco"
-                "\n 4. Cilindro"
-                "\n 5. Estrella"
                 "\n v. Actualizar velocidades"
                 "\n ----------------- "
                 "\n a. Testeo"

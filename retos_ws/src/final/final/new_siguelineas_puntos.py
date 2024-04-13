@@ -12,7 +12,7 @@ from cv_bridge import CvBridge  # Package to convert between ROS and OpenCV Imag
 
 
 class DetectLinea(Node):
-    def __init__(self, camara_sub=False, sim=False):
+    def __init__(self, camara_sub=False, sim=False, final=False):
         super().__init__('detectar_linea')
 
         # ================== Publisher ==================
@@ -25,12 +25,13 @@ class DetectLinea(Node):
 
 
         # ================== Subscriber ==================
-        self.subscriber_ = self.create_subscription(Int32, 'rectificar', self.rectificador_callback, 10)
+        #self.subscriber_ = self.create_subscription(Int32, 'rectificar', self.rectificador_callback, 10)
 
-        if sim:
-            self.subscriber_cam = self.create_subscription(Image, 'camera/image_raw', self.camara_callback, 10)
-        elif camara_sub:
-            self.subscriber_cam = self.create_subscription(CompressedImage, 'video_frames', self.camara_callback, 10)
+        if not final:
+            if sim:
+                self.subscriber_cam = self.create_subscription(Image, 'camera/image_raw', self.camara_callback, 10)
+            elif camara_sub:
+                self.subscriber_cam = self.create_subscription(CompressedImage, 'video_frames', self.camara_callback, 10)
 
         timer_period = 0.001  # seconds
         self.timer = self.create_timer(timer_period, self.timer_callback)
@@ -38,7 +39,7 @@ class DetectLinea(Node):
         # ================== Variables ==================
         self.sim = sim
 
-        if sim:
+        if final:
             self.cap = cv2.VideoCapture(0)
         else:
             self.cap = cv2.VideoCapture(0)  # /home/jcrex/Vídeos/siguelineas_largo.mp4
@@ -340,6 +341,8 @@ def main(args=None):
         camara_sub = True
     if input("esta en simulador y/n ") == "y":
         sim = True
+    if input("esta en final y/n ") == "y":
+        final = True
 
     robot = DetectLinea(camara_sub=camara_sub, sim=sim)
 
