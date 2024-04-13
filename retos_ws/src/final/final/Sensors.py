@@ -30,13 +30,10 @@ class Sensors(Node):
         
     def callback_izquierda(self, msg):
         self.distancia_izq = msg.data
-        while True:
-            op = input("Introduce una opción (1-pruebas/2-salir): ")
-            if op == '1':
-                print("Pruebas")
-                self.detectar_pared(self)
-            elif op == '2':
-                break
+        op = input("Introduce una opción (1-pruebas): ")
+        if op == '1':
+            print("Pruebas")
+            self.detectar_pared(self)
         #print(f'Distancia izquierda: {self.distancia_izq} \n')
 
     def callback_delante_der(self, msg):
