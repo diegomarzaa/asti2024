@@ -51,12 +51,16 @@ def avanzar_izquierda_guillem(mov, sensors):
     distancia_delante_der = distancias[2]
     distancia_der = distancias[3]
     while True:
+        print("holaa")
         mov.avanzar()
+        print("holaaaaa")
         if mov.detectar_izquierda_libre(sensors):
+            print("izquierda libre")
             mov.detener()
             mov.girar_izq(90)
             time.sleep(1)
         elif mov.detectar_pared(sensors):
+            print("pared")
             mov.detener()
             if abs(distancia_delante_izq - distancia_delante_der) < 5:
                 if distancia_izq > distancia_der:
@@ -67,14 +71,17 @@ def avanzar_izquierda_guillem(mov, sensors):
                 girar_pared_diagonal(mov, sensors)
             time.sleep(1)
         elif mov.detectar_derecha_libre(sensors):
+            print("derecha libre")
             mov.detener()
             mov.girar_der(90)
             time.sleep(1)
         elif distancia_izq < 15:
+            print("izquierda lejos")
             mov.detener()
             mov.girar_der(10)
             time.sleep(1)
         elif distancia_der < 15:
+            print("derecha lejos")
             mov.detener()
             mov.girar_izq(10)
             time.sleep(1)
