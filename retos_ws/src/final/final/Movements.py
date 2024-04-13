@@ -215,7 +215,7 @@ class Servo():
     def pale_bajar(self, prints=False):
         if prints:
             print("Pale bajado")
-        self.herramienta_girar(self.grados_pale_bajo, self.tiempo_pale_bajar)
+        self.herramienta_girar(self.grados_pale_bajo, self.tiempo_pale_bajar, final_tranquilo=True)
 
 
 
