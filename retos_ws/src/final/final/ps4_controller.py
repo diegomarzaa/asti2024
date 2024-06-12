@@ -2,7 +2,7 @@ import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Joy
 from geometry_msgs.msg import Twist
-from std_msgs.msg import Bool 
+from final.Movements import Movements, pedir_velocidades
 
 obstacle_front_left = False
 obstacle_front_right = False
@@ -11,8 +11,17 @@ obstacle_right = False
 class PS4Node(Node):
     def __init__(self):
         super().__init__('ps4_controller')
-        self.state = "quieto"
-        self.publisher = self.create_publisher(Twist, 'cmd_vel', 10)
+
+        self.mov = Movements()
+        self.mov.actualizar_vel_lineal(0.5)
+        self.mov.actualizar_vel_angular(1.2)
+
+        self.multiplicador_linear_vel = 1.0
+        self.multiplicador_angular_vel = 1.0
+        
+        self.aceleracion = 0.0
+        self.deceleracion = 0.0
+
         self.subs_joy = self.create_subscription(Joy, 'joy', self.callback_joy, 10)
         
         self.timer = self.create_timer(0.001, self.loop)  # 0.001 seconds
@@ -24,7 +33,6 @@ class PS4Node(Node):
             print("CUADRADO")
         elif msg.buttons[1] == 1:
             print("X")
-            self.state = "quieto"
         elif msg.buttons[2] == 1:
             print("CIRCULO")
         elif msg.buttons[3] == 1:
@@ -35,16 +43,12 @@ class PS4Node(Node):
         # Joystick izquierdo
         if msg.axes[0] < 0:
             print("DERECHA (joystick izquierdo): ", msg.axes[0])
-            self.state = "girar_derecha"
         elif msg.axes[0] > 0:
             print("IZQUIERDA (joystick izquierdo): ", msg.axes[0])
-            self.state = "girar_izquierda"
         if msg.axes[1] < 0:
             print("ABAJO (joystick izquierdo): ", msg.axes[1])
-            self.state = "retroceder"
         elif msg.axes[1] > 0:
             print("ARRIBA (joystick izquierdo): ", msg.axes[1])
-            self.state = "avanzar"
 
         
         # Joystick derecho
@@ -57,30 +61,41 @@ class PS4Node(Node):
         elif msg.axes[5] > 0:
             print("ARRIBA (joystick derecho): ", msg.axes[5])
 
+        # Acelerador R2
+        if msg.axes[4] < 0.7:
+            self.aceleracion = (msg.axes[4]-0.7)*(-2.5) / 10    # 0.7 -> 0.0, -1.0 -> 0.425  // Es una aceleración trivial desde 0 a 4.25
+        elif msg.axes[4] > 0.7:
+            self.aceleracion = 0.0
+
+        # Decelerador L2
+        if msg.axes[3] < 0.7:
+            self.deceleracion = (msg.axes[3]-0.7)*(-2) / 10    # 0.7 -> 0.0, -1.0 -> 0.34  // Es una aceleración trivial desde 0 a 4.25
+        elif msg.axes[3] > 0.7:
+            self.deceleracion = 0.0
+
+        # Set velocidades
+        self.multiplicador_linear_vel = msg.axes[1]
+        self.multiplicador_angular_vel = msg.axes[0]
+
     def loop(self):
-        message = Twist()
+        if self.aceleracion > 0:
+          vel_lineal = self.multiplicador_linear_vel * self.mov.obj_linear_vel + self.aceleracion
+        else:
+          vel_lineal = self.multiplicador_linear_vel * self.mov.obj_linear_vel - self.deceleracion
+        
+        vel_angular = self.multiplicador_angular_vel * self.mov.obj_angular_vel
+        
+        if vel_lineal < 0:
+            vel_angular = -vel_angular    # al ir marcha atrás girará al revés
 
-        if self.state == "avanzar":
-            message.linear.x = 0.2
-            message.angular.z = 0.0
-        elif self.state == "retroceder":
-            message.linear.x = -0.2
-            message.angular.z = 0.0
-        elif self.state == "girar_derecha":
-            message.linear.x = 0.0
-            message.angular.z = -0.2
-        elif self.state == "girar_izquierda":
-            message.linear.x = 0.0
-            message.angular.z = 0.2
-        elif self.state == "quieto":
-            message.linear.x = 0.0
-            message.angular.z = 0.0
-
-        self.publisher.publish(message)
+        self.mov.avanzar_curva(vel_lineal, vel_angular)
 
 def main(args=None):
     rclpy.init(args=args)
     avoidance_node = PS4Node()
+    mov = Movements()
+    mov.actualizar_vel_lineal(0.4)
+    mov.actualizar_vel_angular(0.3)
     rclpy.spin(avoidance_node)
     avoidance_node.destroy_node()
     rclpy.shutdown()
