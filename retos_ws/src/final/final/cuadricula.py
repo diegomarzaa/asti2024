@@ -19,6 +19,18 @@ COL_LETRAS = [0.34, 0.11, 0.63, 0.52, 0.46, 0.24, 0.23, 0.34]
 FILA_NUM = [0.40, 0.33, 0.50, 0.14, 0.745, 0.215, 0.50]
 FILA_LETRAS = [0.40, 0.33, 0.50, 0.14, 0.745, 0.215, 0.50]
 
+# INICIO - NÚMEROS
+diccionario_numeros = {
+                      '1': -2, '2': -3, '3': -4, '4': -5, '5': -6, '6': -7, '7': -8, '8': -9,   # COLUMNAS - (9 POSIBLES)
+                      '9': +2, '10': +3, '11': +4, '12': +5, '13': +6, '14': +7, '15': +8             # FILAS +  (8 POSIBLES)       
+                      }
+
+# FIN - LETRAS
+diccionario_letras = {
+                      'A': -2, 'B': -3, 'C': -4, 'D': -5, 'E': -6, 'F': -7, 'G': -8, 'H': -9,   # COLUMNAS - (9 POSIBLES)
+                      'I': +2, 'J': +3, 'K': +4, 'L': +5, 'M': +6, 'N': +7, 'O': +8             # FILAS +  (8 POSIBLES)       
+                      }
+
 opciones = {
   '1': 'Ángulo a ojo',
   '2': 'Cálculo con trigonometría',
@@ -116,8 +128,11 @@ def calculo_trigonometria(mov):
 def posicion_final(mov):
   
     # INTRODUCIMOS LA POSICIÓN INICIAL DEL NÚMERO Y LA FINAL DE LA LETRA
-    inicio = int(input("Introduce la posición inicial (-: columna(9 posibles) / +: fila(8 posibles)): "))
-    fin = int(input("Introduce la posición final (-: columna(9 posibles) / +: fila(8 posibles)): "))
+    inicio_num = int(input("Introduce la posición inicial (-: columna(9 posibles) / +: fila(8 posibles)): "))
+    fin_letra = int(input("Introduce la posición final (-: columna(9 posibles) / +: fila(8 posibles)): "))
+
+    inicio = diccionario_numeros[inicio_num]
+    fin = diccionario_letras[fin_letra]
 
     # CALCULAMOS LAS DISTANCIAS DE LAS LETRAS Y NÚMEROS
     distancia_numero = 0
