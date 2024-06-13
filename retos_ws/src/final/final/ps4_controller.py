@@ -13,7 +13,7 @@ class PS4Node(Node):
         super().__init__('ps4_controller')
 
         self.mov = Movements()
-        self.mov.actualizar_vel_lineal(0.5)
+        self.mov.actualizar_vel_lineal(0.4)
         self.mov.actualizar_vel_angular(1.2)
 
         self.multiplicador_linear_vel = 1.0
@@ -21,6 +21,10 @@ class PS4Node(Node):
         
         self.aceleracion = 0.0
         self.deceleracion = 0.0
+        self.aceleracion_angular = 0.0
+        self.deceleracion_angular = 0.0
+        
+        self.state = 'quieto'
 
         self.subs_joy = self.create_subscription(Joy, 'joy', self.callback_joy, 10)
         
@@ -31,8 +35,10 @@ class PS4Node(Node):
         # ------ BOTONES -------
         if msg.buttons[0] == 1:
             print("CUADRADO")
+            self.state = 'adelante'
         elif msg.buttons[1] == 1:
             print("X")
+            self.state = 'quieto'
         elif msg.buttons[2] == 1:
             print("CIRCULO")
         elif msg.buttons[3] == 1:
@@ -63,15 +69,25 @@ class PS4Node(Node):
 
         # Acelerador R2
         if msg.axes[4] < 0.7:
-            self.aceleracion = (msg.axes[4]-0.7)*(-2.5) / 10    # 0.7 -> 0.0, -1.0 -> 0.425  // Es una aceleración trivial desde 0 a 4.25
+            self.aceleracion = (msg.axes[4]-0.7)*(-2.1) / 10    # 0.7 -> 0.0, -1.0 -> 0.391  // Es una aceleración trivial desde 0 a 4.25
         elif msg.axes[4] > 0.7:
             self.aceleracion = 0.0
 
         # Decelerador L2
         if msg.axes[3] < 0.7:
-            self.deceleracion = (msg.axes[3]-0.7)*(-2) / 10    # 0.7 -> 0.0, -1.0 -> 0.34  // Es una aceleración trivial desde 0 a 4.25
+            self.deceleracion = (msg.axes[3]-0.7)*(-1.6) / 10    # 0.7 -> 0.0, -1.0 -> 0.306  // Es una aceleración trivial desde 0 a 4.25
         elif msg.axes[3] > 0.7:
             self.deceleracion = 0.0
+            
+        # Aceleraciones y deceleraciones angulares cuando L2
+        if msg.buttons[4] == 1:
+            self.aceleracion_angular = self.aceleracion * 3.5
+            self.deceleracion_angular = self.deceleracion * 3.5
+            self.aceleracion = 0
+            self.deceleracion = 0
+        else:
+            self.aceleracion_angular = 0.0
+            self.deceleracion_angular = 0.0
 
         # Set velocidades
         self.multiplicador_linear_vel = msg.axes[1]
@@ -83,11 +99,28 @@ class PS4Node(Node):
         else:
           vel_lineal = self.multiplicador_linear_vel * self.mov.obj_linear_vel - self.deceleracion
         
-        vel_angular = self.multiplicador_angular_vel * self.mov.obj_angular_vel
+        if self.aceleracion_angular > 0:
+            if self.multiplicador_angular_vel > 0:
+                vel_angular = self.multiplicador_angular_vel * self.mov.obj_angular_vel + self.aceleracion_angular
+            elif self.multiplicador_angular_vel < 0:
+                vel_angular = self.multiplicador_angular_vel * self.mov.obj_angular_vel - self.aceleracion_angular
+            else:
+                vel_angular = 0.0
+        else:
+            if self.multiplicador_angular_vel > 0:
+                vel_angular = self.multiplicador_angular_vel * self.mov.obj_angular_vel - self.deceleracion_angular
+            elif self.multiplicador_angular_vel < 0:
+                vel_angular = self.multiplicador_angular_vel * self.mov.obj_angular_vel + self.deceleracion_angular
+            else:
+                vel_angular = 0.0
         
         if vel_lineal < 0:
             vel_angular = -vel_angular    # al ir marcha atrás girará al revés
-
+        
+        if self.state == 'quieto':
+            self.mov.detener()
+            return 1
+        
         self.mov.avanzar_curva(vel_lineal, vel_angular)
 
 def main(args=None):

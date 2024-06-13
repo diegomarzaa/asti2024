@@ -33,6 +33,9 @@ setup(
             'cam_sub = pruebas.camara_sub:main',
             'lector_de_archivo = pruebas.lector_de_archivo:main',
             'lector_cmd_vel = pruebas.lector_cmd_vel:main',
+            'detector = pruebas.detector:main',
+            'avoidance = pruebas.avoidance:main',
+            'follower = pruebas.follower:main',
         ],
     },
 )
