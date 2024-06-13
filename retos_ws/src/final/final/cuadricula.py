@@ -138,8 +138,8 @@ def calculo_trigonometria(mov):
 def posicion_final(mov):
   
     # INTRODUCIMOS LA POSICIÓN INICIAL DEL NÚMERO Y LA FINAL DE LA LETRA
-    inicio_num = input("Introduce la posición inicial (-: columna(9 posibles) / +: fila(8 posibles)): ")
-    fin_letra = input("Introduce la posición final (-: columna(9 posibles) / +: fila(8 posibles)): ")
+    inicio_num = input("Introduce la posición inicial (NÚMERO): ")
+    fin_letra = input("Introduce la posición final (LETRA): ")
 
     inicio = diccionario_numeros[inicio_num]
     fin = diccionario_letras[fin_letra]
