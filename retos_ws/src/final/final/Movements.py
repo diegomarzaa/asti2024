@@ -3,13 +3,13 @@ import math
 from rclpy.node import Node
 from geometry_msgs.msg import Twist
 #from final.Sensors import Sensors
-try:
+"""try:
     import RPi.GPIO as GPIO
     GPIO_ENABLED = True
 except ImportError:
     print("RPi.GPIO no encontrada en el sistema")
     GPIO_ENABLED = False
-    
+ """   
 def pedir_velocidades(mov):
     velocidad_lineal = input(f"Velocidad linear actual: {mov.obj_linear_vel} m/s.\nNueva velocidad lineal (Enter para omitir): ")
     if velocidad_lineal:
@@ -63,7 +63,7 @@ def get_servo_movements():
     }
     return actions_servo
 
-class Servo():
+#class Servo():
     def __init__(self):
         # Grados
         self.servo_current_angle = 0.0
