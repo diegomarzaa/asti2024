@@ -1,62 +1,155 @@
-# UJI ROBOTICS - ASTI2024
+# ASTI 2024 - UJI ROBOTICS TEAM 🚀
 
-# ROSBAG
+## ¿Qué es esto?
 
-- `ros2 bag record /cmd_vel`
-- Mandar cosas
-- `ros2 bag play rosbag2_2024_04_12-09_48_08/rosbag2_2024_04_12-09_48_08_0.db3`
+Bienvenidos al repositorio usado para quedar en segunda posición en el ASTI2024. Esto contiene todos los paquetes de los programas usados para las diferentes pruebas. Entre ello tenemos:
+
+- ROS2 Foxy con integración para TurtleBot3.
+- Simulación en Gazebo.
+- Paquetes ROS.
+- Un Docker para que no corrompas tu portátil.
+
+## Prerrequisitos
+
+Sistema operativo:
+- Cualquiera, mientras soporte Docker (En principio este repositorio necesitaría Ubuntu 20.04 con ROS2 Foxy, que es el que se usó para el desarrollo, pero como en las asignaturas de la carrera se recomienda instalar ubuntu 22.04 con Humble, el uso de docker ayuda a no tener problemas de compatibilidad). 
+
+Primero asegúrate de tener instalado en tu sistema:
+- [Git](https://git-scm.com/downloads) (para clonar este repositorio).
+- [Docker](https://docs.docker.com/get-docker/) (es como una máquina virtual para no corromper tu portátil en las instalaciones, en [este tutorial](https://youtu.be/SAMPOK_lazw?si=vdhNN9obfBl0p4j3) y [este otro](https://youtu.be/XcJzOYe3E6M?si=rwoMkr18-vI-5y3D&t=765) podrás aprender más sobre como funciona docker y su importancia.)
 
 
-# IP
+## Como empezar?
 
-Para ver la IP de la raspberry en cualquier wifi sin usar un monitor:
-  - sudo apt-get install arp-scan
-  - sudo arp-scan --interface=wlo1 --localnet
+### 1. Clona este repositorio
+
+```bash
+git clone https://github.com/username/asti2024.git
+cd asti2024
+```
+
+### 2. Construye la imagen de Docker
+
+Usa el `Dockerfile` incluido para construir tu entorno de trabajo, que ya viene con todo lo que necesitas:
+
+```bash
+sudo docker build -t asti2024 .
+```
+
+Esto te creará una imagen llamada `asti2024` con todo el caos controlado de ROS2 y los paquetes que necesitas. Puedes ver si se ha creado correctamente con:
+
+```bash
+sudo docker images
+```
+
+y deberías ver algo similar a esto:
+
+```bash
+REPOSITORY          TAG       IMAGE ID       CREATED            SIZE
+asti2024            latest    535bcd5d8e02   14 seconds ago     900MB
+```
+
+### 3. Ejecuta el contenedor
+
+```bash
+chmod +x abrir-workspace-asti.sh
+./abrir-workspace-asti.sh
+```
+
+Al ser la primera vez, se compilarán automáticamente todos los archivos del entorno de ROS2, y tras esto, estarás dentro del contenedor.
+
+---
+
+## Usar el entorno Docker 🐳
+
+En el contenedor abierto con el script `abrir-workspace-asti.sh` cualquier cambio que hagas en la carpeta `retos_ws` también se hará en tu portátil. Así podrás hacer las modificaciones que quieras en tu código sin miedo a romper nada.
+
+- [ ] Aún en fase beta, falta implementar:
+
+También está la alternativa `abrir-workspace-asti-tests.sh` que abre el contenedor totalmente aislado, podrás modificar lo que quieras sin miedo a romper nada, ya que cuando salgas del contenedor, todo lo que hayas hecho se perderá.
+
+### Ejemplo de uso 🎯
+
+#### Corre la simulación de TurtleBot3
+
+- [ ] Falta implementar el TurtleBot3 en la simulación, con el docker aún no se instalan todos los paquetes del turtlebot
+
+```bash
+ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py
+```
+
+#### Corre el keyboard teleop para mover el robot
+
+```bash
+ros2 run final keyboard_teleop
+```
+
+---
+
+## Problemas y Cosas que podrían salir mal 💥
+
+- **Permisos denegados en dispositivos USB**:
+
+  ```bash
+  sudo chmod 777 /dev/ttyUSB0
+  ```
+
+- **Fallos al compilar**: asegúrate de que has sourceado todo bien:
+
+  ```bash
+  source /opt/ros/foxy/setup.bash
+  source /root/asti2024/retos_ws/install/setup.bash
+  ```
 
 
-# COMPILACIÓN / ERRORES
 
-- Hacer sources:
-  - `source /opt/ros/foxy/setup.bash`
-  - `source install/setup.bash`
-- Compilar el código en la raspberry, en principio ya estará siempre hecho.
-  - `colcon build --packages-select custom_interfaces`
-  - `colcon build --packages-select dynamixel_sdk`
-  - `source install/setup.bash`
-  - `colcon build --symlink-install --packages-select bringup`
-  - Compilar los programas restantes (final...)
-  - `source install/setup.bash`
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Comandos Comunes 🎮
+
+- **Rosbags**
+
+```bash
+# Grabar movimientos
+ros2 bag record /cmd_vel
+```
+
+```bash
+# Reproducir movimientos
+ros2 bag play rosbag2_<fecha>/rosbag2_<fecha>.db3
+```
+
+- **IP de la Raspberry** (en cualquier wifi, sin monitor)
+    - [ ] Falta mirar mejor esto
+
+```bash
+sudo apt-get install arp-scan
+sudo arp-scan --interface=wlo1 --localnet
+```
+
 - Si sigue sin funcionar
   - `sudo usermod -aG dialout pi`
   - `sudo chmod 777 /dev/ttyUSB0`  (o el puerto que sea, podría ser ttyUSB1, ttyUSB2, etc. Usar `ls /dev/ttyUSB*` para verlo)
   - Reiniciar la controladora de motores. Conectar USB + energia.
   - Cambiar el usb de sitio.
 
-
-# Otros comandos
-
-`ros2 run final keyboard_teleop`
-
-`ros2 run teleop_twist_keyboard teleop_twist_keyboard`
-
-`ros2 topic pub cmd_vel geometry_msgs/Twist "{linear: {x: 0.1, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: 0.0}}"`
-
-`ros2 topic pub -1 /set_velocity custom_interfaces/SetVelocity "{id: 1, velocity: 50}"`  
-(Id puede ser 1 o 2, y velocity puede ser + o -)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+- **Testeo de motores**
+    - `ros2 run final keyboard_teleop`
+    - `ros2 run teleop_twist_keyboard teleop_twist_keyboard`
+    - `ros2 topic pub cmd_vel geometry_msgs/Twist "{linear: {x: 0.1, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: 0.0}}"`
+    - `ros2 topic pub -1 /set_velocity custom_interfaces/SetVelocity "{id: 1, velocity: 50}"`  
+    - (Id puede ser 1 o 2, y velocity puede ser + o -)
 
 ## ¿Cómo ejecutar un programa ya hecho en el CyberCrex o en el portátil?
 
