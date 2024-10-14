@@ -24,7 +24,7 @@ Primero asegúrate de tener instalado en tu sistema:
 ### 1. Clona este repositorio
 
 ```bash
-git clone https://github.com/username/asti2024.git
+git clone https://github.com/diegomarzaa/asti2024.git
 cd asti2024
 ```
 
