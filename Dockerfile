@@ -27,7 +27,7 @@ RUN apt-get update && apt-get install -y \
 ENV TURTLEBOT3_MODEL=burger
 
 # Create workspace directory
-WORKDIR /root/retos_ws
+WORKDIR /root/asti2024_ws
 
 # Set up entrypoint
 COPY docker-entry.sh /docker-entry.sh

@@ -24,7 +24,7 @@ case $parametro in
     tmux split-window
     
     # Envia las teclas al segundo panel
-    tmux send-keys -t my_session:0.2 'cd ../retos_ws' Enter
+    tmux send-keys -t my_session:0.2 'cd ../asti2024_ws' Enter
     tmux send-keys -t my_session:0.2 'ros2 run semifnal laberinto' Enter
 
     # Adjunta la sesión

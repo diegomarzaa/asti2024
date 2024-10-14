@@ -31,7 +31,7 @@ class RosButtonApp:
         self.input_label = tk.Label(self.master, text="Carpeta del workspace:")
         self.input_label.pack(pady=5)
         self.input_box = tk.Entry(self.master)
-        self.input_box.insert(tk.END, "~/Documents/10.UJI/UJIROBOTICS-ASTI/asti2024_ws/retos_ws/install/setup.bash")  # Default input
+        self.input_box.insert(tk.END, "~/Documents/10.UJI/UJIROBOTICS-ASTI/asti2024_ws/asti2024_ws/install/setup.bash")  # Default input
         self.input_box.pack(pady=5)
         
         # division line

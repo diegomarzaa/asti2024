@@ -62,7 +62,7 @@ Al ser la primera vez, se compilarán automáticamente todos los archivos del en
 
 ## Usar el entorno Docker 🐳
 
-En el contenedor abierto con el script `abrir-workspace-asti.sh` cualquier cambio que hagas en la carpeta `retos_ws` también se hará en tu portátil. Así podrás hacer las modificaciones que quieras en tu código sin miedo a romper nada.
+En el contenedor abierto con el script `abrir-workspace-asti.sh` cualquier cambio que hagas en la carpeta `asti2024_ws` también se hará en tu portátil. Así podrás hacer las modificaciones que quieras en tu código sin miedo a romper nada.
 
 - [ ] Aún en fase beta, falta implementar:
 
@@ -72,7 +72,7 @@ También está la alternativa `abrir-workspace-asti-tests.sh` que abre el conten
 
 #### Corre la simulación de TurtleBot3
 
-- [ ] Falta implementar el TurtleBot3 en la simulación, con el docker aún no se instalan todos los paquetes del turtlebot
+- [ ] Falta implementar el TurtleBot3 en la simulación, con el docker aún no se instalan todos los paquetes del turtlebot, solo van los programas hechos por nosotros que se encuentran en la carpeta
 
 ```bash
 ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py
@@ -98,7 +98,7 @@ ros2 run final keyboard_teleop
 
   ```bash
   source /opt/ros/foxy/setup.bash
-  source /root/asti2024/retos_ws/install/setup.bash
+  source /root/asti2024/asti2024_ws/install/setup.bash
   ```
 
 
@@ -199,7 +199,7 @@ network:
   - Para conectarlo a los datos de un móvil o red no configurada, habría que hacerlo desde la interfaz gráfica de la raspberry, conectando un teclado, ratón y monitor... O conectando cable ethernet.
 
 3. Sources.
-  - `cd Documents/asti2024/retos_ws`
+  - `cd Documents/asti2024/asti2024_ws`
   - `source install/setup.bash`  (O usar el alias `src` para hacerlo más rápido)
 
 4. Ejecutar el programa deseado.
@@ -256,8 +256,8 @@ network:
 
 ## ¿Cómo hacer un nuevo programa?
 
-1. Crear el programa en la carpeta `asti2024/retos_ws/src/pruebas/pruebas` (por ejemplo)
-2. Si el programa es en python, ir a `asti2024/retos_ws/src/pruebas/setup.py` y añadir el nombre del programa en la lista de `entry_points`.
+1. Crear el programa en la carpeta `asti2024/asti2024_ws/src/pruebas/pruebas` (por ejemplo)
+2. Si el programa es en python, ir a `asti2024/asti2024_ws/src/pruebas/setup.py` y añadir el nombre del programa en la lista de `entry_points`.
 3. Ejemplo:
   ```python
   entry_points={

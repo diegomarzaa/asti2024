@@ -4,7 +4,6 @@ from time import sleep
 import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import Twist
-from semifinal.misfunciones import *
 
 class LineaPublisher(Node):
 
@@ -17,9 +16,9 @@ class LineaPublisher(Node):
 
         self.tupla = (0.0, 0.0)
         self.matrix = np.zeros((7, 7), dtype=int)
-        self.black_threshold = 40
+        self.black_threshold = 50
         self.vid = cv2.VideoCapture(0)
-        #self.vid = cv2.VideoCapture('/home/alemany/asti2024/retos_ws/src/semifinal/semifinal/video.mp4')
+        #self.vid = cv2.VideoCapture('/home/alemany/asti2024/asti2024_ws/src/semifinal/semifinal/video.mp4')
 
         self.estacionado = True
         self.giro = "der"
@@ -72,7 +71,7 @@ class LineaPublisher(Node):
                     else:
                         self.matrix[i, j] = 0
 
-            cv2.imshow('frame', frame)
+            #cv2.imshow('frame', frame)
             
             # Dibujar líneas horizontales
             for i in range(1, 7):
@@ -82,7 +81,7 @@ class LineaPublisher(Node):
             for j in range(1, 7):
                 cv2.line(frame, (j * cell_size_x, 0), (j * cell_size_x, rows), (0, 255, 0), 1)
 
-            cv2.imshow('frame', frame)
+            #cv2.imshow('frame', frame)
             if cv2.waitKey(10) & 0xFF == ord('q'):
                 break
 
@@ -125,23 +124,13 @@ class LineaPublisher(Node):
                     else:
                         self.matrix[i, j] = 0
 
-            #cv2.imshow('frame', frame)
-            
-            # Dibujar líneas horizontales
-            for i in range(1, 7):
-                cv2.line(frame, (0, i * cell_size_y), (cols, i * cell_size_y), (0, 255, 0), 1)
-
-	    # Dibujar líneas verticales
-            for j in range(1, 7):
-                cv2.line(frame, (j * cell_size_x, 0), (j * cell_size_x, rows), (0, 255, 0), 1)
-
-            cv2.imshow('frame', frame)
+           
             
             
             #Bobo
             if self.veces_derecha >= 3 and self.veces_izquierda >= 3: 
                 self.estacionado = False
-                self.tupla = (0.3, 0.0)
+                self.tupla = (0.2, 0.0)
                 self.estado = 'Recto'
                 self.veces_derecha = 0
                 self.veces_izquierda = 0
@@ -199,13 +188,13 @@ class LineaPublisher(Node):
             # Recto
             elif self.matrix[0, 3] == 1 and self.matrix[0, 0] == 0 and self.matrix[0, 6] == 0:
                 self.estacionado = False
-                self.tupla = (0.3, 0.0)
+                self.tupla = (0.2, 0.0)
                 self.estado = 'Recto'
             
             # Recto
             elif self.matrix[0, 0] == 1 and self.matrix[0, 6] == 1:
                 self.estacionado = False
-                self.tupla = (0.3, 0.0)
+                self.tupla = (0.2, 0.0)
                 self.estado = 'Recto'
                 
             # 180º
