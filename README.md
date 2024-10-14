@@ -30,13 +30,13 @@ cd asti2024
 
 ### 2. Construye la imagen de Docker
 
-Usa el `Dockerfile` incluido para construir tu entorno de trabajo, que ya viene con todo lo que necesitas:
+Usa el fichero de `Dockerfile` incluido para construir todo el entorno de trabajo, en ese archivo podrás ver todo el proceso que se sigue para dejarlo listo, ejecútalo:
 
 ```bash
 sudo docker build -t asti2024 .
 ```
 
-Esto te creará una imagen llamada `asti2024` con todo el caos controlado de ROS2 y los paquetes que necesitas. Puedes ver si se ha creado correctamente con:
+Esto te creará una imagen llamada `asti2024`. Puedes ver si se ha creado correctamente con:
 
 ```bash
 sudo docker images
