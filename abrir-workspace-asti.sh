@@ -13,3 +13,7 @@ sudo docker run -it --rm \
     -v /tmp/.X11-unix:/tmp/.X11-unix \
     -v "$(pwd)/asti2024_ws:/root/asti2024_ws" \
     asti2024
+
+# Agregar --privileged si da errores de permisos
+# Agregar --gpus all si se quiere usar la GPU para simulaciones
+# Agregar --device=/dev/ttyUSB0:/dev/ttyUSB0 si se quiere usar un puerto USB para testear motores directamente
