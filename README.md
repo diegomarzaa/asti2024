@@ -3,6 +3,7 @@
 ## Tareas pendientes
 
 - [ ] Poder modificar los wifis a los que se conecta la raspberry automáticamente
+- [ ] Implementar simulación gazebo en el dockerfile, testear resto de programas del asti.
 - [ ] Testear sistema de Docker con el cybercrex (bringup haciendo ssh, y el resto desde nuestro portátil)
 
 ## ¿Qué es esto?
