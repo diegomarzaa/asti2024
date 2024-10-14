@@ -1,5 +1,10 @@
 # ASTI 2024 - UJI ROBOTICS TEAM 🚀
 
+## Tareas pendientes
+
+- [ ] Poder modificar los wifis a los que se conecta la raspberry automáticamente
+- [ ] Testear sistema de Docker con el cybercrex (bringup haciendo ssh, y el resto desde nuestro portátil)
+
 ## ¿Qué es esto?
 
 Bienvenidos al repositorio usado para quedar en segunda posición en el ASTI2024. Esto contiene todos los paquetes de los programas usados para las diferentes pruebas. Entre ello tenemos:
