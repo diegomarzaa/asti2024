@@ -2,8 +2,18 @@
 Changelog for package dynamixel_sdk
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+3.7.60 (2022-06-03)
+-------------------
+* ROS2 Humble Hawksbill supported
+
+3.7.40 (2021-04-14)
+-------------------
+* Add ROS 2 basic example
+* Bug fix
+* Contributors: Will Son
+
 3.7.30 (2020-07-13)
-------------------
+-------------------
 * ROS 2 Eloquent Elusor supported
 * ROS 2 Foxy Fitzroy supported
 * 3x faster getError member function of GroupSync&BulkRead Class #388
